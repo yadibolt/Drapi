@@ -1,0 +1,5 @@
+<?php
+
+// include the globals file
+// TODO: maybe delete later or implement config?
+require_once __DIR__ . '/globals.inc';

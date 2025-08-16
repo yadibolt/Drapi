@@ -1,0 +1,57 @@
+<?php
+
+function pingvin_schema() {
+  $pingvin_schemas = [];
+
+  /**
+   * Schema for the pingvin_session table.
+   */
+  $pingvin_schemas['pingvin_session'] = [
+    'description' => 'Stores tokens used by Pingvin Authentication.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => TRUE,
+        'description' => 'Unique identifier for the session.',
+      ],
+      'entityId' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'The id of the user or entity associated with this session.',
+      ],
+      'tiedTo' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'default' => 0,
+        'description' => 'The id of the refresh token this record is tied to, if applicable. Defaults to 0, if the token type is "refresh".',
+      ],
+      'token' => [
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => TRUE,
+        'description' => 'The actual token value used.',
+      ],
+      'tokenType' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => TRUE,
+        'description' => 'The type of token, e.g., "access", "refresh", etc.',
+      ],
+      'createdAt' => [
+        'type' => 'int',
+        'not null' => TRUE,
+        'description' => 'The timestamp when the session was created.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'userId_index' => ['entityId'],
+    ],
+  ];
+
+  return $pingvin_schemas;
+}
+
+function pingvin_install() {
+
+}
