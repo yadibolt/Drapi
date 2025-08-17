@@ -54,8 +54,8 @@ class RouteFile {
     foreach ($asserters as $asserter) {
       try {
         call_user_func([$asserter, 'assert'], $this);
-      } catch (Exception) {
-        return false;
+      } catch (Exception $e) {
+        throw new Exception("{$asserter} requirements not met.\n{$e->getMessage()}");
       }
     }
 

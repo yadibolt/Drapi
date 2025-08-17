@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\pingvin\addon\Core\Auth;
+namespace pingvin\Addon\Core\Auth;
 
 /**
  * @route

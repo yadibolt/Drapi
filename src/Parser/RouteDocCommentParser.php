@@ -19,7 +19,7 @@ class RouteDocCommentParser {
     'path',
     'permission',
     'restrict_host',
-    'enable_cache',
+    'enabled',
   ];
 
   /**
@@ -48,7 +48,7 @@ class RouteDocCommentParser {
    * @throws Exception
    *    if the Doc Comment is not parsable and contains errors.
    */
-  public function parse(): array {
+  public function parse(bool $fill = false): array {
     if (!str_starts_with($this->content, '/**') || !str_ends_with($this->content, '*/')) {
       throw new Exception('Doc comment must start with /** and end with */');
     }
@@ -88,6 +88,24 @@ class RouteDocCommentParser {
     $routeContent = json_decode('{' . $routeContent . '}', true);
     if ($routeContent === null) {
       throw new Exception('The route definition is not valid. Please check the syntax.');
+    }
+
+    if ($fill) {
+      $routeContent = $this->fillMissingKeys($routeContent);
+    }
+
+    return $routeContent;
+  }
+
+  protected function fillMissingKeys(array $routeContent): array {
+    foreach (self::ROUTE_TAGS as $tag) {
+      if (!array_key_exists($tag, $routeContent)) {
+        if ($tag === 'enabled') {
+          $routeContent[$tag] = true;
+        } else {
+          $routeContent[$tag] = null;
+        }
+      }
     }
 
     return $routeContent;

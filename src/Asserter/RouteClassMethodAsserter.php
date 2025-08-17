@@ -32,15 +32,15 @@ class RouteClassMethodAsserter {
       throw new Exception('Class does not have any public methods.');
     }
 
+    $numMethodsDefined = 0;
     // route file must not have constructor or other __methods
     foreach ($methods as $method) {
       if (str_starts_with($method, '__')) {
         throw new Exception('Class has a method that starts with double underscore: ' . $method);
       }
-    }
-
-    $numMethodsDefined = 0;
-    foreach ($methods as $method) {
+      if ($method !== strtolower($method)) {
+        throw new Exception('Class has a method that is not all lowercase: ' . $method);
+      }
       if (in_array(strtoupper($method), Route::ALLOWED_ROUTE_METHODS)) {
         $numMethodsDefined += 1;
       }

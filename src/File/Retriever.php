@@ -24,7 +24,7 @@ class Retriever {
     'docComment', // doc comment of the class
     'name', // full class name including the namespace
     'shortName', // short class name without the namespace (so basically: class name)
-    'interface', // interface name that the class implements
+    'interfaces', // interface name that the class implements
     'publicMethods', // methods of the class
   ];
 
@@ -65,7 +65,7 @@ class Retriever {
    * @throws Exception
    *   If the file does not exist or the retrieval attribute is not allowed.
    */
-  public function retrieve(string $retrievalAttribute): string|array {
+  public function retrieve(string $retrievalAttribute): string|array|null {
     if (!in_array($retrievalAttribute, self::ALLOWED_FILE_ATTRIBUTES)) {
       throw new Exception("Retrieval attribute '{$retrievalAttribute}' is not allowed.");
     }

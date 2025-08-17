@@ -2,6 +2,6 @@
 
 namespace Drupal\pingvin\Route;
 
-interface RouteInterface {{
+interface RouteInterface {
 
 }

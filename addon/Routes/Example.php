@@ -1,8 +1,10 @@
 <?php
 
-namespace Drupal\pingvin\addon\Routes;
+namespace pingvin\Addon\Routes;
 
 use Drupal\pingvin\Route\RouteInterface;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  *  Example route implementation.
@@ -15,18 +17,20 @@ use Drupal\pingvin\Route\RouteInterface;
  *  For example, if you want to handle GET requests, you have to define the `get` method.
  *
  * @route
- * id = 'pingvin.example'
+ * id = 'pingvin:example'
  * name = 'Example Route'
  * method = 'GET'
- * description = 'Excample route using GET!'
+ * description = 'Example route using GET!'
  * path = 'example/read'
  * permission = [
  *  'access content'
  * ]
- * restrict_host = []
- * enable_cache = false
  * @route-end
  */
 class Example implements RouteInterface {
-
+  public function get(Request $request): JsonResponse {
+    return new JsonResponse([
+      'message' => 'Hello from the other side!'
+    ], 200);
+  }
 }

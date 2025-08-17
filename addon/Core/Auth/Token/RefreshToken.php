@@ -1,8 +1,7 @@
 <?php
 
-namespace Drupal\pingvin\addon\Core\Auth\Token;
+namespace pingvin\Addon\Core\Auth\Token;
 
-class RefreshToken
-{
+class RefreshToken {
 
 }

@@ -61,10 +61,11 @@ class RouteClassDocCommentAsserter {
       throw new Exception('The route method must be one of: ' . implode(', ', Route::ALLOWED_ROUTE_METHODS) . '.');
     }
 
+    // all http methods are lowercased for the class method to be validated
     $retriever = new Retriever($filePath);
     $publicMethods = $retriever->retrieve('publicMethods');
-    if (!in_array(strtoupper($json['method']), strtoupper($publicMethods))) {
-      throw new Exception('The route method must be defined one of the public methods of the class.');
+    if (!in_array(strtolower($json['method']), $publicMethods)) {
+      throw new Exception('The class must define a public method that matches the http method.');
     }
 
     // description
@@ -91,21 +92,8 @@ class RouteClassDocCommentAsserter {
     }
 
     // restrict host
-    if (isset($json['restrict_host']) && !is_array($json['restrict_host'])) {
-      throw new Exception('The route restrict_host must be an array.');
-    }
-
-    if (isset($json['restrict_host'])) {
-      foreach ($json['restrict_host'] as $host) {
-        if (!is_string($host)) {
-          throw new Exception('Each host in restrict_host must be a string.');
-        }
-      }
-    }
-
-    // enable cache
-    if (isset($json['enable_cache']) && !is_bool($json['enable_cache'])) {
-      throw new Exception('The route enable_cache must be a boolean.');
+    if (isset($json['restrict_host']) && !is_string($json['restrict_host'])) {
+      throw new Exception('The route restrict_host must be a string.');
     }
   }
 }

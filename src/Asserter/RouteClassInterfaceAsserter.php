@@ -33,7 +33,7 @@ class RouteClassInterfaceAsserter {
       throw new Exception("The 'interfaces' attribute retrieved from {$filePath} is not an array.");
     }
 
-    $interfaceNamespace = 'Drupal\\' . PROJECT_ID . '\Route\RouteInterface';
+    $interfaceNamespace = 'Drupal\\' . pw8dr1_PROJECT_ID . '\Route\RouteInterface';
     if (!in_array($interfaceNamespace, $interfaces)) {
       throw new Exception("The file at {$filePath} does not implement the required interface $interfaceNamespace.");
     }
