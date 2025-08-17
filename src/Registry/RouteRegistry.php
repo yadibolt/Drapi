@@ -2,6 +2,6 @@
 
 namespace Drupal\pingvin\Registry;
 
-class Route {
+class RouteRegistry {
 
 }

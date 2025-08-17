@@ -4,13 +4,14 @@ namespace Drupal\pingvin\File;
 
 use Exception;
 use ReflectionClass;
+use ReflectionMethod;
 
 /**
  * Used mainly to determine the attributes of a PHP file.
  * Since we use registry to register the routes, we need to check required
  * attributes in order to securely create the routes.
  *
- * @see \Drupal\pingvin\Registry\Route
+ * @see \Drupal\pingvin\Registry\RouteRegistry
  */
 class Retriever {
   /**
@@ -24,6 +25,7 @@ class Retriever {
     'name', // full class name including the namespace
     'shortName', // short class name without the namespace (so basically: class name)
     'interface', // interface name that the class implements
+    'publicMethods', // methods of the class
   ];
 
   /**
@@ -69,12 +71,13 @@ class Retriever {
     }
 
     return match ($retrievalAttribute) {
-      'namespace' => $this->retrieveClassNamesp(),
+      'namespace' => $this->retrieveClassNamespace(),
       'namespaceName' => $this->retrieveClassNamespaceName(),
       'docComment' => $this->retrieveClassDocComment(),
       'name' => $this->retrieveClassName(),
       'shortName' => $this->retrieveClassShortName(),
-      'interface' => $this->retrieveInterfaceName(),
+      'interfaces' => $this->retrieveInterfaceName(),
+      'publicMethods' => $this->retrieveDefinedPublicMethods(),
       default => throw new Exception("Retrieval attribute '{$retrievalAttribute}' is not implemented."),
     };
   }
@@ -193,5 +196,25 @@ class Retriever {
   protected function retrieveInterfaceName(): ?array {
     $reflection = $this->createReflection();
     return $reflection->getInterfaceNames() ?: null;
+  }
+
+  /**
+   * Retrieves the public methods defined in the class.
+   *
+   * @return array|null
+   *    Returns an array of public method names defined in the class.
+   *    If the class does not have any public methods, returns null.
+   * @throws Exception
+   *    If the class does not exist or cannot be reflected.
+   */
+  protected function retrieveDefinedPublicMethods(): ?array {
+    $reflection = $this->createReflection();
+    $methods = $reflection->getMethods(ReflectionMethod::IS_PUBLIC) ?: null;
+
+    if ($methods === null) return null;
+
+    return array_map(function ($method) {
+      return $method->getName();
+    }, $methods);
   }
 }
