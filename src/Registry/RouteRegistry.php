@@ -82,7 +82,7 @@ class RouteRegistry {
             throw new Exception('Invalid route file: ' . $filePath);
           }
         } catch (Exception $e) {
-          throw new Exception('Error validating route file: ' . $filePath . "\n" . $e->getMessage());
+          throw new Exception('Error validating route file: ' . $filePath . '. ' . $e->getMessage());
         }
 
         $this->routePathRegistry[] = $filePath;

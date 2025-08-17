@@ -1,6 +1,6 @@
 <?php
 
-namespace pingvin\Addon\Routes;
+namespace Drupal\pingvin\Addon\Routes;
 
 use Drupal\pingvin\Route\RouteInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;

@@ -1,6 +1,6 @@
 <?php
 
-namespace pingvin\Addon\Core\Auth;
+namespace src\addon\Core\Auth;
 
 /**
  * @route
