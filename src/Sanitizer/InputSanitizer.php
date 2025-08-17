@@ -7,7 +7,6 @@ use Exception;
 class InputSanitizer {
   protected const array ALLOWED_SANITIZERS = [
     'xss',
-    'json',
     'sql',
   ];
 
