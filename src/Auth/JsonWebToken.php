@@ -59,6 +59,14 @@ class JsonWebToken {
     }
   }
 
+  /**
+   * Creates a JWT token of the specified type with optional data.
+   *
+   * @param string $tokenType
+   * @param array $data
+   * @return string
+   * @throws Exception
+   */
   public function create(string $tokenType, array $data = []): string {
     if (!in_array($tokenType, [self::JWT_TOKEN_TYPE_ACCESS, self::JWT_TOKEN_TYPE_REFRESH])) {
       throw new Exception('Invalid token type. Allowed types are: ' . self::JWT_TOKEN_TYPE_ACCESS . ' and ' . self::JWT_TOKEN_TYPE_REFRESH);
@@ -89,6 +97,12 @@ class JsonWebToken {
     return $header . '.' . $payload . '.' . $sig;
   }
 
+  /**
+   * Verifies the JWT token and returns its status.
+   *
+   * @param string $token
+   * @return array
+   */
   public function verify(string $token): array {
     if (!str_contains($token, '.')) {
       return $this->jwtResponse(
@@ -118,19 +132,46 @@ class JsonWebToken {
     );
   }
 
+  /**
+   * Verifies if the JWT token is expired.
+   *
+   * @param string $token
+   * @return bool
+   */
   protected function verifyExpiry(string $token): bool {
     $payload = self::getPayload($token);
 
     return (isset($payload['exp']) && $payload['exp'] > time());
   }
 
-  public static function getPayload(string $token) {
+  /**
+   * Extracts the payload from the JWT token.
+   *
+   * @param string $token
+   * @return array
+   */
+  public static function getPayload(string $token): array {
     [, $payload,] = explode('.', $token);
     $payload = Base64::decode($payload);
 
     return json_decode($payload, true);
   }
 
+  /**
+   * Generates a standardized JWT response.
+   *
+   * @param string $action
+   *    The action performed on the token (e.g., 'create', 'verify').
+   * @param bool $valid
+   *    Indicates if the token is valid.
+   * @param bool $expired
+   *    Indicates if the token is expired.
+   * @param bool $error
+   *    Indicates if there was an error during processing.
+   *
+   * @return array
+   *   The response array containing the action, validity, expiration status, and error flag.
+   */
   protected function jwtResponse(string $action, bool $valid, bool $expired, bool $error = false): array {
     return [
       'action' => 'token:'. $action,

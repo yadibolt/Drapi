@@ -14,7 +14,7 @@ class ServerJsonResponse extends JsonResponse {
    * ```json
    * {
    *   "message": "Your message here",
-   *   "error": true|false,
+   *   "error": true|false, - depends on the status code
    *   "timestamp": 1700000000,
    *   "data": null|array - your data
    * }
