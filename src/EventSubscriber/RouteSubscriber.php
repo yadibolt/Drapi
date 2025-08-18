@@ -20,7 +20,8 @@ class RouteSubscriber extends RouteSubscriberBase {
    *    If the provided directory does not exist or if a route file is invalid.
    */
   protected function alterRoutes(RouteCollection $collection): void {
-    $config = Drupal::configFactory()->getEditable(pw8dr1_PROJECT_ID);
+    $configCtx = pw8dr1_PROJECT_ID . '.settings';
+    $config = Drupal::configFactory()->getEditable($configCtx);
     $configRoutes = [];
 
     $userRouteRegistry = new RouteRegistry(pw8dr1_USER_ROUTES_DIR)->registerRoutes();
@@ -39,6 +40,7 @@ class RouteSubscriber extends RouteSubscriberBase {
     // this prevents the issues with registering routes, duplicates and/or cache issues
     // within the config
     $config->set('route_registry', $configRoutes);
+    $config->save();
   }
 }
 

@@ -148,7 +148,9 @@ class Route {
       requirements: [
         '_permission' => implode(', ', $this->permission) ?: '',
       ],
-      options: [],
+      options: [
+        pw8dr1_PROJECT_ID.':routeId' => $this->id,
+      ],
       host: $this->restrictHost ?: '',
       schemes: $schemes,
       methods: [$this->method],

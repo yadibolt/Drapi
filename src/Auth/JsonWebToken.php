@@ -51,7 +51,8 @@ class JsonWebToken {
    * If the secret key is not set, it uses a default value and logs a warning.
    */
   public function __construct() {
-    $config = Drupal::configFactory()->getEditable(pw8dr1_PROJECT_ID);
+    $configCtx = pw8dr1_PROJECT_ID . '.settings';
+    $config = Drupal::configFactory()->getEditable($configCtx);
     $this->secret = $config->get('jwt_secret') ?: pw8dr1_PROJECT_ID; // TODO: change
 
     if ($this->secret === pw8dr1_PROJECT_ID) {

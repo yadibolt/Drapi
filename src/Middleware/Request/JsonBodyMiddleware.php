@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\pingvin\Middleware\Auth;
+namespace Drupal\pingvin\Middleware\Request;
 
 use Drupal\pingvin\Http\ServerJsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
-class AuthRefreshMiddleware {
+class JsonBodyMiddleware {
   /**
    * The current request object.
    *
@@ -43,7 +43,7 @@ class AuthRefreshMiddleware {
    */
   public function apply(): array|ServerJsonResponse {
     return [
-      'auth3' => 'test2',
+      'auth' => 'test5',
     ];
   }
 }

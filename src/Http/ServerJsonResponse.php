@@ -28,12 +28,16 @@ class ServerJsonResponse extends JsonResponse {
     parent::__construct($data, $status, $headers, $json);
 
     if (is_array($data)) {
+      $_data = [];
+
       if (isset($data['message'])) {
-        $_data = $data['message'] ?: '';
+        $_data['message'] = $data['message'] ?: '';
         unset($data['message']);
       }
-      if ($status >= 400) $_data['error'] = true;
+
+      $_data['error'] = $status >= 400;
       $_data['timestamp'] = time();
+      if (!empty($data)) $_data['data'] = $data;
 
       $this->setData($_data);
     }

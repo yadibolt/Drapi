@@ -49,9 +49,11 @@ class RouteBuilder {
    *    If the doc comment is not parsable or contains errors.
    */
   public function buildFromPath(): Route {
-    $config = Drupal::configFactory()->getEditable(pw8dr1_PROJECT_ID);
+    $configCtx = pw8dr1_PROJECT_ID . '.settings';
+    $config = Drupal::configFactory()->getEditable($configCtx);
     if (!$config->get('route_registry')) {
       $config->set('route_registry', []);
+      $config->save();
     }
 
     $configRouteRegistry = $config->get('route_registry');
