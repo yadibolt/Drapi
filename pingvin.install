@@ -11,47 +11,43 @@ function pingvin_schema() {
     'fields' => [
       'id' => [
         'type' => 'serial',
-        'not null' => TRUE,
+        'not null' => true,
         'description' => 'Unique identifier for the session.',
       ],
-      'entityId' => [
+      'entity_id' => [
         'type' => 'int',
-        'not null' => TRUE,
+        'not null' => true,
         'description' => 'The id of the user or entity associated with this session.',
       ],
-      'tiedTo' => [
+      'refresh_token_id' => [
         'type' => 'int',
-        'not null' => TRUE,
+        'not null' => true,
         'default' => 0,
         'description' => 'The id of the refresh token this record is tied to, if applicable. Defaults to 0, if the token type is "refresh".',
       ],
       'token' => [
         'type' => 'varchar',
         'length' => 512,
-        'not null' => TRUE,
+        'not null' => true,
         'description' => 'The actual token value used.',
       ],
-      'tokenType' => [
+      'token_type' => [
         'type' => 'varchar',
         'length' => 32,
-        'not null' => TRUE,
+        'not null' => true,
         'description' => 'The type of token, e.g., "access", "refresh", etc.',
       ],
-      'createdAt' => [
+      'created_at' => [
         'type' => 'int',
-        'not null' => TRUE,
+        'not null' => true,
         'description' => 'The timestamp when the session was created.',
       ],
     ],
     'primary key' => ['id'],
     'indexes' => [
-      'userId_index' => ['entityId'],
+      'entity_id_index' => ['entity_id'],
     ],
   ];
 
   return $pingvin_schemas;
-}
-
-function pingvin_install() {
-
 }

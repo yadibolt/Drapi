@@ -30,6 +30,14 @@ class ServerJsonResponse extends JsonResponse {
     if (is_array($data)) {
       $_data = [];
 
+      // we use 'actionId' as an identifier for client side
+      // applications to give them a way to track the request
+      // state.
+      if (isset($data['actionId'])) {
+        $_data['actionId'] = $data['actionId'];
+        unset($data['actionId']);
+      }
+
       if (isset($data['message'])) {
         $_data['message'] = $data['message'] ?: '';
         unset($data['message']);

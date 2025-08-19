@@ -9,6 +9,7 @@ use Drupal\pingvin\Middleware\Auth\AuthRefreshMiddleware;
 use Drupal\pingvin\Middleware\Client\CorsMiddleware;
 use Drupal\pingvin\Middleware\Request\JsonBodyMiddleware;
 use Drupal\pingvin\Middleware\Request\RequestMiddleware;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 class Middleware {
@@ -35,6 +36,7 @@ class Middleware {
    * @return null|ServerJsonResponse
    *    Returns null if the request is valid and all middlewares passed,
    *    or a ServerJsonResponse if any middleware validation fails.
+   * @throws Exception
    */
   public static function enable(Request $request, array $middlewares = []): Request|ServerJsonResponse {
     $routeObject = $request->attributes->get('_route_object');
@@ -88,7 +90,7 @@ class Middleware {
       // is already exposed in the route controller
       if ($response instanceof ServerJsonResponse) return $response;
 
-      // we add new attributes that the middlewares might retrieved
+      // we add new attributes that the middlewares might retrieve
       // if the keys are the same, we do not override the existing ones
       // this results in 'first in, first served' behavior
       if (!empty($response) && is_array($response)) {

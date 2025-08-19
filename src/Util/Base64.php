@@ -26,6 +26,6 @@ class Base64 {
   public static function decode(string $payload): string {
     $payload = strtr($payload, '-_', '+/');
 
-    return base64_decode(str_pad($base64, strlen($base64) % 4, '=', STR_PAD_RIGHT));
+    return base64_decode(str_pad($payload, strlen($payload) % 4, '=', STR_PAD_RIGHT));
   }
 }

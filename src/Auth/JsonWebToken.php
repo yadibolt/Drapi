@@ -30,13 +30,13 @@ class JsonWebToken {
    *
    * @var string
    */
-  protected const string JWT_TOKEN_TYPE_ACCESS = 'access';
+  public const string JWT_TOKEN_TYPE_ACCESS = 'access';
   /**
    * Refresh token type that is used to obtain new access tokens and extend user sessions.
    *
    * @var string
    */
-  protected const string JWT_TOKEN_TYPE_REFRESH = 'refresh';
+  public const string JWT_TOKEN_TYPE_REFRESH = 'refresh';
   /**
    * Secret key used for signing JWT tokens.
    *
@@ -100,6 +100,9 @@ class JsonWebToken {
 
   /**
    * Verifies the JWT token and returns its status.
+   * Returned array follows standardized format.
+   * The array contains the following keys:
+   * - actionId: token:invalid_format, token:invalid, token:expired, token:ok
    *
    * @param string $token
    * @return array
@@ -122,12 +125,12 @@ class JsonWebToken {
     $valid = hash_equals($sig, $expSig);
     $expired = $this->verifyExpiry($token);
 
-    if (!$valid) $action = 'invalid';
-    if ($expired) $action = 'expired';
-    else $action = 'ok';
+    if (!$valid) $actionId = 'invalid';
+    if ($expired) $actionId = 'expired';
+    else $actionId = 'ok';
 
     return $this->jwtResponse(
-      $action,
+      $actionId,
       $valid,
       $expired,
     );
@@ -161,7 +164,7 @@ class JsonWebToken {
   /**
    * Generates a standardized JWT response.
    *
-   * @param string $action
+   * @param string $actionId
    *    The action performed on the token (e.g., 'create', 'verify').
    * @param bool $valid
    *    Indicates if the token is valid.
@@ -173,9 +176,9 @@ class JsonWebToken {
    * @return array
    *   The response array containing the action, validity, expiration status, and error flag.
    */
-  protected function jwtResponse(string $action, bool $valid, bool $expired, bool $error = false): array {
+  protected function jwtResponse(string $actionId, bool $valid, bool $expired, bool $error = false): array {
     return [
-      'action' => 'token:'. $action,
+      'actionId' => 'token:'. $actionId,
       'valid' => $valid,
       'expired' => $expired,
       'error' => $error,

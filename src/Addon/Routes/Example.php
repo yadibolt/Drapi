@@ -34,7 +34,7 @@ class Example implements RouteInterface {
     // define the middleware to be used for this route
     // Middleware returns a $request with additional attributes
     // that are useful for the route.
-    $request = Middleware::enable($request, ['auth:jwt', 'auth:jwt:refresh']);
+    $request = Middleware::enable($request, ['auth:jwt']);
 
     // request has an error, when ServerJsonResponse is returned
     // after the middleware is applied, so we return the $request
