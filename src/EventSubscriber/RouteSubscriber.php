@@ -25,8 +25,7 @@ class RouteSubscriber extends RouteSubscriberBase {
     $configRoutes = [];
 
     $userRouteRegistry = new RouteRegistry(pw8dr1_USER_ROUTES_DIR)->registerRoutes();
-    // $coreRouteRegistry = new RouteRegistry(CORE_ROUTES_DIR)->registerRoutes();
-    $coreRouteRegistry = [];
+    $coreRouteRegistry = new RouteRegistry(pw8dr1_CORE_ROUTES_DIR)->registerRoutes();
 
     foreach ([...$userRouteRegistry, ...$coreRouteRegistry] as $registryPath) {
       $route = new RouteBuilder($registryPath)->buildFromPath();
