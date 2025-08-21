@@ -1,6 +1,6 @@
 <?php
 
-namespace src\addon\Core\Auth;
+namespace Drupal\pingvin\Addon\Core\Auth;
 
 use Drupal\pingvin\Http\ServerJsonResponse;
 use Drupal\pingvin\Middleware\Middleware;
@@ -27,7 +27,7 @@ class Login implements RouteInterface {
     $context = $request->attributes->get('context');
 
     return new ServerJsonResponse([
-      'd' => $context,
+      'd' => $context['data'],
     ], 200);
   }
 }

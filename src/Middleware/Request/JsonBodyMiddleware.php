@@ -61,13 +61,13 @@ class JsonBodyMiddleware {
   public function apply(): array|ServerJsonResponse {
     $this->data = $this->request->getContent();
 
-    if ($this->request->server['REQUEST_METHOD'] == 'GET' && !empty($this->data)) {
+    if ($this->request->server->get('REQUEST_METHOD') == 'GET' && !empty($this->data)) {
       return new ServerJsonResponse([
         'message' => 'GET requests cannot have a body.',
       ], 400);
     }
 
-    if (in_array($this->request->server['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+    if (in_array($this->request->server->get('REQUEST_METHOD'), ['POST', 'PUT', 'PATCH', 'DELETE'])) {
       if (empty($this->data)) {
         return new ServerJsonResponse([
           'message' => 'Request body cannot be empty.',
@@ -76,8 +76,7 @@ class JsonBodyMiddleware {
 
       // if the request contains JSON type
       // we try to parse it
-      if (isset($this->request->headers['content-type']) &&
-        !str_contains($this->request->headers['content-type'][0], 'application/json')) {
+      if ($this->request->server->get('CONTENT_TYPE') !== null && str_contains($this->request->server->get('CONTENT_TYPE'), 'application/json')) {
         $contents = json_decode($this->data, true) ?: [];
 
         if (json_last_error() !== JSON_ERROR_NONE) {
@@ -95,7 +94,8 @@ class JsonBodyMiddleware {
         }
 
         $inputSanitizer = new InputSanitizer($this->data);
-        $this->data = $inputSanitizer->sanitize('xss')->sanitize('sql');
+        $this->data = $inputSanitizer->sanitize('xss');
+        $this->data = $inputSanitizer->sanitize('sql');
       }
     }
 

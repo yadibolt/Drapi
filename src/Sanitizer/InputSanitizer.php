@@ -39,7 +39,7 @@ class InputSanitizer {
    * @throws Exception
    *    If the sanitizer is not allowed or not implemented.
    */
-  public function sanitize(string $sanitizer): self {
+  public function sanitize(string $sanitizer): string|array {
     if (!in_array($sanitizer, self::ALLOWED_SANITIZERS)) {
       throw new Exception("Sanitizer value '{$sanitizer}' is not allowed.");
     }
@@ -60,7 +60,7 @@ class InputSanitizer {
    * @return string|array
    *    The sanitized input data.
    */
-  protected function sanitizeXSS(string|array $input): self {
+  protected function sanitizeXSS(string|array $input): string|array {
     $patterns = [
       '/<\s*script\b/i',
       '/on\w+\s*=/i',
@@ -70,12 +70,12 @@ class InputSanitizer {
     ];
 
     if (is_array($input)) {
-      return array_map([$this, 'sanitizeXSS'], $input);
+      $this->input = array_map([$this, 'sanitizeXSS'], $input);
+      return $this->input;
     }
     $sanitized = preg_replace($patterns, '', $input);
     $this->input = htmlspecialchars($sanitized, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
-
-    return $this;
+    return $this->input;
   }
 
   /**
@@ -87,7 +87,7 @@ class InputSanitizer {
    * @return string|array
    *    The sanitized input data.
    */
-  protected function sanitizeSQL(string|array $input): self {
+  protected function sanitizeSQL(string|array $input): string|array {
     $patterns = [
       '/\bUNION\b/i',
       '/\bSELECT\b/i',
@@ -104,7 +104,8 @@ class InputSanitizer {
     ];
 
     if (is_array($input)) {
-      return array_map([$this, 'sanitizeSQL'], $input);
+      $this->input = array_map([$this, 'sanitizeSQL'], $input);
+      return $this->input;
     }
 
     $sanitized = preg_replace($patterns, '', $input);
@@ -114,6 +115,6 @@ class InputSanitizer {
       $sanitized
     );
 
-    return $this;
+    return $this->input;
   }
 }

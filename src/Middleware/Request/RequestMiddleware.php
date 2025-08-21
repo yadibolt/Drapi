@@ -50,22 +50,24 @@ class RequestMiddleware {
    *    Returns the attributes or a JSON response in case of an error.
    */
   public function apply(): array|ServerJsonResponse {
-    if ((!isset($this->server['HTTPS']) || $this->server['HTTPS'] !== 'on') &&
-      (!isset($this->server['REQUEST_SCHEME']) || $this->server['REQUEST_SCHEME'] !== 'https') &&
-      (!isset($this->server['SERVER_PORT']) || $this->server['SERVER_PORT'] != 443)) {
+    if (
+      ($this->request->server->get('HTTPS') === null || $this->request->server->get('HTTPS') !== 'on') &&
+      ($this->request->server->get('REQUEST_SCHEME') === null || $this->request->server->get('REQUEST_SCHEME') !== 'https') &&
+      ($this->request->server->get('SERVER_PORT') === null || (int)$this->request->server->get('SERVER_PORT') !== 443)
+    ) {
       return new ServerJsonResponse([
         'message' => 'Invalid protocol.',
       ], 400);
     }
 
-    if (empty($this->headers)) {
+    if (empty($this->request->headers)) {
       return new ServerJsonResponse([
         'message' => 'Headers cannot be empty.',
       ], 400);
     }
 
     if (!empty(self::SUSPICIOUS_AGENTS)) {
-      if (array_any(self::SUSPICIOUS_AGENTS, fn($agent) => stripos($this->request->headers['user-agent'][0], $agent) !== false)) {
+      if (array_any(self::SUSPICIOUS_AGENTS, fn($agent) => stripos($this->request->server->get('HTTP_USER_AGENT'), $agent) !== false)) {
         return new ServerJsonResponse([
           'message' => 'Suspicious User-Agent detected.',
         ], 400);
