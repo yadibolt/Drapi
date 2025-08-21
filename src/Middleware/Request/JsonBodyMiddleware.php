@@ -2,10 +2,20 @@
 
 namespace Drupal\pingvin\Middleware\Request;
 
+use Drupal\cordr\Route\Content\Validation;
 use Drupal\pingvin\Http\ServerJsonResponse;
+use Drupal\pingvin\Sanitizer\InputSanitizer;
+use Exception;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class JsonBodyMiddleware {
+  /**
+   * Maximum allowed size for the request body in bytes.
+   *
+   * @var int
+   */
+  protected const int MAX_BODY_SIZE = 1048576;
   /**
    * The current request object.
    *
@@ -20,6 +30,12 @@ class JsonBodyMiddleware {
    * @var array
    */
   protected array $routeDefinition;
+  /**
+   * Request body data.
+   *
+   * @var array
+   */
+  protected $data;
 
   /**
    * Constructs the AuthMiddleware.
@@ -40,10 +56,51 @@ class JsonBodyMiddleware {
    *
    * @return array|ServerJsonResponse
    *    Returns the attributes or a JSON response in case of an error.
+   * @throws Exception
    */
   public function apply(): array|ServerJsonResponse {
+    $this->data = $this->request->getContent();
+
+    if ($this->request->server['REQUEST_METHOD'] == 'GET' && !empty($this->data)) {
+      return new ServerJsonResponse([
+        'message' => 'GET requests cannot have a body.',
+      ], 400);
+    }
+
+    if (in_array($this->request->server['REQUEST_METHOD'], ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+      if (empty($this->data)) {
+        return new ServerJsonResponse([
+          'message' => 'Request body cannot be empty.',
+        ], 400);
+      }
+
+      // if the request contains JSON type
+      // we try to parse it
+      if (isset($this->request->headers['content-type']) &&
+        !str_contains($this->request->headers['content-type'][0], 'application/json')) {
+        $contents = json_decode($this->data, true) ?: [];
+
+        if (json_last_error() !== JSON_ERROR_NONE) {
+          return new ServerJsonResponse([
+            'message' => 'Invalid JSON.'
+          ], 400);
+        } else {
+          $this->data = $contents;
+        }
+
+        if (strlen(json_encode($this->data)) > self::MAX_BODY_SIZE) {
+          return new ServerJsonResponse([
+            'message' => 'Request body too large.',
+          ], 400);
+        }
+
+        $inputSanitizer = new InputSanitizer($this->data);
+        $this->data = $inputSanitizer->sanitize('xss')->sanitize('sql');
+      }
+    }
+
     return [
-      'auth' => 'test5',
+      'data' => $this->data ?: [],
     ];
   }
 }

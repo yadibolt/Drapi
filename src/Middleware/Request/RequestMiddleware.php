@@ -3,9 +3,17 @@
 namespace Drupal\pingvin\Middleware\Request;
 
 use Drupal\pingvin\Http\ServerJsonResponse;
+use Drupal\pingvin\Sanitizer\InputSanitizer;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class RequestMiddleware {
+  /**
+   * Suspicious User-Agent strings to block.
+   *
+   * @var array
+   */
+  protected const array SUSPICIOUS_AGENTS = [];
   /**
    * The current request object.
    *
@@ -42,8 +50,28 @@ class RequestMiddleware {
    *    Returns the attributes or a JSON response in case of an error.
    */
   public function apply(): array|ServerJsonResponse {
-    return [
-      'auth' => 'test6',
-    ];
+    if ((!isset($this->server['HTTPS']) || $this->server['HTTPS'] !== 'on') &&
+      (!isset($this->server['REQUEST_SCHEME']) || $this->server['REQUEST_SCHEME'] !== 'https') &&
+      (!isset($this->server['SERVER_PORT']) || $this->server['SERVER_PORT'] != 443)) {
+      return new ServerJsonResponse([
+        'message' => 'Invalid protocol.',
+      ], 400);
+    }
+
+    if (empty($this->headers)) {
+      return new ServerJsonResponse([
+        'message' => 'Headers cannot be empty.',
+      ], 400);
+    }
+
+    if (!empty(self::SUSPICIOUS_AGENTS)) {
+      if (array_any(self::SUSPICIOUS_AGENTS, fn($agent) => stripos($this->request->headers['user-agent'][0], $agent) !== false)) {
+        return new ServerJsonResponse([
+          'message' => 'Suspicious User-Agent detected.',
+        ], 400);
+      }
+    }
+
+    return [];
   }
 }

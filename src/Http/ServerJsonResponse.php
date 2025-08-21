@@ -2,6 +2,7 @@
 
 namespace Drupal\pingvin\Http;
 
+use Drupal\pingvin\Middleware\Client\CorsMiddleware;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 class ServerJsonResponse extends JsonResponse {
@@ -48,6 +49,11 @@ class ServerJsonResponse extends JsonResponse {
       if (!empty($data)) $_data['data'] = $data;
 
       $this->setData($_data);
+
+      $this->headers->set('Access-Control-Allow-Origin', CorsMiddleware::ALLOW_ORIGINS);
+      $this->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      $this->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      $this->headers->set('Access-Control-Expose-Headers', 'Content-Type, Authorization');
     }
   }
 }

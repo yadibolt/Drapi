@@ -3,9 +3,19 @@
 namespace Drupal\pingvin\Middleware\Client;
 
 use Drupal\pingvin\Http\ServerJsonResponse;
+use Grpc\Server;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class CorsMiddleware {
+  /**
+   * Allowed origins for CORS requests.
+   *
+   * This constant defines the allowed origins for CORS requests.
+   * It can be set to '*' to allow all origins or a specific origin URL.
+   */
+  public const string ALLOW_ORIGINS = '*';
+
   /**
    * The current request object.
    *
@@ -41,9 +51,18 @@ class CorsMiddleware {
    * @return array|ServerJsonResponse
    *    Returns the attributes or a JSON response in case of an error.
    */
-  public function apply(): array|ServerJsonResponse {
-    return [
-      'auth' => 'test3',
-    ];
+  public function apply(): array|ServerJsonResponse|Response {
+    // preflight
+    if ($this->request->getMethod() === 'OPTIONS') {
+      $response = new Response('', 204);
+      $response->headers->set('Access-Control-Allow-Origin', self::ALLOW_ORIGINS);
+      $response->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+      $response->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      $response->headers->set('Access-Control-Expose-Headers', 'Content-Type, Authorization');
+
+      return $response;
+    }
+
+    return [];
   }
 }
