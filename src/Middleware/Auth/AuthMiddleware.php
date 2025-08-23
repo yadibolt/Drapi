@@ -136,6 +136,25 @@ class AuthMiddleware {
       ], 403);
     }
 
+    // we also check the permissions and roles to access the route
+    // that are defined in the Doc Comments of the route class
+    // User has to have all the permissions specified by the route definition
+    $requiredPermissions = $this->routeDefinition['permission'] ?: [];
+    if (array_any($requiredPermissions, fn($requiredPermission) => !$user->hasPermission($requiredPermission))) {
+      return new ServerJsonResponse([
+        'message' => 'User does not have the required permissions.',
+        'actionId' => 'user:missing_permissions',
+      ], 403);
+    }
+
+    $requiredRoles = $this->routeDefinition['roles'] ?: [];
+    if (array_any($requiredRoles, fn($requiredRole) => !$user->hasRole($requiredRole))) {
+      return new ServerJsonResponse([
+        'message' => 'User does not have the required roles.',
+        'actionId' => 'user:missing_roles',
+      ], 403);
+    }
+
     // everything is ok, we set the user as a context for the route
     // doing this we save some database calls for the route
     return [

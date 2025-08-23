@@ -48,7 +48,7 @@ class Route {
   /**
    * The description of the route.
    *
-   * @var string
+   * @var ?string
    */
   protected ?string $description;
   /**
@@ -58,15 +58,21 @@ class Route {
    */
   protected string $path;
   /**
-   * The permission required to access the route.
+   * The permissions required to access the route.
    *
-   * @var array
+   * @var ?array
    */
-  protected ?array $permission;
+  protected ?array $permissions;
+  /**
+   * The roles required to access the route.
+   *
+   * @var ?array
+   */
+  protected ?array $roles;
   /**
    * The host restrictions for the route.
    *
-   * @var string
+   * @var ?string
    */
   protected ?string $restrictHost;
   /**
@@ -91,7 +97,8 @@ class Route {
     $this->method = $routeContent['method'];
     $this->description = $routeContent['description'];
     $this->path = $routeContent['path'];
-    $this->permission = $routeContent['permission'];
+    $this->permissions = $routeContent['permissions'];
+    $this->roles = $routeContent['roles'];
     $this->restrictHost = $routeContent['restrict_host'];
     $this->enabled = $routeContent['enabled'] ?: true;
   }
@@ -109,7 +116,8 @@ class Route {
       'method' => $this->method,
       'description' => $this->description,
       'path' => $this->path,
-      'permission' => $this->permission,
+      'permissions' => $this->permissions,
+      'roles' => $this->roles,
       'restrict_host' => $this->restrictHost,
       'enabled' => $this->enabled,
     ];
@@ -146,7 +154,7 @@ class Route {
         '_format' => 'json',
       ],
       requirements: [
-        '_permission' => implode(', ', $this->permission) ?: '',
+        '_permission' => implode(', ', $this->permissions) ?: '',
       ],
       options: [
         pw8dr1_PROJECT_ID.':routeId' => $this->id,
@@ -157,10 +165,23 @@ class Route {
     );
   }
 
+  /**
+   * Returns the unique identifier of the route.
+   *
+   * @return string
+   *    The unique identifier of the route.
+   */
   public function getId(): string {
     return $this->id;
   }
 
+  /**
+   * Sets the unique identifier of the route.
+   *
+   * @param bool $enabled
+   *    Whether the route is enabled.
+   * @return void
+   */
   public function setEnabled(bool $enabled): void {
     $this->enabled = $enabled;
   }

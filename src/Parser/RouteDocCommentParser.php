@@ -17,7 +17,8 @@ class RouteDocCommentParser {
     'method',
     'description',
     'path',
-    'permission',
+    'permissions',
+    'roles',
     'restrict_host',
     'enabled',
   ];
@@ -42,7 +43,7 @@ class RouteDocCommentParser {
   /**
    * Parses the doc comment content to extract route information.
    *
-   * @return bool
+   * @return array
    *    Returns true if the parsing is successful.
    *
    * @throws Exception
@@ -97,6 +98,14 @@ class RouteDocCommentParser {
     return $routeContent;
   }
 
+  /**
+   * Fills missing keys in the route content with default values.
+   *
+   * @param array $routeContent
+   *    The route content array to fill.
+   * @return array
+   *    The filled route content array.
+   */
   protected function fillMissingKeys(array $routeContent): array {
     foreach (self::ROUTE_TAGS as $tag) {
       if (!array_key_exists($tag, $routeContent)) {

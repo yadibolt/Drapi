@@ -33,9 +33,9 @@ class JsonBodyMiddleware {
   /**
    * Request body data.
    *
-   * @var array
+   * @var string|resource|false|null
    */
-  protected $data;
+  protected mixed $data;
 
   /**
    * Constructs the AuthMiddleware.

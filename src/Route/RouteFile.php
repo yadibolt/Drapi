@@ -43,6 +43,14 @@ class RouteFile {
     $this->filePath = $filePath;
   }
 
+  /**
+   * Validates the Route file against all asserters.
+   *
+   * @return bool
+   *    Returns true if the Route file is valid.
+   * @throws Exception
+   *    If any of the asserter requirements are not met.
+   */
   public function isValid(): bool {
     $asserters = [
       RouteClassDeclarationAsserter::class,
@@ -62,6 +70,12 @@ class RouteFile {
     return true;
   }
 
+  /**
+   * Gets the file path of the Route file.
+   *
+   * @return string
+   *    The file path of the Route file.
+   */
   public function getFilePath(): string {
     return $this->filePath;
   }

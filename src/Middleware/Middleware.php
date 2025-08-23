@@ -100,7 +100,7 @@ class Middleware {
       }
     }
 
-    // if evething is fine, we return the request back
+    // if everything is fine, we return the request back
     // with the attributes set by the middlewares
     if (!empty($attributes)) $request->attributes->set('context', $attributes);
 

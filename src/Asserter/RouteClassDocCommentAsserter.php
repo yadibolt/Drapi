@@ -78,15 +78,28 @@ class RouteClassDocCommentAsserter {
       throw new Exception('The route path must be a string.');
     }
 
-    // permission
-    if (isset($json['permission']) && !is_array($json['permission'])) {
-      throw new Exception('The route permission must be an array.');
+    // permissions
+    if (isset($json['permissions']) && !is_array($json['permissions'])) {
+      throw new Exception('The route permissions must be an array.');
     }
 
-    if (isset($json['permission'])) {
-      foreach ($json['permission'] as $host) {
+    if (isset($json['permissions'])) {
+      foreach ($json['permissions'] as $host) {
         if (!is_string($host)) {
-          throw new Exception('Each host in permission must be a string.');
+          throw new Exception('Each permission must be a string.');
+        }
+      }
+    }
+
+    // roles
+    if (isset($json['roles']) && !is_array($json['roles'])) {
+      throw new Exception('The route roles must be an array.');
+    }
+
+    if (isset($json['roles'])) {
+      foreach ($json['roles'] as $host) {
+        if (!is_string($host)) {
+          throw new Exception('Each role must be a string.');
         }
       }
     }

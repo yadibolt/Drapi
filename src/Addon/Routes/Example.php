@@ -24,8 +24,11 @@ use Symfony\Component\HttpFoundation\Request;
  * method = 'GET'
  * description = 'Example route using GET!'
  * path = 'example/read'
- * permission = [
+ * permissions = [
  *  'access content'
+ * ]
+ * roles = [
+ *  'authenticated'
  * ]
  * @route-end
  */
