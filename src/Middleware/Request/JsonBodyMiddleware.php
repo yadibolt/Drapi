@@ -64,6 +64,7 @@ class JsonBodyMiddleware {
     if ($this->request->server->get('REQUEST_METHOD') == 'GET' && !empty($this->data)) {
       return new ServerJsonResponse([
         'message' => 'GET requests cannot have a body.',
+        'actionId' => 'request:body_not_empty',
       ], 400);
     }
 
@@ -79,6 +80,7 @@ class JsonBodyMiddleware {
       if (empty($this->data)) {
         return new ServerJsonResponse([
           'message' => 'Request body cannot be empty.',
+          'actionId' => 'request:body_empty',
         ], 400);
       }
 
@@ -89,7 +91,8 @@ class JsonBodyMiddleware {
 
         if (json_last_error() !== JSON_ERROR_NONE) {
           return new ServerJsonResponse([
-            'message' => 'Invalid JSON.'
+            'message' => 'Invalid JSON.',
+            'actionId' => 'body:invalid',
           ], 400);
         } else {
           $this->data = $contents;
@@ -98,6 +101,7 @@ class JsonBodyMiddleware {
         if (strlen(json_encode($this->data)) > self::MAX_BODY_SIZE) {
           return new ServerJsonResponse([
             'message' => 'Request body too large.',
+            'actionId' => 'body:too_large',
           ], 400);
         }
 

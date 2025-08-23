@@ -1,13 +1,13 @@
 <?php
 
 function pingvin_schema() {
-  $pingvin_schemas = [];
+  $schemas = [];
 
   /**
-   * Schema for the pingvin_session table.
+   * Schema for the session table.
    */
-  $pingvin_schemas['pingvin_session'] = [
-    'description' => 'Stores tokens used by Pingvin Authentication.',
+  $schemas[pw8dr1_PROJECT_ID . '_session'] = [
+    'description' => 'Stores tokens used by ' . pw8dr1_PROJECT_NAME . ' Authentication.',
     'fields' => [
       'id' => [
         'type' => 'serial',
@@ -37,10 +37,21 @@ function pingvin_schema() {
         'not null' => true,
         'description' => 'The type of token, e.g., "access", "refresh", etc.',
       ],
+      'user_agent' => [
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => false,
+        'description' => 'The user agent string from the client that created this session.',
+      ],
+      'updated_at' => [
+        'type' => 'int',
+        'not null' => true,
+        'description' => 'The timestamp when the record was edited.',
+      ],
       'created_at' => [
         'type' => 'int',
         'not null' => true,
-        'description' => 'The timestamp when the session was created.',
+        'description' => 'The timestamp when the record was created.',
       ],
     ],
     'primary key' => ['id'],
@@ -49,5 +60,5 @@ function pingvin_schema() {
     ],
   ];
 
-  return $pingvin_schemas;
+  return $schemas;
 }

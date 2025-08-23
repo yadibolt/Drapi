@@ -57,12 +57,21 @@ class RequestMiddleware {
     ) {
       return new ServerJsonResponse([
         'message' => 'Invalid protocol.',
+        'actionId' => 'protocol:invalid',
       ], 400);
     }
 
     if (empty($this->request->headers)) {
       return new ServerJsonResponse([
         'message' => 'Headers cannot be empty.',
+        'actionId' => 'headers:empty',
+      ], 400);
+    }
+
+    if (empty($this->request->headers->get('content-type'))) {
+      return new ServerJsonResponse([
+        'message' => 'Content-Type header is required.',
+        'actionId' => 'headers:content_type_missing',
       ], 400);
     }
 
@@ -70,10 +79,16 @@ class RequestMiddleware {
       if (array_any(self::SUSPICIOUS_AGENTS, fn($agent) => stripos($this->request->server->get('HTTP_USER_AGENT'), $agent) !== false)) {
         return new ServerJsonResponse([
           'message' => 'Suspicious User-Agent detected.',
+          'actionId' => 'user_agent:not_allowed',
         ], 400);
       }
     }
 
-    return [];
+    $agent = $this->request->server->get('HTTP_USER_AGENT') ?: 'unknown';
+    $agent = substr($agent, 0, 512);
+
+    return [
+      'userAgent' => $agent,
+    ];
   }
 }

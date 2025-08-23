@@ -112,16 +112,16 @@ class AuthMiddleware {
       ], 401);
     }
 
-    // we try to load actual user from the session, not from the token
+    // we try to load actual user from the session retrieval, not from the token
     // just to be sure that the session contains the entityId
-    if (!is_object($session) || !isset($session->entityId)) {
+    if (!is_object($session) || empty($session->getEntityId())) {
       return new ServerJsonResponse([
         'message' => 'Not an object or invalid entity.',
         'actionId' => 'session:invalid_format',
       ], 500);
     }
 
-    $user = User::load((int)$session->entityId);
+    $user = User::load((int)$session->getEntityId());
     if (!$user) {
       return new ServerJsonResponse([
         'message' => 'User not found.',
@@ -139,7 +139,7 @@ class AuthMiddleware {
     // we also check the permissions and roles to access the route
     // that are defined in the Doc Comments of the route class
     // User has to have all the permissions specified by the route definition
-    $requiredPermissions = $this->routeDefinition['permission'] ?: [];
+    $requiredPermissions = $this->routeDefinition['permissions'] ?: [];
     if (array_any($requiredPermissions, fn($requiredPermission) => !$user->hasPermission($requiredPermission))) {
       return new ServerJsonResponse([
         'message' => 'User does not have the required permissions.',
@@ -159,6 +159,7 @@ class AuthMiddleware {
     // doing this we save some database calls for the route
     return [
       'user' => $user,
+      'userSession' => $session,
     ];
   }
 }

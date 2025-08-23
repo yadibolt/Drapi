@@ -64,9 +64,13 @@ class JsonWebToken {
    * Creates a JWT token of the specified type with optional data.
    *
    * @param string $tokenType
+   *    The type of token to create. Allowed values are 'access' and 'refresh'.
    * @param array $data
+   *    Optional data to include in the token payload (only for access tokens).
    * @return string
+   *   The generated JWT token.
    * @throws Exception
+   *   If the token type is invalid.
    */
   public function create(string $tokenType, array $data = []): string {
     if (!in_array($tokenType, [self::JWT_TOKEN_TYPE_ACCESS, self::JWT_TOKEN_TYPE_REFRESH])) {
@@ -140,19 +144,22 @@ class JsonWebToken {
    * Verifies if the JWT token is expired.
    *
    * @param string $token
+   *   The JWT token to verify.
    * @return bool
+   *   True if the token is expired, false otherwise.
    */
   protected function verifyExpiry(string $token): bool {
     $payload = self::getPayload($token);
-
-    return (isset($payload['exp']) && $payload['exp'] > time());
+    return !(isset($payload['exp']) && $payload['exp'] > time());
   }
 
   /**
    * Extracts the payload from the JWT token.
    *
    * @param string $token
+   *  The JWT token from which to extract the payload.
    * @return array
+   * The payload as an associative array.
    */
   public static function getPayload(string $token): array {
     [, $payload,] = explode('.', $token);
