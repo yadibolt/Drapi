@@ -67,6 +67,14 @@ class JsonBodyMiddleware {
       ], 400);
     }
 
+    if (!empty($this->request->query->all())) {
+      foreach ($this->request->query->all() as $key => $value) {
+        $inputSanitizer = new InputSanitizer($value);
+        $this->request->query->set($key, $inputSanitizer->sanitize('xss'));
+        $this->request->query->set($key, $inputSanitizer->sanitize('sql'));
+      }
+    }
+
     if (in_array($this->request->server->get('REQUEST_METHOD'), ['POST', 'PUT', 'PATCH', 'DELETE'])) {
       if (empty($this->data)) {
         return new ServerJsonResponse([
