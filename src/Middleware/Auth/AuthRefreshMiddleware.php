@@ -5,6 +5,7 @@ namespace Drupal\pingvin\Middleware\Auth;
 use Drupal\pingvin\Auth\JsonWebToken;
 use Drupal\pingvin\Http\ServerJsonResponse;
 use Drupal\pingvin\Session\Session;
+use Drupal\user\Entity\User;
 use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -105,7 +106,7 @@ class AuthRefreshMiddleware {
     // if the session does not exist, we return a response with 'session:invalid'.
     $session = Session::retrieve(
       token: $this->refreshToken,
-      tokenType: JsonWebToken::JWT_TOKEN_TYPE_REFRESH
+      tokenType: JsonWebToken::TOKEN_TYPE_REFRESH
     );
 
     if (empty($session)) {
@@ -115,10 +116,35 @@ class AuthRefreshMiddleware {
       ], 401);
     }
 
+    // we try to load actual user from the retrieved session, not from the token
+    // just to be sure that the session contains the entityId
+    if (!is_object($session) || empty($session->getEntityId())) {
+      return new ServerJsonResponse([
+        'message' => 'Not an object or invalid entity.',
+        'actionId' => 'session:invalid_format',
+      ], 500);
+    }
+
+    $user = User::load((int)$session->getEntityId());
+    if (!$user) {
+      return new ServerJsonResponse([
+        'message' => 'User not found.',
+        'actionId' => 'user:not_found',
+      ], 404);
+    }
+
+    if (!$user->isActive()) {
+      return new ServerJsonResponse([
+        'message' => 'User is not active.',
+        'actionId' => 'user:not_active',
+      ], 403);
+    }
+
     // the session exists, which means that refresh token is valid
     // we can now retrieve the refresh token as additional context
     return [
-      'refreshToken' => $this->refreshToken,
+      'user' => $user,
+      'userSession' => $session, // session can be null for anonymous user
     ];
   }
 }

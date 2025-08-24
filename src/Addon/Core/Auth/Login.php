@@ -6,6 +6,7 @@ use Drupal;
 use Drupal\cordr\Route\Http\Response;
 use Drupal\pingvin\Auth\JsonWebToken;
 use Drupal\pingvin\Http\ServerJsonResponse;
+use Drupal\pingvin\Logger\L;
 use Drupal\pingvin\Middleware\Middleware;
 use Drupal\pingvin\Route\RouteInterface;
 use Drupal\pingvin\Session\Session;
@@ -82,18 +83,26 @@ class Login implements RouteInterface {
     // this session contains very minimal information exposure due to security reasons
     $jwt = new JsonWebToken();
     $payload = [
-      'user_id' => $user->id(),
+      'userId' => $user->id(),
     ];
 
-    $accessToken = $jwt->create(JsonWebToken::JWT_TOKEN_TYPE_ACCESS, $payload);
-    $refreshToken = $jwt->create(JsonWebToken::JWT_TOKEN_TYPE_REFRESH);
+    $accessToken = $jwt->create(JsonWebToken::TOKEN_TYPE_ACCESS, $payload, JsonWebToken::BASIC);
+    $refreshToken = $jwt->create(JsonWebToken::TOKEN_TYPE_REFRESH, [], JsonWebToken::BASIC);
 
     $session = new Session($user->id(), $accessToken, $refreshToken, $userAgent);
-    if (!$session->save()) {
+    try {
+      $session->saveRefreshToken();
+      $session->saveAccessToken();
+    } catch (Exception) {
       return new ServerJsonResponse([
         'message' => 'Server could not process the request.',
       ], 500);
     }
+
+    L::log('User @userId started a new session using @userAgent.', [
+      '@userId' => $user->id(),
+      '@userAgent' => $userAgent,
+    ], 'info');
 
     return new ServerJsonResponse([
       'message' => 'Login successful.',

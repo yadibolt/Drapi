@@ -19,7 +19,7 @@ class Middleware {
    */
   public const array ALLOWED_MIDDLEWARES = [
     'auth:jwt',
-    'auth:jwt:refresh',
+    'auth:jwt-refresh',
     'body:json',
     'client:cors',
     'request'
@@ -76,7 +76,7 @@ class Middleware {
 
       $response = match ($middleware) {
         'auth:jwt' => new AuthMiddleware($request, $routeDefinition)->apply(),
-        'auth:jwt:refresh' => new AuthRefreshMiddleware($request, $routeDefinition)->apply(),
+        'auth:jwt-refresh' => new AuthRefreshMiddleware($request, $routeDefinition)->apply(),
         'body:json' => new JsonBodyMiddleware($request, $routeDefinition)->apply(),
         'client:cors' => new CorsMiddleware($request, $routeDefinition)->apply(),
         'request' => new RequestMiddleware($request, $routeDefinition)->apply(),

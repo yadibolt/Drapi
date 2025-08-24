@@ -27,9 +27,7 @@ use Symfony\Component\HttpFoundation\Request;
  * permissions = [
  *  'access content'
  * ]
- * roles = [
- *  'authenticated'
- * ]
+ * roles = []
  * @route-end
  */
 class Example implements RouteInterface {

@@ -3,6 +3,7 @@
 namespace Drupal\pingvin\Auth;
 
 use Drupal;
+use Drupal\pingvin\Logger\L;
 use Drupal\pingvin\Util\Base64;
 use Exception;
 
@@ -12,36 +13,39 @@ class JsonWebToken {
    *
    * @var string
    */
-  protected const string JWT_HASH_ALGORITHM = 'sha512';
+  protected const string HASH_ALGORITHM = 'sha512';
   /**
    * Expiration time for JWT access tokens in seconds.
    *
    * @var int
    */
-  protected const int JWT_ACCESS_TOKEN_EXP_TIME = 3600;
+  protected const int ACCESS_TOKEN_EXP_TIME = 3600;
   /**
    * Expiration time for JWT refresh tokens in seconds.
    *
    * @var int
    */
-  protected const int JWT_REFRESH_TOKEN_EXP_TIME = 604800;
+  protected const int REFRESH_TOKEN_EXP_TIME = 604800;
   /**
    * Access token type that is used to validate user actions and permissions/roles.
    *
    * @var string
    */
-  public const string JWT_TOKEN_TYPE_ACCESS = 'access';
+  public const string TOKEN_TYPE_ACCESS = 'access';
   /**
    * Refresh token type that is used to obtain new access tokens and extend user sessions.
    *
    * @var string
    */
-  public const string JWT_TOKEN_TYPE_REFRESH = 'refresh';
+  public const string TOKEN_TYPE_REFRESH = 'refresh';
   /**
    * Secret key used for signing JWT tokens.
    *
    * @var string
    */
+  public const string PERMANENT = 'permanent';
+  public const string BASIC = 'basic';
+
   protected string $secret;
 
   /**
@@ -56,7 +60,7 @@ class JsonWebToken {
     $this->secret = $config->get('jwt_secret') ?: pw8dr1_PROJECT_ID; // TODO: change
 
     if ($this->secret === pw8dr1_PROJECT_ID) {
-      Drupal::logger(pw8dr1_PROJECT_ID)->warning('JWT secret key is not set in the configuration. Using default value!');
+      L::log('JWT secret key is not set in the configuration. Using default value!', [], 'warning');
     }
   }
 
@@ -72,15 +76,20 @@ class JsonWebToken {
    * @throws Exception
    *   If the token type is invalid.
    */
-  public function create(string $tokenType, array $data = []): string {
-    if (!in_array($tokenType, [self::JWT_TOKEN_TYPE_ACCESS, self::JWT_TOKEN_TYPE_REFRESH])) {
-      throw new Exception('Invalid token type. Allowed types are: ' . self::JWT_TOKEN_TYPE_ACCESS . ' and ' . self::JWT_TOKEN_TYPE_REFRESH);
+  public function create(string $tokenType, array $data = [], string $expiryType = self::BASIC): string {
+    if (!in_array($tokenType, [self::TOKEN_TYPE_ACCESS, self::TOKEN_TYPE_REFRESH])) {
+      throw new Exception('Invalid token type. Allowed types are: ' . self::TOKEN_TYPE_ACCESS . ' and ' . self::TOKEN_TYPE_REFRESH);
     }
 
     // set the expiration time based on the token type
-    $expirationTime = $tokenType === self::JWT_TOKEN_TYPE_ACCESS
-      ? self::JWT_ACCESS_TOKEN_EXP_TIME
-      : self::JWT_REFRESH_TOKEN_EXP_TIME;
+    $expirationTime = $tokenType === self::TOKEN_TYPE_ACCESS
+      ? self::ACCESS_TOKEN_EXP_TIME
+      : self::REFRESH_TOKEN_EXP_TIME;
+
+    if ($expiryType === self::PERMANENT) {
+      // 50 years
+      $expirationTime = 50 * 365 * 24 * 60 * 60;
+    }
 
     // base header used for all JWT tokens
     $jwt = [
@@ -92,11 +101,11 @@ class JsonWebToken {
 
     // additional data if the token is not a refresh token
     // and the data is present
-    if (!empty($data) && $tokenType === self::JWT_TOKEN_TYPE_ACCESS) $jwt['data'] = $data;
+    if (!empty($data) && $tokenType === self::TOKEN_TYPE_ACCESS) $jwt['data'] = $data;
 
     $header = Base64::encode(json_encode(["alg" => "HS512", "typ" => "JWT"]));
     $payload = Base64::encode(json_encode($jwt));
-    $sig = Base64::encode(hash_hmac(self::JWT_HASH_ALGORITHM, $header . '.' . $payload, $this->secret, true));
+    $sig = Base64::encode(hash_hmac(self::HASH_ALGORITHM, $header . '.' . $payload, $this->secret, true));
 
     // return the token in the format: header.payload.signature
     return $header . '.' . $payload . '.' . $sig;
@@ -124,7 +133,7 @@ class JsonWebToken {
     [$header, $payload, $sig] = explode('.', $token);
 
     $sig = Base64::decode($sig);
-    $expSig = hash_hmac(self::JWT_HASH_ALGORITHM, $header . '.' . $payload, $this->secret, true);
+    $expSig = hash_hmac(self::HASH_ALGORITHM, $header . '.' . $payload, $this->secret, true);
 
     $valid = hash_equals($sig, $expSig);
     $expired = $this->verifyExpiry($token);

@@ -96,90 +96,103 @@ class Session {
   }
 
   /**
-   * Method saves the session to the database.
-   * In case of a new session, a new record is inserted. (one for access token, one for refresh token)
-   * If the access token already exists, it will be returned instead in a form of self.
-   * If the refresh token already exists, it will be updated with the new access token and returned in a form of self.
-   *
-   * @return Session|null
-   *    Returns the saved Session object with updated ID if it was a new session,
-   *    or null if the save operation failed.
    * @throws Exception
-   *   If there is an error during the database operation.
    */
-  public function save(): ?self {
-    // we first need to check if the access token already exists
-    // with the combination of accessToken and refreshToken
-    $query = Drupal::database()->select(self::SESSION_TABLE, self::SESSION_TABLE_SHORTHAND)
+  public function saveAccessToken(): Exception|self {
+    $database = Drupal::database();
+
+    $query = $database->select(self::SESSION_TABLE, self::SESSION_TABLE_SHORTHAND)
       ->fields(self::SESSION_TABLE_SHORTHAND)
       ->condition('token', $this->refreshToken)
-      ->condition('token_type', JsonWebToken::JWT_TOKEN_TYPE_REFRESH);
+      ->condition('token_type', JsonWebToken::TOKEN_TYPE_REFRESH);
     $existingRefreshToken = $query->execute()->fetchObject() ?: null;
 
-    if ($existingRefreshToken !== null) {
-      // so the refresh token already exists, we need to update the access token
-      $query = Drupal::database()->select(self::SESSION_TABLE, self::SESSION_TABLE_SHORTHAND)
-        ->condition('refresh_token_id', $existingRefreshToken->id);
-      $existingAccessToken = $query->execute()->fetchObject() ?: null;
-
-      // we set the record ID to the existing access token ID
-      // so we can update it later in the save process
-      // we strictly do not update the refresh tokens as they
-      // should remain the same for the user session and should be only deleted
-      // or created. Anyway, this is a rare case that can happen due to
-      // bad implementations.
-      if ($existingAccessToken !== null) $this->id = $existingAccessToken->id;
+    if (!$existingRefreshToken) {
+      throw new Exception('Cannot create access token without an existing refresh token. Please save the refresh token first.');
     }
 
-    $queryBase = Drupal::database();
+    $query = $database->select(self::SESSION_TABLE, self::SESSION_TABLE_SHORTHAND)
+      ->fields(self::SESSION_TABLE_SHORTHAND)
+      ->condition('token', $this->accessToken)
+      ->condition('token_type', JsonWebToken::TOKEN_TYPE_ACCESS)
+      ->condition('refresh_token_id', $existingRefreshToken->id);
+    $existingAccessToken = $query->execute()->fetchObject() ?: null;
 
-    if ($this->id !== null) {
-      // we update the access token tied to the existing refresh token
+    $result = null;
+    if ($existingAccessToken) {
       $this->updatedAt = time();
 
-      $query = $queryBase->update(self::SESSION_TABLE)
-        ->condition('id', $this->id)
+      $query = $database->update(self::SESSION_TABLE)
+        ->condition('id', $existingAccessToken->id)
         ->fields([
-          'token' => $this->accessToken,
+          'user_agent' => $this->userAgent,
           'updated_at' => $this->updatedAt,
         ]);
-
-      return $query->execute() ? $this : null;
     } else {
-      // we create a fresh, new record for access token and refresh token
-      $query = $queryBase->insert(self::SESSION_TABLE)
+      $query = Drupal::database()->insert(self::SESSION_TABLE)
         ->fields([
           'entity_id' => $this->entityId,
-          'refresh_token_id' => 0,
-          'token' => $this->refreshToken,
-          'token_type' => JsonWebToken::JWT_TOKEN_TYPE_REFRESH,
-          'user_agent' => $this->userAgent,
-          'created_at' => $this->createdAt,
-          'updated_at' => $this->updatedAt,
-        ]);
-      $refreshTokenId = $query->execute();
-
-      if ($refreshTokenId === 0) return null;
-
-      $query = $queryBase->insert(self::SESSION_TABLE)
-        ->fields([
-          'entity_id' => $this->entityId,
-          'refresh_token_id' => $refreshTokenId,
+          'refresh_token_id' => $existingRefreshToken->id,
           'token' => $this->accessToken,
-          'token_type' => JsonWebToken::JWT_TOKEN_TYPE_ACCESS,
+          'token_type' => JsonWebToken::TOKEN_TYPE_ACCESS,
           'user_agent' => $this->userAgent,
           'created_at' => $this->createdAt,
           'updated_at' => $this->updatedAt,
         ]);
+    }
 
-      $accessTokenId = $query->execute();
-
-      if ($accessTokenId === 0) return null;
+    $result = $query->execute();
+    if (!$result) {
+      throw new Exception('Failed to save access token.');
     }
 
     // reset the pivot ID
     $this->id = null;
+    return $this;
+  }
 
+  /**
+   * @throws Exception
+   */
+  public function saveRefreshToken(): Exception|self {
+    $database = Drupal::database();
+
+    $query = $database->select(self::SESSION_TABLE, self::SESSION_TABLE_SHORTHAND)
+      ->fields(self::SESSION_TABLE_SHORTHAND)
+      ->condition('token', $this->refreshToken)
+      ->condition('token_type', JsonWebToken::TOKEN_TYPE_REFRESH);
+    $existingRefreshToken = $query->execute()->fetchObject() ?: null;
+
+    $result = null;
+    if ($existingRefreshToken) {
+      $this->updatedAt = time();
+
+      $query = $database->update(self::SESSION_TABLE)
+        ->condition('id', $existingRefreshToken->id)
+        ->fields([
+          'user_agent' => $this->userAgent,
+          'updated_at' => $this->updatedAt,
+        ]);
+    } else {
+      $query = Drupal::database()->insert(self::SESSION_TABLE)
+        ->fields([
+          'entity_id' => $this->entityId,
+          'refresh_token_id' => 0,
+          'token' => $this->refreshToken,
+          'token_type' => JsonWebToken::TOKEN_TYPE_REFRESH,
+          'user_agent' => $this->userAgent,
+          'created_at' => $this->createdAt,
+          'updated_at' => $this->updatedAt,
+        ]);
+    }
+
+    $result = $query->execute();
+    if (!$result) {
+      throw new Exception('Failed to save refresh token.');
+    }
+
+    // reset the pivot ID
+    $this->id = null;
     return $this;
   }
 
@@ -201,17 +214,17 @@ class Session {
    *    or an array of objects if multiple sessions are found.
    * @throws Exception
    */
-  public static function retrieve(string $token = '', string $tokenType = '', string|int $userId = '', int $refreshTokenId = 0): null|self|array {
+  public static function retrieve(string $token = '', string $tokenType = '', string|int $userId = '', int|null $refreshTokenId = null): null|self|array {
     // this method tries to find appropriate session for the given parameters
     // and returns an array|object with session data if found, or an empty array if not found.
-    if (!empty($token) && !empty($tokenType) && in_array($tokenType, [JsonWebToken::JWT_TOKEN_TYPE_ACCESS, JsonWebToken::JWT_TOKEN_TYPE_REFRESH])) {
+    if (!empty($token) && !empty($tokenType) && in_array($tokenType, [JsonWebToken::TOKEN_TYPE_ACCESS, JsonWebToken::TOKEN_TYPE_REFRESH])) {
       // case when we retrieve by session token
       $query = Drupal::database()->select(self::SESSION_TABLE, self::SESSION_TABLE_SHORTHAND)
         ->fields(self::SESSION_TABLE_SHORTHAND)
         ->condition('token', $token)
         ->condition('token_type', $tokenType);
 
-      if ($refreshTokenId !== 0) {
+      if ($refreshTokenId !== null) {
         $query->condition('refresh_token_id', $refreshTokenId);
       }
 
@@ -222,15 +235,15 @@ class Session {
 
       return new self(
         entityId: $result->entity_id,
-        accessToken: $result->token_type === JsonWebToken::JWT_TOKEN_TYPE_ACCESS ? $result->token : 0,
-        refreshToken: $result->token_type === JsonWebToken::JWT_TOKEN_TYPE_REFRESH ? $result->token : 0,
+        accessToken: $result->token_type === JsonWebToken::TOKEN_TYPE_ACCESS ? $result->token : 0,
+        refreshToken: $result->token_type === JsonWebToken::TOKEN_TYPE_REFRESH ? $result->token : 0,
         userAgent: $result->user_agent,
         updatedAt: $result->updated_at,
         createdAt: $result->created_at
       );
     }
 
-    if (!empty($userId) && !empty($tokenType) && in_array($tokenType, [JsonWebToken::JWT_TOKEN_TYPE_ACCESS, JsonWebToken::JWT_TOKEN_TYPE_REFRESH])) {
+    if (!empty($userId) && !empty($tokenType) && in_array($tokenType, [JsonWebToken::TOKEN_TYPE_ACCESS, JsonWebToken::TOKEN_TYPE_REFRESH])) {
       // case when we retrieve by user ID
       $query = Drupal::database()->select(self::SESSION_TABLE, self::SESSION_TABLE_SHORTHAND)
         ->fields(self::SESSION_TABLE_SHORTHAND)
@@ -249,8 +262,8 @@ class Session {
       foreach ($result as $row) {
         $tokens[] = new self(
           entityId: $row->entity_id,
-          accessToken: $row->token_type === JsonWebToken::JWT_TOKEN_TYPE_ACCESS ? $row->token : 0,
-          refreshToken: $row->token_type === JsonWebToken::JWT_TOKEN_TYPE_REFRESH ? $row->token : 0,
+          accessToken: $row->token_type === JsonWebToken::TOKEN_TYPE_ACCESS ? $row->token : 0,
+          refreshToken: $row->token_type === JsonWebToken::TOKEN_TYPE_REFRESH ? $row->token : 0,
           userAgent: $row->user_agent,
           updatedAt: $row->updated_at,
           createdAt: $row->created_at
@@ -276,7 +289,7 @@ class Session {
     $query = Drupal::database()->select(self::SESSION_TABLE, self::SESSION_TABLE_SHORTHAND)
       ->fields(self::SESSION_TABLE_SHORTHAND)
       ->condition('token', $token)
-      ->condition('token_type', JsonWebToken::JWT_TOKEN_TYPE_REFRESH);
+      ->condition('token_type', JsonWebToken::TOKEN_TYPE_REFRESH);
     $refreshToken = $query->execute()->fetchObject() ?: null;
 
     if ($refreshToken === null) {
@@ -309,7 +322,7 @@ class Session {
     $query = Drupal::database()->select(self::SESSION_TABLE, self::SESSION_TABLE_SHORTHAND)
       ->fields(self::SESSION_TABLE_SHORTHAND)
       ->condition('token', $refreshToken)
-      ->condition('token_type', JsonWebToken::JWT_TOKEN_TYPE_REFRESH);
+      ->condition('token_type', JsonWebToken::TOKEN_TYPE_REFRESH);
     $refreshToken = $query->execute()->fetchObject() ?: null;
 
     if (empty($refreshToken)) return false;
@@ -317,7 +330,7 @@ class Session {
     // invalidates all access tokens tied to the given refresh token
     $query = Drupal::database()->delete(self::SESSION_TABLE)
       ->condition('refresh_token_id', $refreshToken->id)
-      ->condition('token_type', JsonWebToken::JWT_TOKEN_TYPE_ACCESS)
+      ->condition('token_type', JsonWebToken::TOKEN_TYPE_ACCESS)
       ->execute();
 
     return $query > 0;
@@ -327,14 +340,14 @@ class Session {
     $query = Drupal::database()->select(self::SESSION_TABLE, self::SESSION_TABLE_SHORTHAND)
       ->fields(self::SESSION_TABLE_SHORTHAND)
       ->condition('token', $accessToken)
-      ->condition('token_type', JsonWebToken::JWT_TOKEN_TYPE_ACCESS);
+      ->condition('token_type', JsonWebToken::TOKEN_TYPE_ACCESS);
     $accessToken = $query->execute()->fetchObject() ?: null;
 
     if (empty($accessToken)) return false;
 
     $query = Drupal::database()->delete(self::SESSION_TABLE)
       ->condition('id', $accessToken->refresh_token_id)
-      ->condition('token_type', JsonWebToken::JWT_TOKEN_TYPE_REFRESH)
+      ->condition('token_type', JsonWebToken::TOKEN_TYPE_REFRESH)
       ->execute();
 
     return $query > 0;
@@ -346,8 +359,18 @@ class Session {
    * @return string
    *    Returns the token as a string.
    */
-  public function getToken(): string {
+  public function getAccessToken(): string {
     return $this->accessToken;
+  }
+
+  /**
+   * Gets the refresh token associated with the session.
+   *
+   * @return string
+   *    Returns the refresh token as a string.
+   */
+  public function getRefreshToken(): string {
+    return $this->refreshToken;
   }
 
   /**

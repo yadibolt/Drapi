@@ -96,32 +96,66 @@ class AuthMiddleware {
       ], 401);
     }
 
-    // if the session does not exist, we return a response with 'session:invalid'
-    // the client side application has to handle this response and call
-    // /token/refresh endpoint to get a new access token.
-    // if the session is not refreshed, all actions are forbidden
-    $session = Session::retrieve(
-      token: $this->accessToken,
-      tokenType: JsonWebToken::JWT_TOKEN_TYPE_ACCESS
-    );
+    // we first check for the anonymous user
+    // and the token payload
+    $tokenPayload = JsonWebToken::getPayload($this->accessToken);
 
-    if (empty($session)) {
+    if (empty($tokenPayload)) {
       return new ServerJsonResponse([
-        'message' => 'Session does not exist.',
-        'actionId' => 'session:invalid',
-      ], 401);
+        'message' => 'Weird, no payload.',
+        'actionId' => 'token:empty',
+      ]);
     }
 
-    // we try to load actual user from the session retrieval, not from the token
-    // just to be sure that the session contains the entityId
-    if (!is_object($session) || empty($session->getEntityId())) {
+    if (!isset($tokenPayload['data']['userId'])) {
       return new ServerJsonResponse([
-        'message' => 'Not an object or invalid entity.',
-        'actionId' => 'session:invalid_format',
-      ], 500);
+        'message' => 'Weird, no payload.',
+        'actionId' => 'token:empty',
+      ], 400);
     }
 
-    $user = User::load((int)$session->getEntityId());
+    $userId = null;
+    $session = null;
+    $tokenUserId = (int)$tokenPayload['data']['userId'] > 0 ? (int)$tokenPayload['data']['userId'] : null;
+    if ($tokenUserId === null) {
+      // meaning the user is anonymous
+      $userId = 0;
+    } else {
+      // if the userId is not 0 or a positive integer
+      // its real user, and we check the actual session
+      // --
+      // if the session does not exist, we return a response with 'session:invalid'
+      // the client side application has to handle this response and call
+      // /token/refresh endpoint to get a new access token.
+      // if the session is not refreshed, all actions are forbidden
+      $session = Session::retrieve(
+        token: $this->accessToken,
+        tokenType: JsonWebToken::TOKEN_TYPE_ACCESS
+      );
+
+      if (empty($session)) {
+        return new ServerJsonResponse([
+          'message' => 'Session does not exist.',
+          'actionId' => 'session:invalid',
+        ], 401);
+      }
+
+      // we try to load actual user from the retrieved session, not from the token
+      // just to be sure that the session contains the entityId
+      if (!is_object($session) || empty($session->getEntityId())) {
+        return new ServerJsonResponse([
+          'message' => 'Not an object or invalid entity.',
+          'actionId' => 'session:invalid_format',
+        ], 500);
+      }
+
+      // set the userId from the session entityId
+      $userId = (int)$session->getEntityId();
+    }
+
+    // now we continue normally
+    // we try to load the user and proceed with the checks
+    $user = User::load($userId);
     if (!$user) {
       return new ServerJsonResponse([
         'message' => 'User not found.',
@@ -129,7 +163,7 @@ class AuthMiddleware {
       ], 404);
     }
 
-    if (!$user->isActive()) {
+    if (!$user->isActive() && $userId !== 0) {
       return new ServerJsonResponse([
         'message' => 'User is not active.',
         'actionId' => 'user:not_active',
@@ -147,6 +181,9 @@ class AuthMiddleware {
       ], 403);
     }
 
+    // log roles
+    \Drupal::logger('auth')->debug('User roles: @roles', ['@roles' => implode(', ', $user->getRoles())]);
+
     $requiredRoles = $this->routeDefinition['roles'] ?: [];
     if (array_any($requiredRoles, fn($requiredRole) => !$user->hasRole($requiredRole))) {
       return new ServerJsonResponse([
@@ -159,7 +196,7 @@ class AuthMiddleware {
     // doing this we save some database calls for the route
     return [
       'user' => $user,
-      'userSession' => $session,
+      'userSession' => $session, // session can be null for anonymous user
     ];
   }
 }

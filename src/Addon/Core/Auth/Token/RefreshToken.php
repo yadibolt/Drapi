@@ -1,52 +1,50 @@
 <?php
 
-namespace Drupal\pingvin\Addon\Core\Auth;
+namespace Drupal\pingvin\Addon\Core\Auth\Token;
 
-use Drupal;
-use Drupal\cordr\Route\Http\Response;
 use Drupal\pingvin\Auth\JsonWebToken;
 use Drupal\pingvin\Http\ServerJsonResponse;
 use Drupal\pingvin\Logger\L;
 use Drupal\pingvin\Middleware\Middleware;
 use Drupal\pingvin\Route\RouteInterface;
 use Drupal\pingvin\Session\Session;
-use Drupal\pingvin\User\User;
+use Drupal\user\Entity\User;
 use Exception;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+
 
 /**
  * @route
- * id = 'pingvin:auth_logout'
- * name = 'Pingvin Auth - Logout'
+ * id = 'pingvin:auth_token_refresh'
+ * name = 'Pingvin Auth - Refresh Token'
  * method = 'GET'
- * description = 'Logout route for Pingvin Auth.'
- * path = 'auth/logout'
+ * description = 'Refresh token route for Pingvin Auth.'
+ * path = 'auth/refresh-token'
  * permissions = [
  *  'access content'
  * ]
- * roles = [
- *  'authenticated'
- * ]
+ * roles = []
  * @route-end
  */
-class Logout implements RouteInterface {
+class RefreshToken implements RouteInterface {
   /**
-   * Handles Logout requests.
+   * Handles Token Refresh requests.
    *
    * @param Request $request
    *    The HTTP request object from Symfony.
    * @return ServerJsonResponse
-   *    The JSON response containing the logout data.
+   *    The JSON response containing the login data.
    * @throws Exception
    *    Only if the middleware specifications are incorrect.
    */
   public function get(Request $request): ServerJsonResponse {
-    $request = Middleware::enable($request, ['auth:jwt', 'body:json', 'client:cors', 'request']);
+    $request = Middleware::enable($request, ['auth:jwt-refresh', 'client:cors', 'request']);
     if ($request instanceof ServerJsonResponse) return $request;
 
     /** @var array $context */
     $context = $request->attributes->get('context');
+    /** @var User $user */
+    $user = $context['user'];
     /** @var ?Session $userSession */
     $userSession = $context['userSession'];
     /** @var string $userAgent */
@@ -58,31 +56,34 @@ class Logout implements RouteInterface {
       ], 400);
     }
 
-    $accessToken = $userSession->getAccessToken();
+    // we invalidate all access tokens for the user session
+    $refreshToken = $userSession->getRefreshToken();
+    Session::invalidateAccessTokens($refreshToken);
 
-    // we remove all the refresh tokens that are associated with this access token
-    if (!Session::invalidateRefreshTokens($accessToken)) {
+    // we create a new access token for the user
+    $jwt = new JsonWebToken();
+    $payload = [
+      'userId' => $user->id(),
+    ];
+    $accessToken = $jwt->create(JsonWebToken::TOKEN_TYPE_ACCESS, $payload, JsonWebToken::BASIC);
+
+    $session = new Session($user->id(), $accessToken, $refreshToken, $userAgent);
+    try {
+      $session->saveAccessToken();
+    } catch (Exception) {
       return new ServerJsonResponse([
         'message' => 'Server could not process the request.',
       ], 500);
     }
 
-    // we remove the access token
-    if (!Session::delete($accessToken)) {
-      return new ServerJsonResponse([
-        'message' => 'Server could not process the request.',
-      ], 500);
-    }
-
-    $tokenPayload = JsonWebToken::getPayload($accessToken);
-    L::log('User @userId has logged out from @userAgent', [
-      '@userId' => $tokenPayload['data']['userId'],
+    L::log('User @userId generated new access token using @userAgent.', [
+      '@userId' => $user->id(),
       '@userAgent' => $userAgent,
     ], 'info');
 
-    // everything ok, we return a success message
     return new ServerJsonResponse([
-      'message' => 'Logout successful.',
-    ], 200);
+      'message' => 'Token generated successfully.',
+      'accessToken' => $accessToken,
+    ], 201);
   }
 }
