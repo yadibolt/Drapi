@@ -99,6 +99,12 @@ class Login implements RouteInterface {
       ], 500);
     }
 
+    try {
+      // we also need to update the login timestamp
+      $user->setLastLoginTime(time());
+      $user->save();
+    } catch (Exception) {}
+
     L::log('User @userId started a new session using @userAgent.', [
       '@userId' => $user->id(),
       '@userAgent' => $userAgent,

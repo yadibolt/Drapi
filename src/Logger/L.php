@@ -2,6 +2,8 @@
 
 namespace Drupal\pingvin\Logger;
 
+use Drupal;
+
 class L {
   /**
    * Available Drupal log levels.
@@ -11,7 +13,6 @@ class L {
   public const array LOG_LEVELS = [
     'debug',
     'warning',
-    'log',
     'error',
     'notice',
     'info',
@@ -36,11 +37,10 @@ class L {
       $log_level = 'error';
     }
 
-    $caller = \Drupal::logger(pw8dr1_PROJECT_ID . '_logs');
+    $caller = Drupal::logger(pw8dr1_PROJECT_ID . '_logs');
     match($log_level) {
       'debug' => $caller->debug($message, $tokens),
       'warning' => $caller->warning($message, $tokens),
-      'log' => $caller->log($message, $tokens),
       'notice' => $caller->notice($message, $tokens),
       'info' => $caller->info($message, $tokens),
       'critical' => $caller->critical($message, $tokens),

@@ -33,7 +33,17 @@ function pingvin_mail(string $key, array &$message, array $params): void {
  */
 function pingvin_theme(array $existing, string $type, string $theme, string $path): array {
   return [
-    'forgot_password_mail' => [
+    'user_forgot_password_mail' => [
+      'variables' => [
+        'params' => [],
+      ],
+    ],
+    'user_forgot_password_confirmation_mail' => [
+      'variables' => [
+        'params' => [],
+      ],
+    ],
+    'user_registration_mail' => [
       'variables' => [
         'params' => [],
       ],

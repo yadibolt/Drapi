@@ -137,23 +137,6 @@ class User {
   }
 
   /**
-   * Extracts the language code from a reset password token.
-   *
-   * The token is expected to be in the format: {langcode}-{hashed_email}.{request_time_hash}.{random_token}
-   * If the token is malformed or does not contain a valid language code, 'en' is returned as the default.
-   *
-   * @param string $token
-   *    The reset password token from which to extract the language code.
-   * @return string
-   *    The extracted language code, or 'en' if not found or invalid.
-   */
-  public static function extractLangcodeFromResetPasswordToken(string $token): string {
-    $parts = explode('-', $token);
-    if (count($parts) !== 2) return 'en';
-    return $parts[0] ?: 'en';
-  }
-
-  /**
    * Verifies the validity of a reset password token.
    * This includes checking if the token exists in the database and whether it has expired.
    *

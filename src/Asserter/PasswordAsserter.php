@@ -5,6 +5,7 @@ namespace Drupal\pingvin\Asserter;
 use Drupal\pingvin\Route\RouteFile;
 
 class PasswordAsserter {
+  // todo: maybe make these configurable via config?
   /**
    * Asserts that a password meets the following criteria:
    * - At least 12 characters long

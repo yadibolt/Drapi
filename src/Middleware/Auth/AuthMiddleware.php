@@ -181,9 +181,6 @@ class AuthMiddleware {
       ], 403);
     }
 
-    // log roles
-    \Drupal::logger('auth')->debug('User roles: @roles', ['@roles' => implode(', ', $user->getRoles())]);
-
     $requiredRoles = $this->routeDefinition['roles'] ?: [];
     if (array_any($requiredRoles, fn($requiredRole) => !$user->hasRole($requiredRole))) {
       return new ServerJsonResponse([
@@ -191,6 +188,12 @@ class AuthMiddleware {
         'actionId' => 'user:missing_roles',
       ], 403);
     }
+
+    try {
+      // update the last accessed timestamp of the session
+      $user->setLastAccessTime(time());
+      $user->save();
+    } catch (Exception) {}
 
     // everything is ok, we set the user as a context for the route
     // doing this we save some database calls for the route

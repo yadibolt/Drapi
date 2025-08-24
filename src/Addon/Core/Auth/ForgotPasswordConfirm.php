@@ -2,6 +2,7 @@
 
 namespace Drupal\pingvin\Addon\Core\Auth;
 
+use Drupal;
 use Drupal\pingvin\Asserter\PasswordAsserter;
 use Drupal\pingvin\Http\ServerJsonResponse;
 use Drupal\pingvin\Logger\L;
@@ -91,6 +92,10 @@ class ForgotPasswordConfirm implements RouteInterface {
     L::log('User @userId changed their password.', [
       '@userId' => $user->id(),
     ], 'info');
+
+    $siteMail = Drupal::config('system.site')->get('mail');
+    $mailClient = new MailClient('user_forgot_password_confirmation_mail', []);
+    $mailClient->sendMail($siteMail, $user->getEmail(), 'Password has been successfully changed', $user->getPreferredLangcode());
 
     return new ServerJsonResponse([
       'message' => 'Password has been reset successfully.',

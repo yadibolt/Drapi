@@ -73,10 +73,9 @@ class ForgotPassword implements RouteInterface {
 
       // all ok, we send the mail with reset token
       $siteMail = \Drupal::config('system.site')->get('mail');
-      $mailClient = new MailClient('forgot_password_mail', [
-        'token' => $token,
-      ]);
-      $mailClient->sendMail($siteMail, $data['mail'], 'Password Reset Request', User::extractLangcodeFromResetPasswordToken($token));
+      $mailClient = new MailClient('user_forgot_password_mail', ['token' => $token,]);
+      $langcode = explode('-', $token)[0] ?: 'en';
+      $mailClient->sendMail($siteMail, $data['mail'], 'Password Reset Request', $langcode);
     } catch (Exception $e) {
       return new ServerJsonResponse([
         'message' => 'Server could not process the request.',
