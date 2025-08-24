@@ -60,5 +60,47 @@ function pingvin_schema() {
     ],
   ];
 
+  $schemas[pw8dr1_PROJECT_ID . '_password_reset'] = [
+    'description' => 'Stores password reset tokens used by ' . pw8dr1_PROJECT_NAME . '.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => true,
+        'description' => 'Unique identifier for the password reset entry.',
+      ],
+      'token' => [
+        'type' => 'varchar',
+        'length' => 768,
+        'not null' => true,
+        'description' => 'The actual password reset token value used.',
+      ],
+      'mail' => [
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => true,
+        'description' => 'The email address associated with the password reset token.',
+      ],
+      'expires_at' => [
+        'type' => 'int',
+        'not null' => true,
+        'description' => 'The timestamp when the token expires.',
+      ],
+      'updated_at' => [
+        'type' => 'int',
+        'not null' => true,
+        'description' => 'The timestamp when the record was updated.',
+      ],
+      'created_at' => [
+        'type' => 'int',
+        'not null' => true,
+        'description' => 'The timestamp when the record was created.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'token_index' => ['token'],
+    ],
+  ];
+
   return $schemas;
 }

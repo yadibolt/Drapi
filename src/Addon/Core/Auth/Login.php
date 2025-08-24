@@ -40,7 +40,7 @@ class Login implements RouteInterface {
    *    Only if the middleware specifications are incorrect.
    */
   public function post(Request $request): ServerJsonResponse {
-    $request = Middleware::enable($request, ['body:json', 'client:cors', 'request']);
+    $request = Middleware::enable($request, ['auth:jwt', 'body:json', 'client:cors', 'request']);
     if ($request instanceof ServerJsonResponse) return $request;
 
     /** @var array $context */

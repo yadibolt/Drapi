@@ -2,4 +2,41 @@
 
 // include the globals file
 // TODO: maybe delete later or implement config?
+use Drupal\Core\Render\RendererInterface;
+
 require_once __DIR__ . '/globals.inc';
+
+/**
+ * Implements hook_mail().
+ */
+function pingvin_mail(string $key, array &$message, array $params): void {
+  /** @var RendererInterface $renderer */
+  $renderer = \Drupal::service('renderer');
+
+  switch($key) {
+    case 'send_mail':
+      if (isset($params['headers'])) $message['headers'] = array_merge($message['headers'], $params['headers']);
+      if (!empty($params['from'])) $message['from'] = $params['from'];
+
+      $message['subject'] = $params['subject'];
+      $message['body'][] = (string)$renderer->renderRoot($params['body']);
+
+      break;
+    case 'send_mail_with_attachments':
+      // todo
+      break;
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function pingvin_theme(array $existing, string $type, string $theme, string $path): array {
+  return [
+    'forgot_password_mail' => [
+      'variables' => [
+        'params' => [],
+      ],
+    ],
+  ];
+}
