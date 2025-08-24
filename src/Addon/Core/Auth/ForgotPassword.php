@@ -1,8 +1,9 @@
 <?php
 
-namespace Drupal\pingvin\Addon\Core\Auth\Token;
+namespace Drupal\pingvin\Addon\Core\Auth;
 
 use Drupal\pingvin\Http\ServerJsonResponse;
+use Drupal\pingvin\Logger\L;
 use Drupal\pingvin\Mail\MailClient;
 use Drupal\pingvin\Middleware\Middleware;
 use Drupal\pingvin\Route\RouteInterface;
@@ -81,6 +82,10 @@ class ForgotPassword implements RouteInterface {
         'message' => 'Server could not process the request.',
       ], 500);
     }
+
+    L::log('New password request requested for @mail.', [
+      '@mail' => $data['mail'],
+    ], 'info');
 
     return new ServerJsonResponse([
       'message' => 'If an account with that email exists, a password reset link has been sent.',

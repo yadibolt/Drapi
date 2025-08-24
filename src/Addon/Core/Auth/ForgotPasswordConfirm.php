@@ -1,9 +1,10 @@
 <?php
 
-namespace Drupal\pingvin\Addon\Core\Auth\Token;
+namespace Drupal\pingvin\Addon\Core\Auth;
 
 use Drupal\pingvin\Asserter\PasswordAsserter;
 use Drupal\pingvin\Http\ServerJsonResponse;
+use Drupal\pingvin\Logger\L;
 use Drupal\pingvin\Mail\MailClient;
 use Drupal\pingvin\Middleware\Middleware;
 use Drupal\pingvin\Route\RouteInterface;
@@ -86,6 +87,10 @@ class ForgotPasswordConfirm implements RouteInterface {
         'message' => 'Server could not process the request.',
       ], 500);
     }
+
+    L::log('User @userId changed their password.', [
+      '@userId' => $user->id(),
+    ], 'info');
 
     return new ServerJsonResponse([
       'message' => 'Password has been reset successfully.',
