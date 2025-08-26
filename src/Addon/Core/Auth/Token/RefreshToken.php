@@ -19,7 +19,7 @@ use Symfony\Component\HttpFoundation\Request;
  * name = 'Pingvin Auth - Refresh Token'
  * method = 'GET'
  * description = 'Refresh token route for Pingvin Auth.'
- * path = 'auth/refresh-token'
+ * path = 'auth/token/refresh'
  * permissions = [
  *  'access content'
  * ]

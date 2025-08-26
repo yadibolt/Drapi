@@ -61,6 +61,14 @@ class RequestMiddleware {
       ], 400);
     }
 
+    if (!empty($this->request->query->all())) {
+      foreach ($this->request->query->all() as $key => $value) {
+        $inputSanitizer = new InputSanitizer($value);
+        $this->request->query->set($key, $inputSanitizer->sanitize('xss'));
+        $this->request->query->set($key, $inputSanitizer->sanitize('sql'));
+      }
+    }
+
     if (empty($this->request->headers)) {
       return new ServerJsonResponse([
         'message' => 'Headers cannot be empty.',

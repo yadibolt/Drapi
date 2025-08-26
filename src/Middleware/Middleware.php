@@ -7,6 +7,7 @@ use Drupal\pingvin\Http\ServerJsonResponse;
 use Drupal\pingvin\Middleware\Auth\AuthMiddleware;
 use Drupal\pingvin\Middleware\Auth\AuthRefreshMiddleware;
 use Drupal\pingvin\Middleware\Client\CorsMiddleware;
+use Drupal\pingvin\Middleware\Request\BinaryBodyMiddleware;
 use Drupal\pingvin\Middleware\Request\JsonBodyMiddleware;
 use Drupal\pingvin\Middleware\Request\RequestMiddleware;
 use Exception;
@@ -21,6 +22,7 @@ class Middleware {
     'auth:jwt',
     'auth:jwt-refresh',
     'body:json',
+    'body:binary',
     'client:cors',
     'request'
   ];
@@ -78,6 +80,7 @@ class Middleware {
         'auth:jwt' => new AuthMiddleware($request, $routeDefinition)->apply(),
         'auth:jwt-refresh' => new AuthRefreshMiddleware($request, $routeDefinition)->apply(),
         'body:json' => new JsonBodyMiddleware($request, $routeDefinition)->apply(),
+        'body:binary' => new BinaryBodyMiddleware($request, $routeDefinition)->apply(),
         'client:cors' => new CorsMiddleware($request, $routeDefinition)->apply(),
         'request' => new RequestMiddleware($request, $routeDefinition)->apply(),
         default => new ServerJsonResponse([

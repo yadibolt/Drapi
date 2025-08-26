@@ -59,11 +59,10 @@ class Retriever {
    * @param string $retrievalAttribute
    *   The attribute to retrieve from the file.
    *
-   * @return string
+   * @return string|array|null The value of the retrieved attribute.
    *   The value of the retrieved attribute.
    *
-   * @throws Exception
-   *   If the file does not exist or the retrieval attribute is not allowed.
+   * @throws Exception If the file does not exist or the retrieval attribute is not allowed.
    */
   public function retrieve(string $retrievalAttribute): string|array|null {
     if (!in_array($retrievalAttribute, self::ALLOWED_FILE_ATTRIBUTES)) {
