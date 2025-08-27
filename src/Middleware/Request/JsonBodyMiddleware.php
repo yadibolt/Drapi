@@ -69,6 +69,13 @@ class JsonBodyMiddleware {
     }
 
     if (in_array($this->request->server->get('REQUEST_METHOD'), ['POST', 'PUT', 'PATCH', 'DELETE'])) {
+      if (empty($this->request->headers->get('content-type'))) {
+        return new ServerJsonResponse([
+          'message' => 'Content-Type header is required.',
+          'actionId' => 'headers:content_type_missing',
+        ], 400);
+      }
+
       if (empty($this->data)) {
         return new ServerJsonResponse([
           'message' => 'Request body cannot be empty.',

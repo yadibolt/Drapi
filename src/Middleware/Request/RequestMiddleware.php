@@ -76,13 +76,6 @@ class RequestMiddleware {
       ], 400);
     }
 
-    if (empty($this->request->headers->get('content-type'))) {
-      return new ServerJsonResponse([
-        'message' => 'Content-Type header is required.',
-        'actionId' => 'headers:content_type_missing',
-      ], 400);
-    }
-
     if (!empty(self::SUSPICIOUS_AGENTS)) {
       if (array_any(self::SUSPICIOUS_AGENTS, fn($agent) => stripos($this->request->server->get('HTTP_USER_AGENT'), $agent) !== false)) {
         return new ServerJsonResponse([
