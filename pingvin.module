@@ -23,8 +23,12 @@ function pingvin_mail(string $key, array &$message, array $params): void {
 
       break;
     case 'send_mail_with_attachments':
-      // todo
-      break;
+      if (isset($params['headers'])) $message['headers'] = array_merge($message['headers'], $params['headers']);
+      if (!empty($params['from'])) $message['from'] = $params['from'];
+
+      $message['subject'] = $params['subject'];
+      $message['attachments'] = $params['attachments'];
+      $message['body'][] = (string)$renderer->renderRoot($params['body']);
   }
 }
 

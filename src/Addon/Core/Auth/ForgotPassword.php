@@ -2,6 +2,8 @@
 
 namespace Drupal\pingvin\Addon\Core\Auth;
 
+use Drupal;
+use Drupal\Core\Render\Element\File;
 use Drupal\pingvin\Http\ServerJsonResponse;
 use Drupal\pingvin\Logger\L;
 use Drupal\pingvin\Mail\MailClient;
@@ -75,7 +77,18 @@ class ForgotPassword implements RouteInterface {
       $siteMail = \Drupal::config('system.site')->get('mail');
       $mailClient = new MailClient('user_forgot_password_mail', ['token' => $token,]);
       $langcode = explode('-', $token)[0] ?: 'en';
-      $mailClient->sendMail($siteMail, $data['mail'], 'Password Reset Request', $langcode);
+
+      $randomFile = \Drupal\file\Entity\File::load(5);
+      $uri = $randomFile->getFileUri();
+      $filePath = Drupal::service('file_system')->realpath($uri);
+      $fileName = $randomFile->getFilename();
+
+      $mailClient->sendMailWithAttachments($siteMail, $data['mail'], 'Password Reset Request', [
+        [
+          'fileName' => $fileName,
+          'filePath' => $filePath,
+        ]
+      ], $langcode);
     } catch (Exception $e) {
       return new ServerJsonResponse([
         'message' => 'Server could not process the request.',
