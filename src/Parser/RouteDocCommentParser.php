@@ -21,6 +21,7 @@ class RouteDocCommentParser {
     'roles',
     'restrict_host',
     'enabled',
+    'cacheable'
   ];
 
   /**
@@ -109,7 +110,7 @@ class RouteDocCommentParser {
   protected function fillMissingKeys(array $routeContent): array {
     foreach (self::ROUTE_TAGS as $tag) {
       if (!array_key_exists($tag, $routeContent)) {
-        if ($tag === 'enabled') {
+        if ($tag === 'enabled' || $tag === 'cacheable') {
           $routeContent[$tag] = true;
         } else {
           $routeContent[$tag] = null;

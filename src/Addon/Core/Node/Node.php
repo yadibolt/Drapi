@@ -2,8 +2,6 @@
 
 namespace Drupal\pingvin\Addon\Core\Node;
 
-use Drupal\Core\Path\PathMatcherInterface;
-use Drupal\path_alias\AliasManagerInterface;
 use Drupal\pingvin\Http\ServerJsonResponse;
 use Drupal\pingvin\Middleware\Middleware;
 use Drupal\pingvin\Route\RouteInterface;
@@ -20,6 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
  *  'access content'
  * ]
  * roles = []
+ * cacheable = true
  * @route-end
  */
 class Node implements RouteInterface {
@@ -29,16 +28,9 @@ class Node implements RouteInterface {
 
     /** @var array $context */
     $context = $request->attributes->get('context');
-    $queryUrl = $request->query->get('tar');
-    $queryLang = $request->query->get('lang');
-
-    $internal_path = \Drupal::service('path_alias.manager')->getPathByAlias($queryUrl, $queryLang);
-    $nodeId = (int)str_replace('/node/', '', $internal_path);
-
-    $node = \Drupal\node\Entity\Node::load($nodeId);
 
     return new ServerJsonResponse([
-      'data' => $internal_path === $queryUrl ? [] : $nodeId
-    ], 200);
+      'title' => "Hello World!",
+    ], 200, $request);
   }
 }

@@ -20,6 +20,13 @@ class Route {
     'PATCH',
     'DELETE',
   ];
+  /**
+   * Describes a cache duration in seconds for a route
+   * that has 'cacheable' set to true.
+   *
+   * @var int
+   */
+  public const int CACHE_DURATION = 0;
 
   /**
    * The path to the route file.
@@ -81,6 +88,12 @@ class Route {
    * @var bool
    */
   private ?bool $enabled;
+  /**
+   * Whether the route is enabled.
+   *
+   * @var bool
+   */
+  private ?bool $cacheable;
 
   /**
    * Constructs a new Route object.
@@ -101,6 +114,7 @@ class Route {
     $this->roles = $routeContent['roles'];
     $this->restrictHost = $routeContent['restrict_host'];
     $this->enabled = $routeContent['enabled'] ?: true;
+    $this->cacheable = $routeContent['cacheable'] ?: false;
   }
 
   /**
@@ -120,6 +134,7 @@ class Route {
       'roles' => $this->roles,
       'restrict_host' => $this->restrictHost,
       'enabled' => $this->enabled,
+      'cacheable' => $this->cacheable,
     ];
   }
 

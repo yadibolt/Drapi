@@ -2,10 +2,12 @@
 
 namespace Drupal\pingvin\Http;
 
+use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\pingvin\Middleware\Client\CorsMiddleware;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Drupal\pingvin\Route\Route;
+use Symfony\Component\HttpFoundation\Request;
 
-class ServerJsonResponse extends JsonResponse {
+class ServerJsonResponse extends CacheableJsonResponse {
   /**
    * Constructs a server JSON response.
    * Providing a data as array will result in custom response handling.
@@ -22,10 +24,11 @@ class ServerJsonResponse extends JsonResponse {
    *
    * @param mixed|null $data
    * @param int $status
+   * @param ?Request $request
    * @param array $headers
    * @param bool $json
    */
-  public function __construct(mixed $data = null, int $status = 200, array $headers = [], bool $json = false) {
+  public function __construct(mixed $data = null, int $status = 200, ?Request $request = null, array $headers = [], bool $json = false) {
     parent::__construct($data, $status, $headers, $json);
 
     if (is_array($data)) {
@@ -54,6 +57,23 @@ class ServerJsonResponse extends JsonResponse {
       $this->headers->set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
       $this->headers->set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
       $this->headers->set('Access-Control-Expose-Headers', 'Content-Type, Authorization');
+    }
+
+    if (isset($_SERVER['HTTP_ACCEPT_ENCODING']) && str_contains($_SERVER['HTTP_ACCEPT_ENCODING'], 'gzip')) {
+      $compressed = gzencode($this->getContent(), 6);
+      $this->setContent($compressed);
+      $this->headers->set('Content-Encoding', 'gzip');
+      $this->headers->set('Vary', 'Accept-Encoding');
+    }
+
+    if ($request !== null) {
+      if ($request->headers->get('x-'.pw8dr1_PROJECT_ID.'-cacheable')) {
+        \Drupal::logger('pingvin')->notice('Route cached.');
+        $this->getCacheableMetadata()
+          ->setCacheMaxAge(Route::CACHE_DURATION)
+          ->setCacheContexts(['url.query_args'])
+          ->setCacheTags([$request->headers->get('x-'.pw8dr1_PROJECT_ID.'-cacheable-context') ?: "pingvin"]);
+      }
     }
   }
 }

@@ -2,7 +2,9 @@
 
 namespace Drupal\pingvin\Middleware\Request;
 
+use Drupal;
 use Drupal\pingvin\Http\ServerJsonResponse;
+use Drupal\pingvin\Resolver\PathResolver;
 use Drupal\pingvin\Sanitizer\InputSanitizer;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -50,6 +52,21 @@ class RequestMiddleware {
    *    Returns the attributes or a JSON response in case of an error.
    */
   public function apply(): array|ServerJsonResponse {
+    // setup cacheable property
+    $this->request->headers->set('x-'.pw8dr1_PROJECT_ID.'-cacheable', $this->routeDefinition['cacheable']);
+
+    // we also discover the type of the entity
+    // and return its id as additional context
+    // if it exists
+    $queryLoc = $this->request->query->get('loc');
+    if ($queryLoc) {
+      $resolvedEntity = PathResolver::entityFromAlias($queryLoc, $this->request->query->get('lng') ?: 'en');
+      if ($resolvedEntity) {
+        // todo: think about better way to inject cacheable context for the ServerJsonResponse
+        $this->request->headers->set('x-'.pw8dr1_PROJECT_ID.'-cacheable-context', "{$resolvedEntity['entityType']}:{$resolvedEntity['entityId']}");
+      }
+    }
+
     if (
       ($this->request->server->get('HTTPS') === null || $this->request->server->get('HTTPS') !== 'on') &&
       ($this->request->server->get('REQUEST_SCHEME') === null || $this->request->server->get('REQUEST_SCHEME') !== 'https') &&

@@ -108,5 +108,10 @@ class RouteClassDocCommentAsserter {
     if (isset($json['restrict_host']) && !is_string($json['restrict_host'])) {
       throw new Exception('The route restrict_host must be a string.');
     }
+
+    // cacheable
+    if (isset($json['cacheable']) && !is_bool($json['cacheable'])) {
+      throw new Exception('The route cache must be a boolean.');
+    }
   }
 }
