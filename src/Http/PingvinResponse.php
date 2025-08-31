@@ -13,12 +13,17 @@ class PingvinResponse extends Response {
   protected int $jsonDepth = 512;
   protected int $jsonFlags = 0;
 
-  public function __construct(mixed $data = null, int $status = 200, array $headers = []) {
+  public function __construct(mixed $data = null, int $status = 200, array $headers = [], bool $ignoreCacheHandler = false) {
     parent::__construct('', $status, $headers);
     $this->setData($data);
     $this->statusCode = $status;
 
-    $this->handleCreateCache();
+    if (!$ignoreCacheHandler) {
+      $this->handleCreateCache();
+    }
+
+    $this->headers->remove('X-Generator');
+    $this->headers->set('X-Generator', 'pingvin');
   }
 
   /**
@@ -26,27 +31,26 @@ class PingvinResponse extends Response {
    * @throws \Exception
    */
   protected function handleCreateCache(): void {
+    // todo: depending on caller, set attribute route - cacheable
     $caller = $this->getCaller();
 
     if (isset($caller['class'])) {
       $ref = new \ReflectionClass($caller['class']);
       $filePath = $ref->getFileName();
 
-      $content = new Retriever($filePath)->retrieve('docComment');
-      $routeContent = new RouteDocCommentParser($content)->parse(true);
+      try {
+        $content = new Retriever($filePath)->retrieve('docComment');
+        if ($content) {
+          $routeContent = new RouteDocCommentParser($content)->parse(true);
 
-      \Drupal::logger('pingvin')->info('@a', ['@a' => print_r($routeContent, true)]);
-      \Drupal::logger('pingvin')->info('@a', ['@a' => print_r($routeContent['cacheable'], true)]);
-
-      if ($routeContent['cacheable']) {
-        $context = [
-          'json' => $this->data,
-          'status' => $this->statusCode,
-          'headers' => $this->headers,
-        ];
-
-        Cache::create($routeContent['path'], $context, Cache::DURATION_DEFAULT);
-      }
+          if ($routeContent['cacheable']) {
+            // $this->headers->set('Cache-Control', 'private');
+            $this->headers->set('x-pingvin-cache', 'CACHEABLE');
+          } else {
+            $this->headers->set('x-pingvin-cache', 'UNCACHEABLE');
+          }
+        }
+      } catch (\Exception) { /* fails silently */ }
     }
   }
 

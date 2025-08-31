@@ -3,3 +3,13 @@ services:
     class: Drupal\pingvin\EventSubscriber\RouteSubscriber
     tags:
       - { name: event_subscriber }
+
+  pingvin_services.route_middleware_subscriber:
+    class: Drupal\pingvin\EventSubscriber\RouteMiddlewareSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  pingvin_services.route_cache_subscriber:
+    class: Drupal\pingvin\EventSubscriber\RouteCacheSubscriber
+    tags:
+      - { name: event_subscriber }

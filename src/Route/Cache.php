@@ -16,10 +16,15 @@ class Cache {
       ->condition('pc.cache_tag', $cacheTags, 'IN');
     $result = $query->execute()->fetchAssoc();
 
+
     if (!empty($result) && $result['expires_at'] === self::DURATION_PERMANENT || $result['expires_at'] > time()) {
       $request->headers->set('x-pingvin-cache', 'HIT');
       $date = date('D, d M Y H:i:s \G\M\T', $result['expires_at']);
       $request->headers->set('x-pingvin-cache-expires-at', $date);
+
+      $rv = json_decode($result['context'], true);
+
+      \Drupal::logger('pingvin')->notice('Pingvin route cache hit!!!!!!!!!!. @d', ['@d' => print_r($rv, true)]);
 
       return json_decode($result['context'], true);
     }
@@ -51,7 +56,9 @@ class Cache {
       ->condition('pc.cache_tag', $cacheTag);
     $result = $query->execute()->fetchAssoc();
 
+    $insert = false;
     if (!empty($result) && $result['expires_at'] <= time()) {
+      $insert = true;
       self::clearByTag($cacheTag);
     }
 
@@ -63,7 +70,15 @@ class Cache {
         'created_at' => time(),
       ]);
 
-    return $query->execute() > 0;
+    if ($insert) {
+      return $query->execute() > 0;
+    }
+
+    if (empty($result)) {
+      return $query->execute() > 0;
+    }
+
+    return false;
   }
 
   public static function clearByTag(string $cacheTag): void {
