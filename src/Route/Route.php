@@ -20,13 +20,6 @@ class Route {
     'PATCH',
     'DELETE',
   ];
-  /**
-   * Describes a cache duration in seconds for a route
-   * that has 'cacheable' set to true.
-   *
-   * @var int
-   */
-  public const int CACHE_DURATION = 0;
 
   /**
    * The path to the route file.

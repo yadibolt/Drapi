@@ -102,5 +102,41 @@ function pingvin_schema() {
     ],
   ];
 
+  $schemas[pw8dr1_PROJECT_ID . '_cache'] = [
+    'description' => 'Stores cache tags used by ' . pw8dr1_PROJECT_NAME . '.',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => true,
+        'description' => 'Unique identifier for the cache entry.',
+      ],
+      'cache_tag' => [
+        'type' => 'varchar',
+        'length' => 128,
+        'not null' => true,
+        'description' => 'The cache tag used to identify cached data.',
+      ],
+      'context' => [
+        'type' => 'text',
+        'not null' => false,
+        'description' => 'Additional context information for the cache entry, stored as a serialized array.',
+      ],
+      'expires_at' => [
+        'type' => 'int',
+        'not null' => true,
+        'description' => 'The timestamp when the record expires.',
+      ],
+      'created_at' => [
+        'type' => 'int',
+        'not null' => true,
+        'description' => 'The timestamp when the record was created.',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'cache_tag_index' => ['cache_tag'],
+    ],
+  ];
+
   return $schemas;
 }

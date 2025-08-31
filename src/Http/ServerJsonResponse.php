@@ -2,6 +2,7 @@
 
 namespace Drupal\pingvin\Http;
 
+use Drupal\Core\Cache\Cache;
 use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\pingvin\Middleware\Client\CorsMiddleware;
 use Drupal\pingvin\Route\Route;
@@ -14,13 +15,13 @@ class ServerJsonResponse extends CacheableJsonResponse {
    * You can provide a 'message' key value pair to set the response message.
    *
    * Final response structure will be:
-   * ```json
+   * ```
    * {
    *   "message": "Your message here",
    *   "error": true|false, - depends on the status code
    *   "timestamp": 1700000000,
    *   "data": null|array - your data
-   * }
+   * }```
    *
    * @param mixed|null $data
    * @param int $status
@@ -30,6 +31,11 @@ class ServerJsonResponse extends CacheableJsonResponse {
    */
   public function __construct(mixed $data = null, int $status = 200, ?Request $request = null, array $headers = [], bool $json = false) {
     parent::__construct($data, $status, $headers, $json);
+
+    if ($request !== null) {
+      $cacheable = $request->headers->get('x-'.pw8dr1_PROJECT_ID.'-cacheable');
+      $cacheableContext = $request->headers->get('x-'.pw8dr1_PROJECT_ID.'-cacheable-context') ?: 'pingvin';
+    }
 
     if (is_array($data)) {
       $_data = [];
@@ -64,16 +70,6 @@ class ServerJsonResponse extends CacheableJsonResponse {
       $this->setContent($compressed);
       $this->headers->set('Content-Encoding', 'gzip');
       $this->headers->set('Vary', 'Accept-Encoding');
-    }
-
-    if ($request !== null) {
-      if ($request->headers->get('x-'.pw8dr1_PROJECT_ID.'-cacheable')) {
-        \Drupal::logger('pingvin')->notice('Route cached.');
-        $this->getCacheableMetadata()
-          ->setCacheMaxAge(Route::CACHE_DURATION)
-          ->setCacheContexts(['url.query_args'])
-          ->setCacheTags([$request->headers->get('x-'.pw8dr1_PROJECT_ID.'-cacheable-context') ?: "pingvin"]);
-      }
     }
   }
 }

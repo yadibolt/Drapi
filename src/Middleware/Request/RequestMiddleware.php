@@ -3,10 +3,10 @@
 namespace Drupal\pingvin\Middleware\Request;
 
 use Drupal;
-use Drupal\pingvin\Http\ServerJsonResponse;
+use Drupal\pingvin\Http\PingvinResponse;
 use Drupal\pingvin\Resolver\PathResolver;
 use Drupal\pingvin\Sanitizer\InputSanitizer;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Exception;
 use Symfony\Component\HttpFoundation\Request;
 
 class RequestMiddleware {
@@ -32,6 +32,15 @@ class RequestMiddleware {
   protected array $routeDefinition;
 
   /**
+   * An associative array of entity
+   * containing entity id and type
+   * Can be null if not found
+   *
+   * @var ?array $urlResource
+   */
+  protected ?array $urlResource;
+
+  /**
    * Constructs the AuthMiddleware.
    *
    * @param Request $request
@@ -48,31 +57,50 @@ class RequestMiddleware {
    * Applies the middleware to the request.
    * Middleware should be called at the very beginning of the request lifecycle.
    *
-   * @return array|ServerJsonResponse
+   * @return array|PingvinResponse
    *    Returns the attributes or a JSON response in case of an error.
+   * @throws Exception
    */
-  public function apply(): array|ServerJsonResponse {
+  public function apply(): array|PingvinResponse {
     // setup cacheable property
     $this->request->headers->set('x-'.pw8dr1_PROJECT_ID.'-cacheable', $this->routeDefinition['cacheable']);
 
-    // we also discover the type of the entity
+    $queryLoc = $this->request->query->get('urlLoc');
+    if ($this->routeDefinition['cacheable']) {
+      $hit = Drupal\pingvin\Route\Cache::hit($this->request, [$queryLoc]);
+      if ($hit) return new PingvinResponse($hit['json'], $hit['status'], $hit['headers']);
+    }
+
+
+
+    /*// we also discover the type of the entity
     // and return its id as additional context
     // if it exists
-    $queryLoc = $this->request->query->get('loc');
+    // todo: change this
+    $queryLoc = $this->request->query->get('urlLoc');
     if ($queryLoc) {
-      $resolvedEntity = PathResolver::entityFromAlias($queryLoc, $this->request->query->get('lng') ?: 'en');
+      $resolvedEntity = PathResolver::entityFromAlias($queryLoc, $this->request->query->get('lang') ?: 'en');
       if ($resolvedEntity) {
-        // todo: think about better way to inject cacheable context for the ServerJsonResponse
         $this->request->headers->set('x-'.pw8dr1_PROJECT_ID.'-cacheable-context', "{$resolvedEntity['entityType']}:{$resolvedEntity['entityId']}");
+        $this->urlResource = [
+          'entityId' => $resolvedEntity['entityId'],
+          'entityType' => $resolvedEntity['entityType'],
+        ];
+
+        // cache
+        $hit = Drupal\pingvin\Route\Cache::hit($this->request, ["{$resolvedEntity['entityType']}:{$resolvedEntity['entityId']}"]);
+        if (!empty($hit)) {
+          return new PingvinResponse($hit);
+        }
       }
-    }
+    }*/
 
     if (
       ($this->request->server->get('HTTPS') === null || $this->request->server->get('HTTPS') !== 'on') &&
       ($this->request->server->get('REQUEST_SCHEME') === null || $this->request->server->get('REQUEST_SCHEME') !== 'https') &&
       ($this->request->server->get('SERVER_PORT') === null || (int)$this->request->server->get('SERVER_PORT') !== 443)
     ) {
-      return new ServerJsonResponse([
+      return new PingvinResponse([
         'message' => 'Invalid protocol.',
         'actionId' => 'protocol:invalid',
       ], 400);
@@ -87,7 +115,7 @@ class RequestMiddleware {
     }
 
     if (empty($this->request->headers)) {
-      return new ServerJsonResponse([
+      return new PingvinResponse([
         'message' => 'Headers cannot be empty.',
         'actionId' => 'headers:empty',
       ], 400);
@@ -95,7 +123,7 @@ class RequestMiddleware {
 
     if (!empty(self::SUSPICIOUS_AGENTS)) {
       if (array_any(self::SUSPICIOUS_AGENTS, fn($agent) => stripos($this->request->server->get('HTTP_USER_AGENT'), $agent) !== false)) {
-        return new ServerJsonResponse([
+        return new PingvinResponse([
           'message' => 'Suspicious User-Agent detected.',
           'actionId' => 'user_agent:not_allowed',
         ], 400);
@@ -107,6 +135,7 @@ class RequestMiddleware {
 
     return [
       'userAgent' => $agent,
+      // 'urlResource' => $this->urlResource ?: null,
     ];
   }
 }

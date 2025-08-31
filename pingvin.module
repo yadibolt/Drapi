@@ -3,6 +3,7 @@
 // include the globals file
 // TODO: maybe delete later or implement config?
 use Drupal\Core\Render\RendererInterface;
+use Drupal\pingvin\Route\Cache;
 
 require_once __DIR__ . '/globals.inc';
 
@@ -53,4 +54,18 @@ function pingvin_theme(array $existing, string $type, string $theme, string $pat
       ],
     ],
   ];
+}
+
+function pingvin_entity_update(Drupal\Core\Entity\EntityInterface $entity): void {
+}
+
+function pingvin_entity_insert(Drupal\Core\Entity\EntityInterface $entity): void {
+}
+
+function pingvin_entity_presave(Drupal\Core\Entity\EntityInterface $entity): void {
+}
+
+
+function pingvin_cache_flush() {
+  Cache::clear();
 }
