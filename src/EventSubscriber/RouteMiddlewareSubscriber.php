@@ -2,6 +2,7 @@
 
 namespace Drupal\pingvin\EventSubscriber;
 
+use Drupal\pingvin\Cache\PingvinCache;
 use Drupal\pingvin\Http\PingvinResponse;
 use Drupal\pingvin\Route\Cache;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -42,7 +43,10 @@ class RouteMiddlewareSubscriber implements EventSubscriberInterface {
 
         // todo: implement APCU cache
 
-        $hit = Cache::hit($request, [$url]);
+        $start = microtime(true);
+        $hit = PingvinCache::use($url);
+        $end = microtime(true);
+        \Drupal::logger('t')->info('@t', ['@t' => ($end-$start)*1000]);
         if ($hit) {
           $event->setController(function() use ($hit) {
             \Drupal::logger('pingvin')->info('Cache hit: returning');

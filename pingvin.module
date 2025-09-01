@@ -67,5 +67,5 @@ function pingvin_entity_presave(Drupal\Core\Entity\EntityInterface $entity): voi
 
 
 function pingvin_cache_flush() {
-  Cache::clear();
+  \Drupal\pingvin\Cache\PingvinCache::flush();
 }

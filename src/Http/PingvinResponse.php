@@ -12,13 +12,17 @@ class PingvinResponse extends Response {
   protected mixed $encodedContent;
   protected int $jsonDepth = 512;
   protected int $jsonFlags = 0;
+  protected bool $cached = false;
 
-  public function __construct(mixed $data = null, int $status = 200, array $headers = [], bool $ignoreCacheHandler = false) {
+  public function __construct(mixed $data = null, int $status = 200, array $headers = [], bool $cached = false) {
     parent::__construct('', $status, $headers);
     $this->setData($data);
     $this->statusCode = $status;
+    $this->cached = $cached;
 
-    if (!$ignoreCacheHandler) {
+    \Drupal::logger('pingvin')->notice('Pingvin Response OK @d', ['@d' => print_r($this->data, true)]);
+
+    if (!$cached) {
       $this->handleCreateCache();
     }
 
@@ -57,6 +61,11 @@ class PingvinResponse extends Response {
   protected function setData(string|array|null $data): void {
     $content = [];
 
+    if ($this->cached) {
+      $this->setContent($data);
+      return;
+    }
+
     if ($data === null) {
       $this->data = [];
       $this->encodedContent = '{}';
@@ -67,6 +76,8 @@ class PingvinResponse extends Response {
     if (is_string($data) && json_validate($data, $this->jsonDepth, $this->jsonFlags)) {
       $data = json_decode($data, true, $this->jsonDepth, $this->jsonFlags);
     }
+
+    \Drupal::logger('pingvin')->notice('AAAAAAAAAAA @d', ['@d' => print_r($data, true)]);
 
     if (isset($data['actionId'])) {
       $content['actionId'] = $data['actionId'];

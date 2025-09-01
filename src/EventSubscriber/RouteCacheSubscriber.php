@@ -2,6 +2,7 @@
 
 namespace Drupal\pingvin\EventSubscriber;
 
+use Drupal\pingvin\Cache\PingvinCache;
 use Drupal\pingvin\Http\PingvinResponse;
 use Drupal\pingvin\Route\Cache;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -61,7 +62,7 @@ class RouteCacheSubscriber implements EventSubscriberInterface {
       // 'body' => ???
     ];
 
-    Cache::create($url, $data, Cache::DURATION_DEFAULT);
+    PingvinCache::store($url, $data, Cache::DURATION_DEFAULT);
 
     \Drupal::logger('pingvin')->info('Caching this shit: @d', ['@d' => print_r($data, true)]);
   }
