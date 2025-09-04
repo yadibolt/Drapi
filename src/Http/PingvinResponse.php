@@ -2,23 +2,24 @@
 
 namespace Drupal\pingvin\Http;
 
+use Drupal\Core\Cache\CacheableResponse;
 use Drupal\pingvin\File\Retriever;
 use Drupal\pingvin\Parser\RouteDocCommentParser;
 use Drupal\pingvin\Route\Cache;
 use Symfony\Component\HttpFoundation\Response;
 
-class PingvinResponse extends Response {
+class PingvinResponse extends CacheableResponse {
   protected mixed $data;
   protected mixed $encodedContent;
-  protected int $jsonDepth = 512;
-  protected int $jsonFlags = 0;
+  protected const int JSON_DEPTH = 512;
+  protected const int JSON_FLAGS = 0;
   protected bool $cached = false;
 
   public function __construct(mixed $data = null, int $status = 200, array $headers = [], bool $cached = false) {
     parent::__construct('', $status, $headers);
-    $this->setData($data);
-    $this->statusCode = $status;
     $this->cached = $cached;
+    $this->statusCode = $status;
+    $this->setData($data);
 
     \Drupal::logger('pingvin')->notice('Pingvin Response OK @d', ['@d' => print_r($this->data, true)]);
 
@@ -62,7 +63,10 @@ class PingvinResponse extends Response {
     $content = [];
 
     if ($this->cached) {
+      $this->data = $data;
       $this->setContent($data);
+
+      \Drupal::logger('pingvin')->notice('RETUUUURN @d', ['@d' => print_r($this->data, true)]);
       return;
     }
 
@@ -73,8 +77,8 @@ class PingvinResponse extends Response {
       $this->setContent($this->encodedContent);
     }
 
-    if (is_string($data) && json_validate($data, $this->jsonDepth, $this->jsonFlags)) {
-      $data = json_decode($data, true, $this->jsonDepth, $this->jsonFlags);
+    if (is_string($data) && json_validate($data, self::JSON_DEPTH, self::JSON_FLAGS)) {
+      $data = json_decode($data, true, self::JSON_DEPTH, self::JSON_FLAGS);
     }
 
     \Drupal::logger('pingvin')->notice('AAAAAAAAAAA @d', ['@d' => print_r($data, true)]);
@@ -94,7 +98,7 @@ class PingvinResponse extends Response {
 
     if (!empty($data)) $content['data'] = $data;
 
-    $encodedContent = json_encode($content, $this->jsonFlags, $this->jsonDepth);
+    $encodedContent = json_encode($content, self::JSON_FLAGS, self::JSON_DEPTH);
     if (!$encodedContent) {
       $this->data = [];
       $this->encodedContent = '{}';
@@ -111,5 +115,25 @@ class PingvinResponse extends Response {
     $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 5);
     \Drupal::logger('pingvin')->info('@d', ['@d' => print_r($trace[3], true)]);
     return $trace[3] ?: null;
+  }
+
+  public static function fromCache(string $content): array {
+    if (json_validate($content, self::JSON_DEPTH, self::JSON_FLAGS)) {
+      $content = json_decode($content, true, self::JSON_DEPTH, self::JSON_FLAGS);
+
+      $data = $content['data'] ?: [];
+
+      // unset automatically gen. data
+      if (isset($content['data'])) unset($content['data']);
+      if (isset($content['error'])) unset($content['error']);
+      if (isset($content['timestamp'])) unset($content['timestamp']);
+      // set attrs
+      if (isset($content['message'])) $data['message'] = $content['message'];
+      if (isset($content['actionId'])) $data['actionId'] = $content['actionId'];
+
+      return $data;
+    }
+
+    return [];
   }
 }

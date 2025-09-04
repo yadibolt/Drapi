@@ -3,6 +3,7 @@
 // include the globals file
 // TODO: maybe delete later or implement config?
 use Drupal\Core\Render\RendererInterface;
+use Drupal\pingvin\Cache\PingvinCache;
 use Drupal\pingvin\Route\Cache;
 
 require_once __DIR__ . '/globals.inc';
@@ -67,5 +68,5 @@ function pingvin_entity_presave(Drupal\Core\Entity\EntityInterface $entity): voi
 
 
 function pingvin_cache_flush() {
-  \Drupal\pingvin\Cache\PingvinCache::flush();
+  PingvinCache::flush();
 }

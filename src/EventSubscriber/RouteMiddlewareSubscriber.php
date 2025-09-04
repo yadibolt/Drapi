@@ -2,6 +2,7 @@
 
 namespace Drupal\pingvin\EventSubscriber;
 
+use Drupal\Core\Cache\CacheableJsonResponse;
 use Drupal\pingvin\Cache\PingvinCache;
 use Drupal\pingvin\Http\PingvinResponse;
 use Drupal\pingvin\Route\Cache;
@@ -18,7 +19,7 @@ class RouteMiddlewareSubscriber implements EventSubscriberInterface {
     ];
   }
 
-  public function onKernelController(ControllerEvent $event): ?PingvinResponse
+  public function onKernelController(ControllerEvent $event): PingvinResponse|CacheableJsonResponse|null
   {
     $request = $event->getRequest();
 
@@ -42,6 +43,7 @@ class RouteMiddlewareSubscriber implements EventSubscriberInterface {
         // todo: after all middleware bs
 
         // todo: implement APCU cache
+
 
         $start = microtime(true);
         $hit = PingvinCache::use($url);
