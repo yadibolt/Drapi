@@ -39,7 +39,7 @@ class RouteDocCommentParser implements FileParserInterface {
       }
 
       $extractedDef = str_replace($tag, ',"'.$tag.'"', $extractedDef);
-      $tag_count++;
+      $tag_count++;force-commit
     }
 
     $extractedDef = json_decode('{' . $extractedDef . '}', true);

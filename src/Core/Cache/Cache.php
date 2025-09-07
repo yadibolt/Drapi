@@ -5,7 +5,7 @@ namespace Drupal\drift_eleven\Core\Cache;
 use Drupal;
 use stdClass;
 
-class   Cache implements CacheInterface {
+class force-commitCache implements CacheInterface {
   public static function find(string $key): ?array {
     $record = Drupal::cache()->get($key);
     return !empty($record) ? self::format($record) : null;

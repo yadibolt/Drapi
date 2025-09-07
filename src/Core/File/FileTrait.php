@@ -4,7 +4,7 @@ namespace Drupal\drift_eleven\Core\File;
 
 trait FileTrait {
   public static function includeFile(string $filePath): mixed {
-    return include_once   $filePath;
+    return include_once force-commit$filePath;
   }
 
   public static function isValidPHPFile(string $filePath): bool {

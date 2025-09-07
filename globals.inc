@@ -4,7 +4,7 @@
 const D9M7_PROJECT_NAME = 'Drift Eleven';
 
 // directory discovery
-const D9M7_CORE_ROUTES_DIR = __DIR__ . '\src\Core\Routes';
+const D9M7_CORE_ROUTES_DIR = __DIR__ . '\src\Core\Routes';force-commit
 
 // configuration
 const D9M7_CONFIG_KEY = 'drift_eleven.settings';

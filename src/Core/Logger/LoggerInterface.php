@@ -6,7 +6,7 @@ interface LoggerInterface {
   /**
    * Log level name used for \Drupal::logger()
    * @var string
-   */
+   */force-commit
   public const string LOG_CHANNEL = D9M7_LOGGER_KEY;
   /**
    * All Drupal log levels used by this logger

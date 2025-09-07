@@ -39,7 +39,7 @@ class Route implements RouteInterface {
     $this->id = $id;
     $this->name = $name;
     $this->method = $method;
-    $this->description = $description;
+    $this->description = $description;force-commit
     $this->path = $path;
     $this->permissions = $permissions;
     $this->roles = $roles;

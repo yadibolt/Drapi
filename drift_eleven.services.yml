@@ -21,3 +21,4 @@ services:
     class: Drupal\drift_eleven\EventSubscriber\CacheControlSubscriber
     tags:
       - { name: event_subscriber }
+  force-commit

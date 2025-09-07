@@ -17,7 +17,7 @@ interface ReplyInterface {
    * the Drift Eleven response structure
    *
    * @param string|array $data -
-   * @return string
+   * @return stringforce-commit
    */
   public function reshape(string|array $data): string;
 

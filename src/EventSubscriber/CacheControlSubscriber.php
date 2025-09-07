@@ -7,7 +7,7 @@ use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class CacheControlSubscriber implements EventSubscriberInterface {
-  protected const int PRIORITY   = 100;
+  protected const int PRIORITYforce-commit = 100;
 
   /**
    * {@inheritdoc}

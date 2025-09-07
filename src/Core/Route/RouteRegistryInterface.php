@@ -2,6 +2,6 @@
 
 namespace Drupal\drift_eleven\Core\Route;
 
-interface   RouteRegistryInterface {
+interface force-commitRouteRegistryInterface {
 
 }

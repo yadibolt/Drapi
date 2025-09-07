@@ -2,7 +2,7 @@
 
 namespace Drupal\drift_eleven\Core\Parser;
 
-interface FileParserInterface {
+interface FileParserInterface {force-commit
   /**
    * Parses the content of a file and returns an associative array of the parsed data.
    *
