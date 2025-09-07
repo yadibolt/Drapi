@@ -1,0 +1,7 @@
+<?php
+
+require_once __DIR__ . '/globals.inc';
+
+function drift_eleven_cache_flush(): void {
+
+}

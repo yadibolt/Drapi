@@ -1,0 +1,106 @@
+<?php
+
+function drift_eleven_schema(): array {
+  $schemas = [];
+
+  $sessionSchema = 'drift_eleven_session';
+  $passwordResetSchema = 'drift_eleven_password_reset';
+
+  $schemas[$sessionSchema] = [
+    'description' => 'Table storing all tokens used by AUTH middleware',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => true,
+        'description' => 'ID of the session',
+      ],
+      'entity_id' => [
+        'type' => 'int',
+        'not null' => true,
+        'description' => 'Entity Id session belongs to',
+      ],
+      'token' => [
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => true,
+        'description' => 'JWT token value',
+      ],
+      'token_type' => [
+        'type' => 'varchar',
+        'length' => 32,
+        'not null' => true,
+        'description' => 'Type of the token. Can be "access" or "refresh"',
+      ],
+      'token_parent_id' => [
+        'type' => 'int',
+        'not null' => true,
+        'default' => 0,
+        'description' => 'If token has a parent e.g. Access Token, this is defined as its ID otherwise 0',
+      ],
+      'user_agent' => [
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => false,
+        'description' => 'User agent of entity that created this session',
+      ],
+      'updated_at' => [
+        'type' => 'int',
+        'not null' => true,
+        'description' => 'The timestamp when the record was edited',
+      ],
+      'created_at' => [
+        'type' => 'int',
+        'not null' => true,
+        'description' => 'The timestamp when the record was created',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'entity_id_index' => ['entity_id'],
+    ],
+  ];
+
+  $schemas[$passwordResetSchema] = [
+    'description' => 'Table storing all tokens used by AUTH middleware to reset passwords',
+    'fields' => [
+      'id' => [
+        'type' => 'serial',
+        'not null' => true,
+        'description' => 'ID of the token record',
+      ],
+      'token' => [
+        'type' => 'varchar',
+        'length' => 768,
+        'not null' => true,
+        'description' => 'Password reset token value',
+      ],
+      'mail' => [
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => true,
+        'description' => 'Email associated with token record',
+      ],
+      'expires_at' => [
+        'type' => 'int',
+        'not null' => true,
+        'description' => 'Expiration date of the token record',
+      ],
+      'updated_at' => [
+        'type' => 'int',
+        'not null' => true,
+        'description' => 'The timestamp when the record was updated',
+      ],
+      'created_at' => [
+        'type' => 'int',
+        'not null' => true,
+        'description' => 'The timestamp when the record was created',
+      ],
+    ],
+    'primary key' => ['id'],
+    'indexes' => [
+      'token_index' => ['token'],
+    ],
+  ];
+
+  return $schemas;
+}

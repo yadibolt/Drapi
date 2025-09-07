@@ -1,0 +1,23 @@
+services:
+  # cache bin used by Drupal
+  # make sure to edit the settings.php and include the cache backend
+  # of your choice. preferably set to APCU (...or MemCached, Redis etc.):
+  # ###
+  # $settings['cache']['bins']['drift_eleven'] = 'cache.backend.apcu';
+  # ###
+  cache.drift_eleven:
+    class: Drupal\Core\Cache\CacheBackendInterface
+    factory: cache_factory:get
+    arguments: ['drift_eleven']
+
+  # route registry
+  drift_eleven.service.route_subscriber:
+    class: Drupal\drift_eleven\EventSubscriber\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  # cache control
+  drift_eleven.service.cache_control_subscriber:
+    class: Drupal\drift_eleven\EventSubscriber\CacheControlSubscriber
+    tags:
+      - { name: event_subscriber }
