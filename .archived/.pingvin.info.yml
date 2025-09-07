@@ -1,0 +1,5 @@
+name: Pingvin
+description: Expose Drupal data layer with simple API workflow!
+package: pingvin
+type: module
+core_version_requirement: ^11
