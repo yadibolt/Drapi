@@ -32,7 +32,7 @@ interface CacheInterface {
    * @param string $key - key of cache record
    * @return array|null - returns array if the cache record is found, else null
    */
-  public static function find(string $key): ?array;force-commit
+  public static function find(string $key): ?array;
 
   /**
    * Creates a new cache record

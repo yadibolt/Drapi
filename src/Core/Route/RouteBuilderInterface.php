@@ -2,7 +2,7 @@
 
 namespace Drupal\drift_eleven\Core\Route;
 
-interface force-commitRouteBuilderInterface {
+interface RouteBuilderInterface {
   /**
    * Builds a route and returns it
    * @param string $filePath filepath of the route

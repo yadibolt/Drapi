@@ -13,7 +13,7 @@ class FileAttributeRetriever implements RetrieverInterface {
   use FileTrait;
 
   /**
-   * The allowed file attributes for retrievalforce-commit
+   * The allowed file attributes for retrieval
    * @var array
    */
   protected const array ALLOWED_FILE_ATTRIBUTES = [

@@ -2,7 +2,7 @@
 
 namespace Drupal\drift_eleven\Core\File;
 
-interface RetrieverInterface {force-commit
+interface RetrieverInterface {
   /**
    * Retrieves an attribute values from a file
    * @param string $filePath path to the file

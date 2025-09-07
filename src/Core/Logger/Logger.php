@@ -5,7 +5,7 @@ namespace Drupal\drift_eleven\Core\Logger;
 use Drupal;
 use InvalidArgumentException;
 
-class Logger implements LoggerInterface {force-commit
+class Logger implements LoggerInterface {
   public static function l(string $message, array $context = [], string $logLevel = self::LOG_LEVEL_DEFAULT): void {
     if (!in_array($logLevel, self::LOG_LEVELS)) {
       throw new InvalidArgumentException('You have specified invalid log level. Available log levels are: ' . implode(', ', self::LOG_LEVELS));

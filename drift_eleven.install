@@ -1,7 +1,7 @@
 <?php
 
 function drift_eleven_schema(): array {
-  $schemas = [];force-commit
+  $schemas = [];
 
   $sessionSchema = 'drift_eleven_session';
   $passwordResetSchema = 'drift_eleven_password_reset';

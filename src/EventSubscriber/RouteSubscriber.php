@@ -5,7 +5,7 @@ namespace Drupal\drift_eleven\EventSubscriber;
 use Drupal\Core\Routing\RouteSubscriberBase;
 use Symfony\Component\Routing\RouteCollection;
 
-class   force-commitRouteSubscriber extends RouteSubscriberBase {
+class RouteSubscriber extends RouteSubscriberBase {
 
   /**
    * {@inheritdoc}

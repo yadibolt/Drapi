@@ -22,7 +22,7 @@ interface RouteInterface {
     'http', 'https'
   ];
 
-  /**force-commit
+  /**
    * Constructs a route
    *
    * @param string $id id of the route
