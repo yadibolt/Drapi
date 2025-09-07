@@ -1,7 +1,0 @@
-pingvin_route.configuration:
-  path: '/admin/config/services/pingvin/configuration'
-  defaults:
-    _title_callback: '\Drupal\pingvin\Controller\BlankController::viewTitleCallback'
-    _form: '\Drupal\pingvin\Form\BlankForm'
-  requirements:
-    _permission: 'pingvin_permission.administer'

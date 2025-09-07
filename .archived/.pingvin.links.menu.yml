@@ -1,5 +1,0 @@
-pingvin_links.menu.configuration:
-  title: Pingvin
-  description: "Pingvin: Expose Drupal data layer with simple API workflow!"
-  route_name: pingvin_route.configuration
-  parent: system.admin_config_services
