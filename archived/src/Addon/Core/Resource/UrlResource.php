@@ -1,6 +1,7 @@
 <?php
 
 namespace Drupal\pingvin\Addon\Core\Resource;
+use Drupal\Core\Controller\ControllerBase;
 use Drupal\pingvin\Http\PingvinResponse;
 use Drupal\pingvin\Middleware\Middleware;
 use Drupal\pingvin\Route\RouteInterface;
@@ -20,7 +21,7 @@ use Symfony\Component\HttpFoundation\Request;
  * cacheable = true
  * @route-end
  */
-class UrlResource implements RouteInterface {
+class UrlResource extends ControllerBase implements RouteInterface {
   public function get(Request $request): PingvinResponse
   {
     $request = Middleware::enable($request, ['request']);

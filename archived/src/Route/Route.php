@@ -166,6 +166,7 @@ class Route {
       ],
       options: [
         pw8dr1_PROJECT_ID.':routeId' => $this->id,
+        'no_cache' => TRUE,
       ],
       host: $this->restrictHost ?: '',
       schemes: $schemes,
