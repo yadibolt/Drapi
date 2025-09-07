@@ -1,0 +1,5 @@
+pingvin_permission.administer:
+  title: 'Pingvin Administrator'
+  description: 'Allows users to administer the Pingvin module.'
+
+

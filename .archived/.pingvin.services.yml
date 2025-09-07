@@ -1,0 +1,16 @@
+services:
+  pingvin_services.route_subscriber:
+    class: Drupal\pingvin\EventSubscriber\RouteSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  pingvin_services.route_test:
+    class: Drupal\pingvin\EventSubscriber\PingvinSubscriberTest
+    tags:
+      - { name: event_subscriber }
+
+  cache.pingvin:
+    class: Drupal\Core\Cache\CacheBackendInterface
+    factory: cache_factory:get
+    arguments: ['pingvin']
+a
