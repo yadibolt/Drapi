@@ -2,7 +2,7 @@
 
 namespace Drupal\drift_eleven\Core\Route;
 
-interface  RouteBuilderInterface {
+interface   RouteBuilderInterface {
   /**
    * Builds a route and returns it
    * @param string $filePath filepath of the route

@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Request;
  * permissions= ['access content']
  * roles= []
  * useMiddleware = ['request']
- *  = true
+ *   = true
  * @route-end
  */
 class ExampleRouteBuilder extends RouteBuilder {
