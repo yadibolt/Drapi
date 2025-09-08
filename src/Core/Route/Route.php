@@ -2,6 +2,12 @@
 
 namespace Drupal\drift_eleven\Core\Route;
 
+use Drupal\drift_eleven\Core\Asserters\DirectoryPathAsserter;
+use Drupal\drift_eleven\Core\Asserters\RouteClassAsserter;
+use Drupal\drift_eleven\Core\Asserters\RouteDocCommentAsserter;
+use Drupal\drift_eleven\Core\Asserters\RouteExtendsAsserter;
+use Drupal\drift_eleven\Core\Asserters\RouteImplementsAsserter;
+use Drupal\drift_eleven\Core\Asserters\RouteMethodAsserter;
 use Drupal\drift_eleven\Core\File\FileAttributeRetriever;
 use Exception;
 use InvalidArgumentException;
@@ -36,15 +42,17 @@ class Route implements RouteInterface {
 
   public function applyAssertions(): bool {
       $asserters = [
-          // todo: add asserters here
+        RouteClassAsserter::class,        // checks class declaration
+        RouteMethodAsserter::class,       // checks for required methods
+        RouteDocCommentAsserter::class,   // checks for doc comments
+        RouteExtendsAsserter::class,      // checks if class extends a base class
+        RouteImplementsAsserter::class    // checks if class implements an interface
       ];
 
       foreach ($asserters as $asserter) {
-          try {
-              call_user_func([$asserter, 'assert'], $this);
-          } catch (Exception $e) {
-              throw new ParseError("{$asserter} requirements not met. {$e->getMessage()}");
-          }
+        if (!call_user_func([$asserter, 'assert'], $this)) {
+          throw new ParseError("$asserter requirements not met");
+        }
       }
 
       return true;
@@ -67,9 +75,9 @@ class Route implements RouteInterface {
   }
 
   public function toSymfony(): \Symfony\Component\Routing\Route {
-    $fileAttributes = $this->getFileAttributes();
+    $attributes = $this->getFileAttributes();
 
-    if (empty($fileAttributes['attributes']['name'])) {
+    if (empty($attributes['name'])) {
       throw new InvalidArgumentException('Route name is missing in file attributes.');
     }
 
@@ -77,14 +85,14 @@ class Route implements RouteInterface {
       path: $this->path,
       defaults: [
         '_title' => $this->name,
-        '_controller' => $fileAttributes['attributes']['name'] . '::' . strtolower($this->method),
+        '_controller' => $attributes['name'] . '::' . 'handle',
         '_format' => 'json',
       ],
       requirements: [
         '_permission' => implode(', ', $this->permissions) ?: '',
       ],
       options: [
-        'drift_eleven.route:id' => $this->id,
+        'drift_eleven:route:id' => $this->id,
         'no_cache' => TRUE,
       ],
       schemes: self::ALLOWED_SCHEMES,
@@ -103,6 +111,7 @@ class Route implements RouteInterface {
       'shortName' => FileAttributeRetriever::retrieve($this->filePath, 'shortName'),
       'interfaces' => FileAttributeRetriever::retrieve($this->filePath, 'interfaces'),
       'publicMethods' => FileAttributeRetriever::retrieve($this->filePath, 'publicMethods'),
+      'parentClass' => FileAttributeRetriever::retrieve($this->filePath, 'parentClass'),
     ];
   }
 
@@ -112,6 +121,10 @@ class Route implements RouteInterface {
 
   public function setEnabled(bool $enabled): void {
     $this->enabled = $enabled;
+  }
+
+  public function getFilePath(): string {
+    return $this->filePath;
   }
 
   public function setFilePath(string $filePath): void {

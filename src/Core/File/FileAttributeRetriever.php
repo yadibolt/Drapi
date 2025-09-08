@@ -24,6 +24,7 @@ class FileAttributeRetriever implements RetrieverInterface {
     'shortName',      // short class name without the namespace (so basically: class name)
     'interfaces',     // interface name that the class implements
     'publicMethods',  // methods of the class
+    'parentClass',    // parent class name that the class extends
   ];
 
   /**
@@ -46,8 +47,18 @@ class FileAttributeRetriever implements RetrieverInterface {
       'shortName' => self::retrieveClassShortName($filePath),
       'interfaces' => self::retrieveInterfaceName($filePath),
       'publicMethods' => self::retrieveDefinedPublicMethods($filePath),
+      'parentClass' => self::retrieveParentClassName($filePath),
       default => throw new InvalidArgumentException("Retrieval attribute '$attribute' is not implemented."),
     };
+  }
+
+  /**
+   * @throws ReflectionException
+   */
+  protected static function retrieveParentClassName(string $filePath): ?string {
+    $reflection = self::createReflection($filePath);
+    $parentClass = $reflection->getParentClass();
+    return $parentClass ? $parentClass->getName() : null;
   }
 
   protected static function retrieveClassNamespace(string $filePath): ?string {

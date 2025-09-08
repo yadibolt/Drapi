@@ -3,7 +3,8 @@
 namespace Drupal\drift_eleven\Core\Routes;
 
 use Drupal\drift_eleven\Core\HTTP\Reply;
-use Drupal\drift_eleven\Core\Route\RouteBuilder;
+use Drupal\drift_eleven\Core\Route\RouteFoundation;
+use Drupal\drift_eleven\Core\Route\RouteFoundationInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -21,8 +22,8 @@ use Symfony\Component\HttpFoundation\Request;
  * useCache= true
  * @route-end
  */
-class ExampleRouteBuilder extends RouteBuilder {
-  public function get(Request $request): Reply {
+class ExampleRoute extends RouteFoundation implements RouteFoundationInterface {
+  public function handle(Request $request): Reply {
     return new Reply([
       'message' => 'Yay!',
       'someData' => [

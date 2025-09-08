@@ -10,7 +10,6 @@ use Symfony\Component\HttpFoundation\Response;
 class Reply extends Response implements ReplyInterface {
   protected const int JSON_DEPTH = 512;
   protected const int JSON_FLAGS = 0;
-
   protected array|string $data = [];
   protected bool $useCache = false;
 

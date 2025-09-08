@@ -39,7 +39,8 @@ interface CacheInterface {
    *
    * @param string $key - key of cache record
    * @param mixed $data - data to store
-   * @return bool - returns bool respectively
+   * @param int $cacheDuration
+   * @return void - returns bool respectively
    */
   public static function make(string $key, mixed $data, int $cacheDuration = self::DURATION_DEFAULT): void;
 

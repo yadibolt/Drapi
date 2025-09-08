@@ -20,9 +20,9 @@ class RouteClassMethodAsserter {
    *    If the file does not match the expected criteria.
    */
   public static function assert(RouteFile $file): void {
-    /*$filePath = $file->getFilePath();
+    $filePath = $file->getFilePath();
     if (!file_exists($filePath)) {
-      throw new Exception("File does not exist: {$filePath}");
+      throw new Exception("File does not exist: $filePath");
     }
 
     $attributeRetriever = new Retriever($filePath);
@@ -52,6 +52,6 @@ class RouteClassMethodAsserter {
 
     if ($numMethodsDefined > 1) {
       throw new Exception('Class defines more than one supported method: ' . implode(', ', Route::ALLOWED_ROUTE_METHODS));
-    }*/
+    }
   }
 }

@@ -4,6 +4,7 @@ namespace Drupal\drift_eleven\EventSubscriber;
 
 use Drupal;
 use Drupal\Core\Routing\RouteSubscriberBase;
+use Drupal\drift_eleven\Core\Logger\Logger;
 use Drupal\drift_eleven\Core\Route\Route;
 use Drupal\drift_eleven\Core\Route\RouteRegistry;
 use InvalidArgumentException;
@@ -14,7 +15,7 @@ class RouteSubscriber extends RouteSubscriberBase {
   /**
    * {@inheritdoc}
    */
-  protected function alterRoutes(RouteCollection $collection) {
+  protected function alterRoutes(RouteCollection $collection): void {
       $config = Drupal::configFactory()->getEditable(D9M7_CONFIG_KEY);
       $routeRegistry = $config->get('routeRegistry') ?: [];
 
@@ -26,8 +27,8 @@ class RouteSubscriber extends RouteSubscriberBase {
 
           /** @var Route $route */
           foreach ($routeCollection as $route) {
-              $collection->add("drift_eleven.route:{$route->getId()}", $route->toSymfony());
-              $routeRegistry["drift_eleven.route:{$route->getId()}"] = $route->toArray();
+              $collection->add("drift_eleven:route:{$route->getId()}", $route->toSymfony());
+              $routeRegistry["drift_eleven:route:{$route->getId()}"] = $route->toArray();
           }
 
           // we wipe the config for routeRegistry as we hydrated it

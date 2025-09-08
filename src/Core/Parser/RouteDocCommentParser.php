@@ -2,7 +2,7 @@
 
 namespace Drupal\drift_eleven\Core\Parser;
 
-use Drupal\drift_eleven\Core\Route\Route;
+use Drupal\drift_eleven\Core\Route\RouteInterface;
 use ParseError;
 
 class RouteDocCommentParser implements FileParserInterface {
@@ -32,13 +32,16 @@ class RouteDocCommentParser implements FileParserInterface {
     $extractedDef = trim($extractedDef);
 
     $tag_count = 0;
-    foreach (Route::ALLOWED_ROUTE_TAGS as $tag) {
+    foreach (RouteInterface::ALLOWED_ROUTE_TAGS as $tag) {
+      $pattern = '/\b' . preg_quote($tag, '/') . '\b/';
+      if (!preg_match($pattern, $extractedDef)) continue;
+
       if ($tag_count === 0) {
-        $extractedDef = str_replace($tag, '"'.$tag.'"', $extractedDef); $tag_count++;
-        continue;
+        $extractedDef = preg_replace($pattern, '"' . $tag . '"', $extractedDef, 1);
+      } else {
+        $extractedDef = preg_replace($pattern, ',"' . $tag . '"', $extractedDef, 1);
       }
 
-      $extractedDef = str_replace($tag, ',"'.$tag.'"', $extractedDef);
       $tag_count++;
     }
 
@@ -53,7 +56,7 @@ class RouteDocCommentParser implements FileParserInterface {
   }
 
   protected static function fillMissingTags(array $definition): array {
-    foreach (Route::ALLOWED_ROUTE_TAGS as $tag) {
+    foreach (RouteInterface::ALLOWED_ROUTE_TAGS as $tag) {
       if (!array_key_exists($tag, $definition)) {
         if ($tag === 'enabled') {
           $definition[$tag] = true;
