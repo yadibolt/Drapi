@@ -18,4 +18,12 @@ trait FileTrait {
   public static function isReadable(string $filePath): bool {
     return is_readable($filePath);
   }
+
+  public static function isDir(string $directoryPath): bool {
+    return is_dir($directoryPath);
+  }
+  
+  public static function isDotFile(string $fileName): bool {
+    return $fileName === '.' || $fileName === '..';
+  }
 }

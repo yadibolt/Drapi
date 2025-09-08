@@ -3,26 +3,11 @@
 namespace Drupal\drift_eleven\Core\Route;
 
 use Drupal\drift_eleven\Core\File\FileAttributeRetriever;
+use Exception;
 use InvalidArgumentException;
+use ParseError;
 
 class Route implements RouteInterface {
-  /**
-   * List of allowed route tags
-   * @var array
-   */
-  public const array ALLOWED_ROUTE_TAGS = [
-    'id',
-    'name',
-    'method',
-    'description',
-    'path',
-    'permissions',
-    'roles',
-    'useMiddleware',
-    'useCache',
-    'enabled'
-  ];
-
   protected string $id;
   protected string $name;
   protected string $method;
@@ -47,6 +32,22 @@ class Route implements RouteInterface {
     $this->useCache = $useCache;
     $this->enabled = true;
     $this->filePath = $filePath;
+  }
+
+  public function applyAssertions(): bool {
+      $asserters = [
+          // todo: add asserters here
+      ];
+
+      foreach ($asserters as $asserter) {
+          try {
+              call_user_func([$asserter, 'assert'], $this);
+          } catch (Exception $e) {
+              throw new ParseError("{$asserter} requirements not met. {$e->getMessage()}");
+          }
+      }
+
+      return true;
   }
 
   public function toArray(): array {

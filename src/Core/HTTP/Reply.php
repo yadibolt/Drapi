@@ -28,9 +28,9 @@ class Reply extends Response implements ReplyInterface {
       $cachedData = Cache::find("drift_eleven:url:$requestUri");
       if (!empty($cachedData)) {
         // we found cached data, set the content instantly
-        $this->setContent($cachedData['content']['data']);
-        $this->setStatusCode($cachedData['content']['status']);
-        $this->headers->replace($cachedData['content']['headers']);
+        $this->setContent($cachedData['data']);
+        $this->setStatusCode($cachedData['status']);
+        $this->headers->replace($cachedData['headers']);
 
         return;
       }
