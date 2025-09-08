@@ -20,28 +20,24 @@ class Reply extends Response implements ReplyInterface {
     $request = Drupal::service('request_stack')->getCurrentRequest();
     $requestUri = $request->getRequestUri();
 
-    // todo set cached
-    $this->useCache = true;
+    $config = Drupal::configFactory()->getEditable(D9M7_CONFIG_KEY);
+    $routeRegistry = $config->get('routeRegistry') ?: [];
+    $routeId = $request->attributes->get('_route');
 
-    if ($this->useCache) {
-      $cachedData = Cache::find("drift_eleven:url:$requestUri");
-      if (!empty($cachedData)) {
-        // we found cached data, set the content instantly
-        $this->setContent($cachedData['data']);
-        $this->setStatusCode($cachedData['status']);
-        $this->headers->replace($cachedData['headers']);
-
-        return;
-      }
+    if (isset($routeRegistry[$routeId])) {
+      $route = $routeRegistry[$routeId];
+      $this->useCache = $route['useCache'] ?: false;
+    } else {
+      $this->useCache = false;
     }
 
-    // no cached data found, we create new cache record
-    // if $useCache is set to true
     if (!empty($headers)) $this->headers->replace($headers);
     $this->setStatusCode($status);
+
     $reshaped = $this->reshape($data);
     $this->setData($reshaped);
 
+    // we cache the response if enabled on the route
     if ($this->useCache) Cache::make("drift_eleven:url:$requestUri", [
       'data' => $this->data,
       'status' => $status,
