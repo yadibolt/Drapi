@@ -38,7 +38,7 @@ class Reply extends Response implements ReplyInterface {
     $this->setData($reshaped);
 
     // we cache the response if enabled on the route
-    if ($this->useCache) Cache::make("drift_eleven:url:$requestUri", [
+    if ($this->useCache) Cache::make(D9M7_CACHE_KEY . ":url:$requestUri", [
       'data' => $this->data,
       'status' => $status,
       'headers' => $this->headers,

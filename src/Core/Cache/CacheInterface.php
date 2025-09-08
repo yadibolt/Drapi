@@ -11,6 +11,11 @@ interface CacheInterface {
    */
   public const string CACHE_KEY = D9M7_CACHE_KEY;
   /**
+   * Cache bin key used in module
+   * @var string
+   */
+  public const string CACHE_BIN_KEY = D9M7_CACHE_BIN_KEY;
+  /**
    * Default TTL for cache
    * @var int
    */

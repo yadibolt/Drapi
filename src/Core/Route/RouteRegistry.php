@@ -34,7 +34,6 @@ class RouteRegistry implements RouteRegistryInterface {
 
             $registry[] = $route;
           } catch (Exception) {
-            Logger::l('Failed to register route from file: @filePath', ['@filePath' => $filePath], 'error');
             continue;
           }
         }

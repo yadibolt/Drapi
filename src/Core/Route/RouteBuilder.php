@@ -20,7 +20,7 @@ class RouteBuilder implements RouteBuilderInterface {
       throw new InvalidArgumentException("File $filePath does not exist or is not readable or is not a valid PHP file.");
     }
 
-    $config = Drupal::configFactory()->get(D9M7_CONFIG_KEY);
+    $config = Drupal::configFactory()->getEditable(D9M7_CONFIG_KEY);
     $routeRegistry = $config->get('routeRegistry') ?: [];
 
     $docComment = FileAttributeRetriever::retrieve($filePath, 'docComment');

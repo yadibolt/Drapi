@@ -7,18 +7,18 @@ use stdClass;
 
 class Cache implements CacheInterface {
   public static function find(string $key): ?array {
-    $record = Drupal::cache('drift_eleven')->get($key);
+    $record = Drupal::cache(self::CACHE_BIN_KEY)->get($key);
     return !empty($record) ? self::format($record) : null;
   }
 
   public static function make(string $key, mixed $data, int $cacheDuration = self::DURATION_DEFAULT): void {
     if (self::find($key)) return;
-    Drupal::cache('drift_eleven')->set($key, $data, time() + $cacheDuration);
+    Drupal::cache(self::CACHE_BIN_KEY)->set($key, $data, time() + $cacheDuration);
   }
 
   public static function invalidate(string $key): void {
     if (self::find($key)) {
-      Drupal::cache('drift_eleven')->invalidate($key);
+      Drupal::cache(self::CACHE_BIN_KEY)->invalidate($key);
     }
   }
 
