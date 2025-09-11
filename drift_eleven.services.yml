@@ -17,7 +17,7 @@ services:
       - { name: event_subscriber }
 
   # cache control
-  drift_eleven.service.cache_control_subscriber:
-    class: Drupal\drift_eleven\EventSubscriber\CacheControlSubscriber
+  drift_eleven.service.route_cache_control_subscriber:
+    class: Drupal\drift_eleven\EventSubscriber\RouteCacheControlSubscriber
     tags:
       - { name: event_subscriber }
