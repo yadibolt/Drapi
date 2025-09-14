@@ -24,4 +24,11 @@ interface SessionUserInterface {
    * @return array an associative array containing the user's entityId, active status, roles, and permissions.
    */
   public function getCacheStructData(): array;
+  /**
+   * Creates a SessionUser instance from a given user entity ID.
+   *
+   * @param int $entityId the user entity ID
+   * @return SessionUserInterface|null the SessionUser instance or null if the user does not exist
+   */
+  public static function fromEntityId(int $entityId): ?SessionUserInterface;
 }
