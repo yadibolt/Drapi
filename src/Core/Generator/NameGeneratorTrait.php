@@ -3,8 +3,12 @@
 namespace Drupal\drift_eleven\Core\Generator;
 
 use InvalidArgumentException;
+use Random\RandomException;
 
 trait NameGeneratorTrait {
+  /**
+   * @throws RandomException
+   */
   public static function genFileName(string $basename): string {
     if (!str_contains($basename, '.')) throw new InvalidArgumentException("Filename must contain an extension.");
 

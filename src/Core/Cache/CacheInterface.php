@@ -58,6 +58,13 @@ interface CacheInterface {
   public static function invalidate(string $key): void;
 
   /**
+   * Flushes all existing cache records in the cache bin
+   *
+   * @return void
+   */
+  public static function flush(): void;
+
+  /**
    * Formats existing cache \stdClass object as an associative array
    *
    * @return array|null - returns formatted array on success, else null

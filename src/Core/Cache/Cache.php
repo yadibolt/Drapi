@@ -22,6 +22,10 @@ class Cache implements CacheInterface {
     }
   }
 
+  public static function flush(): void {
+    Drupal::cache(self::CACHE_BIN_KEY)->deleteAll();
+  }
+
   public static function format(stdClass $cacheRecord): ?array {
     return !empty($cacheRecord->data) ? $cacheRecord->data : null;
   }
