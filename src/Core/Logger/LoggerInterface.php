@@ -8,19 +8,27 @@ interface LoggerInterface {
    * @var string
    */
   public const string LOG_CHANNEL = D9M7_LOGGER_KEY;
+  public const string LEVEL_DEBUG = 'debug';
+  public const string LEVEL_INFO = 'info';
+  public const string LEVEL_WARNING = 'warning';
+  public const string LEVEL_ERROR = 'error';
+  public const string LEVEL_CRITICAL = 'critical';
+  public const string LEVEL_ALERT = 'alert';
+  public const string LEVEL_EMERGENCY = 'emergency';
+  public const string LEVEL_NOTICE = 'notice';
   /**
    * All Drupal log levels used by this logger
    * @var array
    */
   public const array LOG_LEVELS = [
-    'debug',
-    'warning',
-    'error',
-    'notice',
-    'info',
-    'critical',
-    'emergency',
-    'alert',
+    self::LEVEL_DEBUG,
+    self::LEVEL_WARNING,
+    self::LEVEL_ERROR,
+    self::LEVEL_NOTICE,
+    self::LEVEL_INFO,
+    self::LEVEL_CRITICAL,
+    self::LEVEL_EMERGENCY,
+    self::LEVEL_ALERT,
   ];
   /**
    * Default log level used by this logger

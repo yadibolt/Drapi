@@ -2,6 +2,7 @@
 
 // project globals
 const D9M7_PROJECT_NAME = 'Drift Eleven';
+const D9M7_PROJECT_ID = 'drift_eleven';
 
 // directory discovery
 const D9M7_CORE_ROUTES_DIR = __DIR__ . '\src\Core\Routes';

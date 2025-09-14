@@ -23,6 +23,6 @@ class Cache implements CacheInterface {
   }
 
   public static function format(stdClass $cacheRecord): ?array {
-    return !empty($cacheRecord) && !empty($cacheRecord->data) ? $cacheRecord->data : null;
+    return !empty($cacheRecord->data) ? $cacheRecord->data : null;
   }
 }
