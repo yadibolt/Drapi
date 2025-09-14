@@ -7,6 +7,7 @@ use Drupal\drift_eleven\Core\Auth\JsonWebToken;
 use Drupal\drift_eleven\Core\Auth\JsonWebTokenInterface;
 use Drupal\drift_eleven\Core\Cache\Cache;
 use Drupal\drift_eleven\Core\HTTP\Reply;
+use Drupal\drift_eleven\Core\Middleware\MiddlewareInterface;
 use Drupal\drift_eleven\Core\Session\Session;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
@@ -66,7 +67,7 @@ class RouteCacheControlSubscriber implements EventSubscriberInterface {
     if (
       (empty($route['roles'])) &&
       (empty($route['permissions']) || (count($route['permissions']) === 1) && $route['permissions'][0] === 'access content') &&
-      (empty($route['useMiddleware']) || (!in_array('jwtAuth', $route['useMiddleware'])))
+      (empty($route['useMiddleware']) || (!in_array(MiddlewareInterface::AUTH, $route['useMiddleware'])))
     ) {
       // if there are no required roles and no required permissions and no required auth
       // we set the response and send it

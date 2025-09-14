@@ -3,15 +3,20 @@
 namespace Drupal\drift_eleven\Core\Middleware;
 
 interface MiddlewareInterface {
+  public const string AUTH = 'auth';
+  public const string AUTH_REFRESH = 'auth_refresh';
+  public const string REQUEST = 'request';
+  public const string BODY_JSON = 'body_json';
+  public const string BODY_BINARY = 'body_binary';
   /**
    * List of allowed middleware types
    * @var array
    */
   public const array ALLOWED_MIDDLEWARES = [
-    'request',
-    'auth',
-    'auth_refresh',
-    'body_json',
-    'body_binary',
+    self::AUTH,
+    self::AUTH_REFRESH,
+    self::REQUEST,
+    self::BODY_JSON,
+    self::BODY_BINARY,
   ];
 }

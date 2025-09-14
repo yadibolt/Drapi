@@ -2,6 +2,8 @@
 
 namespace Drupal\drift_eleven\Core\Session;
 
+use Drupal;
+
 class SessionUser implements SessionUserInterface {
   protected int $entityId;
   protected array $roles;
@@ -34,5 +36,42 @@ class SessionUser implements SessionUserInterface {
       'roles' => $this->roles,
       'permissions' => $this->permissions,
     ];
+  }
+
+  public static function fromEntityId(int $entityId): ?SessionUserInterface {
+    $database = Drupal::database();
+    $bundleUser = 'user';
+
+    $query = $database->select('uses_field_data', 'ufd')
+      ->fields('ufd', ['uid', 'status'])
+      ->condition('ufd.uid', $entityId);
+
+    $query->innerJoin('user__roles', 'u__r', "u__r.bundle = '$bundleUser' AND ufd.uid = u__r.entity_id");
+    $query->fields('u__r', ['roles_target_id']);
+
+    $query->innerJoin('config', 'cf', "u__r.roles_target_id = cf.name");
+    $query->fields('cf', ['data']);
+
+    $result = $query->execute()->fetchAll();
+
+    if (empty($result)) return null;
+
+    $roles = [];
+    $permissions = [];
+    foreach ($result as $row) {
+      $roles[] = $row->roles_target_id;
+
+      $roleData = unserialize($row->data);
+      if (isset($roleData['permissions']) && is_array($roleData['permissions'])) {
+        $permissions = array_merge($permissions, $roleData['permissions']);
+      }
+    }
+
+    return new self(
+      $entityId,
+      (bool)$result[0]->status,
+      array_unique($roles),
+      array_unique($permissions),
+    );
   }
 }

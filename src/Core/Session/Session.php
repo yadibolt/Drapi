@@ -4,6 +4,7 @@ namespace Drupal\drift_eleven\Core\Session;
 
 use Drupal;
 use Drupal\drift_eleven\Core\Auth\JsonWebTokenInterface;
+use Drupal\drift_eleven\Core\Cache\Cache;
 use Drupal\drift_eleven\Core\Logger\Logger;
 use Drupal\drift_eleven\Core\Logger\LoggerInterface;
 use Exception;
@@ -40,7 +41,16 @@ class Session implements SessionInterface {
       if ($this->existsAccess()) {
         return $this->saveAccessExisting();
       } else {
-        return $this->saveAccessNew();
+        $tokenId = $this->saveAccessNew();
+        if ($tokenId > 0) {
+          // if the access token was created,
+          // we also create a cache entry for the entity
+          $sessionUser = SessionUser::fromEntityId($this->entityId);
+          if ($sessionUser) {
+            Cache::make(D9M7_CACHE_KEY . ":session:$this->token", $sessionUser->getCacheStructData());
+          }
+        }
+        return $tokenId;
       }
     } elseif ($this->tokenType === JsonWebTokenInterface::TOKEN_REFRESH) {
       if ($this->existsRefresh()) {
