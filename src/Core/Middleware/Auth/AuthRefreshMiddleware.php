@@ -2,11 +2,14 @@
 
 namespace Drupal\drift_eleven\Core\Middleware\Auth;
 
-use Drupal\drift_eleven\Core\HTTP\Reply;
+use Drupal\drift_eleven\Core\HTTP\Request\RequestAttributesTrait;
+use Drupal\drift_eleven\Core\HTTP\Response\Reply;
 use Drupal\drift_eleven\Core\Middleware\MiddlewareInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 class AuthRefreshMiddleware implements MiddlewareInterface {
+  use RequestAttributesTrait;
+
   protected Request $request;
   protected array $route;
 
@@ -17,11 +20,5 @@ class AuthRefreshMiddleware implements MiddlewareInterface {
 
   public function run(): ?Reply {
     return null;
-  }
-
-  protected function extendRequestAttributes(array $attrs): void {
-    foreach ($attrs as $key => $value) {
-      $this->request->attributes->set($key, $value);
-    }
   }
 }

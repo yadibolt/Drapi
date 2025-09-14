@@ -6,7 +6,7 @@ use Drupal;
 use Drupal\drift_eleven\Core\Logger\Logger;
 use Drupal\drift_eleven\Core\Logger\LoggerInterface;
 use Drupal\drift_eleven\Core\Util\Base64;
-use http\Exception\InvalidArgumentException;
+use InvalidArgumentException;
 
 class JsonWebToken implements JsonWebTokenInterface {
   /**

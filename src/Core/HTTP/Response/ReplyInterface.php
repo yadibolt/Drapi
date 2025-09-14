@@ -1,10 +1,14 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\HTTP;
+namespace Drupal\drift_eleven\Core\HTTP\Response;
 
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 interface ReplyInterface {
+  public const string ACTION_INVALID_HEADER = 'invalid_header';
+  public const string ACTION_INVALID_TOKEN = 'invalid_token';
+  public const string ACTION_INVALID_PAYLOAD = 'invalid_payload';
+  public const string ACTION_ALREADY_LOGGED_IN = 'already_logged_in';
   /**
    * Constructs a new response used in Drift Eleven endpoints
    *

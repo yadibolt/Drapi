@@ -5,7 +5,7 @@ namespace Drupal\drift_eleven\EventSubscriber;
 use Drupal;
 use Drupal\drift_eleven\Core\Auth\JsonWebToken;
 use Drupal\drift_eleven\Core\Cache\Cache;
-use Drupal\drift_eleven\Core\HTTP\Reply;
+use Drupal\drift_eleven\Core\HTTP\Response\Reply;
 use Drupal\drift_eleven\Core\Middleware\MiddlewareInterface;
 use Drupal\drift_eleven\Core\Session\Session;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;

@@ -2,7 +2,7 @@
 
 namespace Drupal\drift_eleven\Core\Route;
 
-use Drupal\drift_eleven\Core\HTTP\Reply;
+use Drupal\drift_eleven\Core\HTTP\Response\Reply;
 use Symfony\Component\HttpFoundation\Request;
 
 interface RouteFoundationInterface {

@@ -8,21 +8,18 @@ use Drupal\drift_eleven\Core\Route\RouteFoundationInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
- * **Example Route Definition**
- * - todo add description
  * @route
- * id= 'drift_eleven:example'
- * name= 'Drift Eleven Example Route'
- * method= 'GET'
+ * id= 'drift_eleven:auth:login'
+ * name= 'Drift Eleven - Login Route'
+ * method= 'POST'
  * description= 'An Example Drift Eleven Route'
  * path= 'example/route/{random_number}'
  * permissions= ['access content']
  * roles= []
- * useMiddleware= ['request']
- * useCache= true
+ * useMiddleware= ['auth_anonym', 'body_json', 'request']
  * @route-end
  */
-class ExampleRoute extends RouteFoundation implements RouteFoundationInterface {
+class LoginRoute extends RouteFoundation implements RouteFoundationInterface {
   public function handle(Request $request): Reply {
     return new Reply([
       'message' => 'Yay!',

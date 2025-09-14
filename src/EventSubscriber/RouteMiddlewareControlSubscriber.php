@@ -4,7 +4,7 @@ namespace Drupal\drift_eleven\EventSubscriber;
 
 use Drupal;
 use Drupal\drift_eleven\Core\Cache\Cache;
-use Drupal\drift_eleven\Core\HTTP\Reply;
+use Drupal\drift_eleven\Core\HTTP\Response\Reply;
 use Drupal\drift_eleven\Core\Middleware\MiddlewareHandler;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;

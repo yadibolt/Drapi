@@ -4,7 +4,6 @@ namespace Drupal\drift_eleven\EventSubscriber;
 
 use Drupal;
 use Drupal\Core\Routing\RouteSubscriberBase;
-use Drupal\drift_eleven\Core\Logger\Logger;
 use Drupal\drift_eleven\Core\Route\Route;
 use Drupal\drift_eleven\Core\Route\RouteRegistry;
 use InvalidArgumentException;

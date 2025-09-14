@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\HTTP;
+namespace Drupal\drift_eleven\Core\HTTP\Response;
 
 use Drupal;
 use Drupal\drift_eleven\Core\Cache\Cache;
