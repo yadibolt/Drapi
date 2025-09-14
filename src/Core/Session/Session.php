@@ -166,6 +166,16 @@ class Session implements SessionInterface {
     return $result !== false ? (int)$result : 0;
   }
 
+  public static function find(string $token): bool|object|null {
+    $database = Drupal::database();
+
+    return $database->select(self::TABLE_NAME, self::TABLE_NAME_SHORT)
+      ->fields(self::TABLE_NAME_SHORT)
+      ->condition('token', $token)
+      ->execute()
+      ->fetchObject();
+  }
+
   public static function findUser(string $token, string $tokenType = JsonWebTokenInterface::TOKEN_ACCESS): ?SessionUser {
     $database = Drupal::database();
     $shortName = self::TABLE_NAME_SHORT;
@@ -206,5 +216,48 @@ class Session implements SessionInterface {
       array_unique($roles),
       array_unique($permissions),
     );
+  }
+
+  public static function delete(string $token, string $tokenType = JsonWebTokenInterface::TOKEN_ACCESS): bool {
+    if (empty($token)) return false;
+
+    $result = 0;
+    $database = Drupal::database();
+
+    // if we delete an access token, we only delete that token
+    // and cache entry if exists
+    if ($tokenType === JsonWebTokenInterface::TOKEN_ACCESS) {
+      $query = $database->delete(self::TABLE_NAME)
+        ->condition('token', $token)
+        ->condition('token_type', JsonWebTokenInterface::TOKEN_ACCESS);
+
+      if ($query->execute() > 0) {
+        Cache::invalidate(D9M7_CACHE_KEY . ":session:$token");
+        return true;
+      } else { return false; }
+    }
+
+    // if we delete a refresh token, we delete the access tokens too
+    // we create temporary access token object to find the refresh token id
+    $tokenSession = new self(
+      entityId: 0, token: $token, tokenType: JsonWebTokenInterface::TOKEN_ACCESS,
+      tokenParentId: 0, userAgent: '', id: null, updatedAt: 0, createdAt: 0
+    );
+    $refreshTokenId = $tokenSession->existsRefresh();
+    if ($refreshTokenId <> 0) {
+      // Refresh token
+      $query = $database->delete(self::TABLE_NAME)
+        ->condition('id', $refreshTokenId)
+        ->condition('token', $token)
+        ->condition('token_type', JsonWebTokenInterface::TOKEN_REFRESH);
+      $result += $query->execute();
+      // Access tokens
+      $query = $database->delete(self::TABLE_NAME)
+        ->condition('token_parent_id', $refreshTokenId)
+        ->condition('token_type', JsonWebTokenInterface::TOKEN_ACCESS);
+      $result += $query->execute();
+    }
+
+    return $result > 0;
   }
 }

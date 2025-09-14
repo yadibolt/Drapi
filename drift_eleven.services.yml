@@ -21,3 +21,9 @@ services:
     class: Drupal\drift_eleven\EventSubscriber\RouteCacheControlSubscriber
     tags:
       - { name: event_subscriber }
+
+  # route middlewares control
+  drift_eleven.service.route_middleware_control_subscriber:
+    class: Drupal\drift_eleven\EventSubscriber\RouteMiddlewareControlSubscriber
+    tags:
+      - { name: event_subscriber }

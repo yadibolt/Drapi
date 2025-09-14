@@ -18,8 +18,8 @@ use Symfony\Component\HttpFoundation\Request;
  * path= 'example/route/{random_number}'
  * permissions= ['access content']
  * roles= []
- * useMiddleware = ['request']
- * useCache= true
+ * useMiddleware = ['request', 'auth']
+ * useCache= false
  * @route-end
  */
 class ExampleRoute extends RouteFoundation implements RouteFoundationInterface {

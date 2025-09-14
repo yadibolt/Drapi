@@ -2,6 +2,9 @@
 
 namespace Drupal\drift_eleven\Core\Middleware;
 
+use Drupal\drift_eleven\Core\HTTP\Reply;
+use Symfony\Component\HttpFoundation\Request;
+
 interface MiddlewareInterface {
   public const string AUTH = 'auth';
   public const string AUTH_REFRESH = 'auth_refresh';
@@ -19,4 +22,8 @@ interface MiddlewareInterface {
     self::BODY_JSON,
     self::BODY_BINARY,
   ];
+
+  public function __construct(Request $request, array $route = []);
+
+  public function run(): ?Reply;
 }
