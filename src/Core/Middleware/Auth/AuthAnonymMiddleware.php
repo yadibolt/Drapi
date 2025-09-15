@@ -35,25 +35,37 @@ class AuthAnonymMiddleware implements MiddlewareInterface {
     if (!$isOk->valid || $isOk->error) {
       return new Reply([
         'message' => 'Invalid token.',
-        'actionId' => ReplyInterface::ACTION_INVALID_TOKEN,
+        'actionId' => ReplyInterface::ACTION_INVALID_TOKEN . ';' . $isOk->action,
       ], 401);
     }
 
     $payload = $jsonWebToken->payloadFrom($matches[1]);
-    if (empty($payload) || !isset($payload['userId']) || !is_numeric($payload['userId'])) {
+    if (empty($payload) || !isset($payload['data']['userId']) || !is_numeric($payload['data']['userId'])) {
       return new Reply([
         'message' => 'Invalid token payload.',
         'actionId' => ReplyInterface::ACTION_INVALID_PAYLOAD,
       ], 401);
     }
 
-    if ($payload['userId'] > 0) {
+    if ($payload['data']['userId'] > 0) {
       return new Reply([
         'message' => 'Already logged in.',
         'actionId' => ReplyInterface::ACTION_ALREADY_LOGGED_IN,
       ], 403);
     }
-    // todo: add context
+
+    $context = $this->request->attributes->get('context', []);
+    self::setRequestAttributes($this->request, 'context', [
+      ...$context,
+      'accessToken' => $matches[1],
+      'user' => [
+        'id' => 0,
+        'roles' => ['anonymous'],
+        'permissions' => ['access content'],
+        'isActive' => true,
+        'isAuthenticated' => false,
+      ],
+    ]);
 
     return null;
   }

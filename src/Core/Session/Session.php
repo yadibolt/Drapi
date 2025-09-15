@@ -8,6 +8,7 @@ use Drupal\drift_eleven\Core\Cache\Cache;
 use Drupal\drift_eleven\Core\Logger\Logger;
 use Drupal\drift_eleven\Core\Logger\LoggerInterface;
 use Exception;
+use PDO;
 
 class Session implements SessionInterface {
   protected const string TABLE_NAME = D9M7_PROJECT_ID . '_session';
@@ -19,19 +20,21 @@ class Session implements SessionInterface {
   protected string $tokenType;
   protected int $tokenParentId;
   protected string $userAgent;
+  protected string $hostname;
   protected int $updatedAt;
   protected int $createdAt;
   protected Drupal\Core\Database\Connection $database;
 
-  public function __construct(int $entityId, string $token, string $tokenType, int $tokenParentId, string $userAgent = '', ?int $id = null, int $updatedAt = 0, int $createdAt = 0) {
+  public function __construct(int $entityId, string $token, string $tokenType, int $tokenParentId, string $userAgent = '', string $hostname = '', ?int $id = null, int $updatedAt = 0, int $createdAt = 0) {
     $this->id = $id;
     $this->entityId = $entityId;
     $this->token = $token;
     $this->tokenType = $tokenType;
     $this->tokenParentId = $tokenParentId;
     $this->userAgent = $userAgent;
-    $this->updatedAt = $updatedAt;
-    $this->createdAt = $createdAt;
+    $this->hostname = $hostname;
+    $this->updatedAt = $updatedAt === 0 ? time() : $updatedAt;
+    $this->createdAt = $createdAt === 0 ? time() : $createdAt;
 
     $this->database = Drupal::database();
   }
@@ -76,6 +79,7 @@ class Session implements SessionInterface {
         'token_type' => $this->tokenType,
         'token_parent_id' => $this->tokenParentId,
         'user_agent' => $this->userAgent,
+        'hostname' => $this->hostname,
         'updated_at' => time(),
         'created_at' => time(),
       ]);
@@ -98,6 +102,7 @@ class Session implements SessionInterface {
         'token_type' => $this->tokenType,
         'token_parent_id' => $this->tokenParentId,
         'user_agent' => $this->userAgent,
+        'hostname' => $this->hostname,
         'updated_at' => time(),
       ]);
 
@@ -112,6 +117,7 @@ class Session implements SessionInterface {
         'token_type' => $this->tokenType,
         'token_parent_id' => 0,
         'user_agent' => $this->userAgent,
+        'hostname' => $this->hostname,
         'updated_at' => time(),
         'created_at' => time(),
       ]);
@@ -134,20 +140,25 @@ class Session implements SessionInterface {
         'token_type' => $this->tokenType,
         'token_parent_id' => 0,
         'user_agent' => $this->userAgent,
+        'hostname' => $this->hostname,
         'updated_at' => time(),
       ]);
 
     return $query->execute() ? $this->id : 0;
   }
 
-  protected function existsRefresh(?string $token = null): int {
-    $useToken = $this->token;
-    if ($token) $useToken = $token;
-
+  protected function existsRefresh(?int $id = null): int {
     $result = $this->database->select(self::TABLE_NAME, self::TABLE_NAME_SHORT)
-      ->fields(self::TABLE_NAME_SHORT, ['id'])
-      ->condition('token', $useToken)
-      ->condition('token_type', JsonWebTokenInterface::TOKEN_REFRESH)
+      ->fields(self::TABLE_NAME_SHORT, ['id']);
+
+    // if we have an id, we check by id instead of token
+    if ($id !== null) {
+      $result = $result->condition('id', $id);
+    } else {
+      $result = $result->condition('token', $this->token);
+    }
+
+    $result = $result->condition('token_type', JsonWebTokenInterface::TOKEN_REFRESH)
       ->execute()
       ->fetchField();
 
@@ -192,7 +203,7 @@ class Session implements SessionInterface {
     $query->innerJoin('user__roles', 'u__r', "u__r.bundle = '$bundleUser' AND $shortName.entity_id = u__r.entity_id");
     $query->fields('u__r', ['roles_target_id']);
 
-    $query->innerJoin('config', 'cf', "u__r.roles_target_id = cf.name");
+    $query->innerJoin('config', 'cf', "CONCAT('user.role.', u__r.roles_target_id) = cf.name");
     $query->fields('cf', ['data']);
 
     $result = $query->execute()->fetchAll();
@@ -241,7 +252,7 @@ class Session implements SessionInterface {
     // we create temporary access token object to find the refresh token id
     $tokenSession = new self(
       entityId: 0, token: $token, tokenType: JsonWebTokenInterface::TOKEN_ACCESS,
-      tokenParentId: 0, userAgent: '', id: null, updatedAt: 0, createdAt: 0
+      tokenParentId: 0, userAgent: '', hostname: '', id: null, updatedAt: 0, createdAt: 0
     );
     $refreshTokenId = $tokenSession->existsRefresh();
     if ($refreshTokenId <> 0) {
@@ -259,5 +270,67 @@ class Session implements SessionInterface {
     }
 
     return $result > 0;
+  }
+
+  public static function invalidate(string $token, string $tokenType = JsonWebTokenInterface::TOKEN_ACCESS): bool {
+    if (empty($token)) return false;
+    if (!in_array($tokenType, JsonWebTokenInterface::TOKEN_TYPES)) return false;
+
+    $database = Drupal::database();
+    if ($tokenType === JsonWebTokenInterface::TOKEN_ACCESS) {
+      $result = $database->select(self::TABLE_NAME, self::TABLE_NAME_SHORT)
+        ->fields(self::TABLE_NAME_SHORT, ['id', 'token_parent_id'])
+        ->condition('token', $token)
+        ->condition('token_type', JsonWebTokenInterface::TOKEN_ACCESS)
+        ->execute()
+        ->fetchAssoc();
+
+      if (empty($result) || empty($result['token_parent_id'])) return false;
+
+      $result = $database->delete(self::TABLE_NAME)
+        ->condition('id', $result['token_parent_id'])
+        ->condition('token_type', JsonWebTokenInterface::TOKEN_REFRESH);
+      $affected = $result->execute();
+
+      $result = $database->delete(self::TABLE_NAME)
+        ->condition('token', $token)
+        ->condition('token_type', JsonWebTokenInterface::TOKEN_ACCESS);
+      $affected += $result->execute();
+
+      return $affected > 0;
+    }
+    if ($tokenType === JsonWebTokenInterface::TOKEN_REFRESH) {
+      $result = $database->select(self::TABLE_NAME, self::TABLE_NAME_SHORT)
+        ->fields(self::TABLE_NAME_SHORT, ['id'])
+        ->condition('token', $token)
+        ->condition('token_type', JsonWebTokenInterface::TOKEN_REFRESH)
+        ->execute()
+        ->fetchAssoc();
+
+      if (empty($result) || empty($result['id'])) return false;
+
+      $result = $database->select(self::TABLE_NAME, self::TABLE_NAME_SHORT)
+        ->fields(self::TABLE_NAME_SHORT, ['token'])
+        ->condition('token_parent_id', $result['id'])
+        ->condition('token_type', JsonWebTokenInterface::TOKEN_ACCESS)
+        ->execute()->fetchAllAssoc('token', PDO::FETCH_ASSOC);
+
+      if (empty($result)) return false;
+
+      $tokens = [];
+      foreach ($result as $tok => $_) {
+        $tokens[] = $tok;
+        Cache::invalidate(D9M7_CACHE_KEY . ":session:$tok");
+      }
+
+      $result = $database->delete(self::TABLE_NAME)
+        ->condition('token', $tokens, 'IN')
+        ->condition('token_type', JsonWebTokenInterface::TOKEN_ACCESS);
+      $affected = $result->execute();
+
+      return $affected > 0;
+    }
+
+    return false;
   }
 }

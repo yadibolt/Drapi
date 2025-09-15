@@ -4,8 +4,6 @@ namespace Drupal\drift_eleven\Core\Routes;
 
 use Drupal\drift_eleven\Core\HTTP\Response\Reply;
 use Drupal\drift_eleven\Core\Route\RouteFoundation;
-use Drupal\drift_eleven\Core\Route\RouteFoundationInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * **Example Route Definition**
@@ -22,8 +20,8 @@ use Symfony\Component\HttpFoundation\Request;
  * useCache= true
  * @route-end
  */
-class ExampleRoute extends RouteFoundation implements RouteFoundationInterface {
-  public function handle(Request $request): Reply {
+class ExampleRoute extends RouteFoundation {
+  public function handle(): Reply {
     return new Reply([
       'message' => 'Yay!',
       'someData' => [

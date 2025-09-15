@@ -12,6 +12,7 @@ use Drupal\drift_eleven\Core\File\FileAttributeRetriever;
 use Exception;
 use InvalidArgumentException;
 use ParseError;
+use Symfony\Component\HttpFoundation\Request;
 
 class Route implements RouteInterface {
   protected string $id;
@@ -85,8 +86,7 @@ class Route implements RouteInterface {
       path: $this->path,
       defaults: [
         '_title' => $this->name,
-        '_controller' => $attributes['name'] . '::' . 'handle',
-        '_format' => 'json',
+        '_controller' => $attributes['name'] . '::' . 'init',
       ],
       requirements: [
         '_permission' => implode(', ', $this->permissions) ?: '',

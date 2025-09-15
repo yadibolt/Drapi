@@ -7,8 +7,14 @@ use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 interface ReplyInterface {
   public const string ACTION_INVALID_HEADER = 'invalid_header';
   public const string ACTION_INVALID_TOKEN = 'invalid_token';
+  public const string ACTION_INVALID_OR_NOT_EXPIRED_TOKEN = 'invalid_or_not_expired_token';
   public const string ACTION_INVALID_PAYLOAD = 'invalid_payload';
   public const string ACTION_ALREADY_LOGGED_IN = 'already_logged_in';
+  public const string ACTION_UNAUTHORIZED_ACCESS = 'unauthorized_access';
+  public const string ACTION_SESSION_NOT_FOUND = 'session_not_found';
+  public const string ACTION_USER_BLOCKED = 'user_blocked';
+  public const string ACTION_COULD_NOT_INVALIDATE_SESSION = 'could_not_invalidate_session';
+  public const string ACTION_COULD_NOT_CREATE_SESSION = 'could_not_create_session';
   /**
    * Constructs a new response used in Drift Eleven endpoints
    *

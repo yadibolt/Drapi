@@ -10,4 +10,8 @@ trait RequestAttributesTrait {
       $request->attributes->set($key, $value);
     }
   }
+
+  public static function setRequestAttributes(Request $request, string $key, array $values): void {
+    $request->attributes->set($key, $values);
+  }
 }

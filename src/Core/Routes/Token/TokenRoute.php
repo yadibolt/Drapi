@@ -6,8 +6,6 @@ use Drupal\drift_eleven\Core\Auth\JsonWebToken;
 use Drupal\drift_eleven\Core\Auth\JsonWebTokenInterface;
 use Drupal\drift_eleven\Core\HTTP\Response\Reply;
 use Drupal\drift_eleven\Core\Route\RouteFoundation;
-use Drupal\drift_eleven\Core\Route\RouteFoundationInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @route
@@ -22,19 +20,19 @@ use Symfony\Component\HttpFoundation\Request;
  * useCache= false
  * @route-end
  */
-class TokenRoute extends RouteFoundation implements RouteFoundationInterface {
-  public function handle(Request $request): Reply {
+class TokenRoute extends RouteFoundation {
+  public function handle(): Reply {
     $jsonWebToken = new JsonWebToken();
     $payload = [
       'userId' => 0,
     ];
 
     // generate permanent token
-    $token = $jsonWebToken->make(JsonWebTokenInterface::TOKEN_ACCESS, $payload, JsonWebTokenInterface::EXP_TIME_PERMANENT_DEFAULT);
+    $tok = $jsonWebToken->make(JsonWebTokenInterface::TOKEN_ACCESS, $payload, JsonWebTokenInterface::EXP_TIME_PERMANENT_DEFAULT);
 
     return new Reply([
       'message' => 'Token generated.',
-      'accessToken' => $token,
+      'accessToken' => $tok,
     ], 200);
   }
 }

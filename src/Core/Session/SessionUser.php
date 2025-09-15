@@ -17,8 +17,12 @@ class SessionUser implements SessionUserInterface {
     $this->permissions = $permissions;
   }
 
+  public function getEntityId(): int {
+    return $this->entityId;
+  }
+
   public function isActive(): bool {
-    return in_array('active', $this->roles, true);
+    return $this->active;
   }
 
   public function getRoles(): array {
@@ -42,7 +46,7 @@ class SessionUser implements SessionUserInterface {
     $database = Drupal::database();
     $bundleUser = 'user';
 
-    $query = $database->select('uses_field_data', 'ufd')
+    $query = $database->select('users_field_data', 'ufd')
       ->fields('ufd', ['uid', 'status'])
       ->condition('ufd.uid', $entityId);
 

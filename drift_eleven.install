@@ -43,6 +43,12 @@ function drift_eleven_schema(): array {
         'not null' => false,
         'description' => 'User agent of entity that created this session',
       ],
+      'hostname' => [
+        'type' => 'varchar',
+        'length' => 512,
+        'not null' => false,
+        'description' => 'Hostname of entity that created this session',
+      ],
       'updated_at' => [
         'type' => 'int',
         'not null' => true,

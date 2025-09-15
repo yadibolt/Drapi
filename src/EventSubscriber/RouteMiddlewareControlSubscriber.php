@@ -33,9 +33,6 @@ class RouteMiddlewareControlSubscriber implements EventSubscriberInterface {
     $requestUri = $request->getPathInfo();
     $requestUriSplit = mb_split('/', ltrim($requestUri, '/'));
 
-    $cacheHit = Cache::find(D9M7_CACHE_KEY . ":url:$requestUri");
-    if (!$cacheHit) return;
-
     $config = Drupal::configFactory()->getEditable(D9M7_CONFIG_KEY);
     $routeRegistry = $config->get('routeRegistry') ?: [];
 
