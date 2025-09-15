@@ -287,6 +287,8 @@ class Session implements SessionInterface {
 
       if (empty($result) || empty($result['token_parent_id'])) return false;
 
+      Cache::invalidate(D9M7_CACHE_KEY . ":session:$token");
+
       $result = $database->delete(self::TABLE_NAME)
         ->condition('id', $result['token_parent_id'])
         ->condition('token_type', JsonWebTokenInterface::TOKEN_REFRESH);
