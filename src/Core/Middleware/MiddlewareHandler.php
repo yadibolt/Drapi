@@ -34,8 +34,6 @@ class MiddlewareHandler {
         MiddlewareInterface::AUTH => new AuthMiddleware($this->request, $this->route)->run(),
         MiddlewareInterface::AUTH_ANONYM => new AuthAnonymMiddleware($this->request, $this->route)->run(),
         MiddlewareInterface::AUTH_REFRESH => new AuthRefreshMiddleware($this->request, $this->route)->run(),
-        MiddlewareInterface::BODY_JSON => new JsonBodyMiddleware($this->request, $this->route)->run(),
-        MiddlewareInterface::BODY_BINARY => new BinaryBodyMiddleware($this->request, $this->route)->run(),
         MiddlewareInterface::REQUEST => new RequestMiddleware($this->request, $this->route)->run(),
         default => new Reply([
           'message' => 'Unknown middleware: ' . $mw

@@ -1,8 +1,56 @@
 <?php
 
+use Drupal\Core\Render\RendererInterface;
 use Drupal\drift_eleven\Core\Cache\Cache;
 
 require_once __DIR__ . '/globals.inc';
+
+// TODO: Change this is temporary
+function drift_eleven_mail(string $key, array &$message, array $params): void {
+  /** @var RendererInterface $renderer */
+  $renderer = Drupal::service('renderer');
+
+  switch($key) {
+    case 'send_mail':
+      if (isset($params['headers'])) $message['headers'] = array_merge($message['headers'], $params['headers']);
+      if (!empty($params['from'])) $message['from'] = $params['from'];
+
+      $message['subject'] = $params['subject'];
+      $message['body'][] = (string)$renderer->renderRoot($params['body']);
+
+      break;
+    case 'send_mail_with_attachments':
+      if (isset($params['headers'])) $message['headers'] = array_merge($message['headers'], $params['headers']);
+      if (!empty($params['from'])) $message['from'] = $params['from'];
+
+      $message['subject'] = $params['subject'];
+      $message['attachments'] = $params['attachments'];
+      $message['body'][] = (string)$renderer->renderRoot($params['body']);
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function drift_eleven_theme(array $existing, string $type, string $theme, string $path): array {
+  return [
+    'user_forgot_password_mail' => [
+      'variables' => [
+        'params' => [],
+      ],
+    ],
+    'user_forgot_password_confirmation_mail' => [
+      'variables' => [
+        'params' => [],
+      ],
+    ],
+    'user_registration_mail' => [
+      'variables' => [
+        'params' => [],
+      ],
+    ],
+  ];
+}
 
 function drift_eleven_cache_flush(): void {
   Cache::flush();

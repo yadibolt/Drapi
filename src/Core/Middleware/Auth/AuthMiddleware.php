@@ -79,6 +79,7 @@ class AuthMiddleware implements MiddlewareInterface {
         'id' => $sessionUser->getEntityId(),
         'roles' => $sessionUser->getRoles(),
         'permissions' => $sessionUser->getPermissions(),
+        'langcode' => $sessionUser->getLangcode(),
         'isActive' => true,
         'isAuthenticated' => true,
       ],

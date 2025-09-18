@@ -5,7 +5,7 @@ namespace Drupal\drift_eleven\Core\Route;
 use Drupal\drift_eleven\Core\HTTP\Response\Reply;
 use Symfony\Component\HttpFoundation\Request;
 
-abstract class RouteFoundation implements RouteFoundationInterface{
+abstract class RouteFoundation implements RouteFoundationInterface {
   /**
    * Request object from Symfony
    * @var Request $request
@@ -55,7 +55,7 @@ abstract class RouteFoundation implements RouteFoundationInterface{
 
     if ($this->request->headers->has('Content-Type') && str_contains($this->request->headers->get('Content-Type'), 'form-data')) {
       $this->data = $this->request->request->all() ?: [];
-      $this->files = $this->request->files->all();
+      $this->files = $this->request->files->all() ?: [];
     }
 
     return $this->handle();

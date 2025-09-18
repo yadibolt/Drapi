@@ -60,6 +60,7 @@ class RefreshTokenRoute extends RouteFoundation {
       true,
       $this->context['user']['roles'],
       $this->context['user']['permissions'],
+      $this->context['user']['langcode'],
     );
 
     Cache::make(D9M7_CACHE_KEY . ":session:$accessTok", $sessionUser->getCacheStructData());

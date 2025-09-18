@@ -3,6 +3,9 @@
 namespace Drupal\drift_eleven\Core\Session;
 
 interface SessionUserInterface {
+  public const string FORGOT_PASSWORD_TABLE_NAME = D9M7_PROJECT_ID . '_password_reset';
+  public const string FORGOT_PASSWORD_TABLE_NAME_SHORT = 'depr';
+  public const int PASSWORD_RESET_TOKEN_EXPIRY = 3600; // TODO: make this configurable
   /**
    * Constructs a new SessionUser object.
    *
@@ -11,7 +14,7 @@ interface SessionUserInterface {
    * @param array $roles the user roles
    * @param array $permissions the user permissions
    */
-  public function __construct(int $entityId, bool $active, array $roles, array $permissions);
+  public function __construct(int $entityId, bool $active, array $roles, array $permissions, string $langcode);
 
   public function isActive(): bool;
 
@@ -31,4 +34,12 @@ interface SessionUserInterface {
    * @return SessionUserInterface|null the SessionUser instance or null if the user does not exist
    */
   public static function fromEntityId(int $entityId): ?SessionUserInterface;
+
+  /**
+   * Generates a reset token for various user operations (e.g., password reset).
+   *
+   * @param string $mail the user's email address
+   * @return string the generated reset token
+   */
+  public static function makeResetToken(string $mail, string $langcode): string;
 }

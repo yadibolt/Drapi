@@ -65,6 +65,7 @@ class AuthRefreshMiddleware implements MiddlewareInterface {
         'id' => $sessionUser->getEntityId(),
         'roles' => $sessionUser->getRoles(),
         'permissions' => $sessionUser->getPermissions(),
+        'langcode' => $sessionUser->getLangcode(),
         'isActive' => true,
         'isAuthenticated' => false,
       ],

@@ -19,6 +19,16 @@ class RequestMiddleware implements MiddlewareInterface {
   }
 
   public function run(): ?Reply {
+    $headerLanguage = $this->request->headers->get('Accept-Language', 'en');
+
+    $context = $this->request->attributes->get('context', []);
+    self::setRequestAttributes($this->request, 'context', [
+      ...$context,
+      'request' => [
+        'langcode' => $headerLanguage,
+      ],
+    ]);
+
     return null;
   }
 }

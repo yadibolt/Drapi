@@ -10,8 +10,6 @@ interface MiddlewareInterface {
   public const string AUTH_ANONYM = 'auth_anonym';
   public const string AUTH_REFRESH = 'auth_refresh';
   public const string REQUEST = 'request';
-  public const string BODY_JSON = 'body_json';
-  public const string BODY_BINARY = 'body_binary';
   /**
    * List of allowed middleware types
    * @var array
@@ -21,8 +19,6 @@ interface MiddlewareInterface {
     self::AUTH_ANONYM,
     self::AUTH_REFRESH,
     self::REQUEST,
-    self::BODY_JSON,
-    self::BODY_BINARY,
   ];
 
   public function __construct(Request $request, array $route = []);

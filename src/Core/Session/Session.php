@@ -198,7 +198,7 @@ class Session implements SessionInterface {
       ->condition(self::TABLE_NAME_SHORT . '.token_type', $tokenType);
 
     $query->innerJoin('users_field_data', 'ufd', "$shortName.entity_id = ufd.uid");
-    $query->fields('ufd', ['status']);
+    $query->fields('ufd', ['status', 'langcode']);
 
     $query->innerJoin('user__roles', 'u__r', "u__r.bundle = '$bundleUser' AND $shortName.entity_id = u__r.entity_id");
     $query->fields('u__r', ['roles_target_id']);
@@ -226,6 +226,7 @@ class Session implements SessionInterface {
       (bool)$result[0]->status,
       array_unique($roles),
       array_unique($permissions),
+      $result[0]->langcode
     );
   }
 

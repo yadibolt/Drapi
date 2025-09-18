@@ -22,7 +22,7 @@ use Exception;
  * path= 'auth/login'
  * permissions= ['access content']
  * roles= []
- * useMiddleware= ['auth_anonym', 'body_json', 'request']
+ * useMiddleware= ['auth_anonym', 'request']
  * @route-end
  */
 class LoginRoute extends RouteFoundation {

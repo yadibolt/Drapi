@@ -16,7 +16,7 @@ use Drupal\drift_eleven\Core\Route\RouteFoundation;
  * path= 'auth/token'
  * permissions= ['access content']
  * roles= []
- * useMiddleware= ['request']
+ * useMiddleware= ['auth_anonym', 'request']
  * useCache= false
  * @route-end
  */

@@ -62,6 +62,7 @@ class AuthAnonymMiddleware implements MiddlewareInterface {
         'id' => 0,
         'roles' => ['anonymous'],
         'permissions' => ['access content'],
+        'langcode' => 'en',
         'isActive' => true,
         'isAuthenticated' => false,
       ],
