@@ -4,6 +4,7 @@ namespace Drupal\drift_eleven\Core\Routes\User;
 
 use Drupal;
 use Drupal\drift_eleven\Core\Asserters\PasswordAsserter;
+use Drupal\drift_eleven\Core\Asserters\UserAsserter;
 use Drupal\drift_eleven\Core\HTTP\Response\Reply;
 use Drupal\drift_eleven\Core\Logger\Logger;
 use Drupal\drift_eleven\Core\Logger\LoggerInterface;
@@ -46,7 +47,7 @@ class ForgotPasswordConfirmRoute extends RouteFoundation {
       ], 400);
     }
 
-    $passwordAsserter = new PasswordAsserter();
+    $passwordAsserter = new UserAsserter();
     if ($passwordAsserter->assertPasswordRequirements($this->data['password'])) {
       return new Reply([
         'message' => 'Password does not meet the requirements.',
@@ -85,10 +86,6 @@ class ForgotPasswordConfirmRoute extends RouteFoundation {
       ], 500);
     }
 
-    Logger::l('Password reset successful for user ID @userId.', [
-      '@userId' => $user->id(),
-    ], LoggerInterface::LEVEL_INFO);
-
     $mailClient = new MailClient('user_forgot_password_confirmation_mail', []);
     $mailClient->sendMail(
       Drupal::config('system.site')->get('mail'), // TODO: make this configurable
@@ -97,8 +94,8 @@ class ForgotPasswordConfirmRoute extends RouteFoundation {
       $user->getPreferredLangcode()
     );
 
-    Logger::l('Password reset requested for email @mail.', [
-      '@mail' => $this->data['mail'],
+    Logger::l('Password reset successful for user ID @userId.', [
+      '@userId' => $user->id(),
     ], LoggerInterface::LEVEL_INFO);
 
     return new Reply([

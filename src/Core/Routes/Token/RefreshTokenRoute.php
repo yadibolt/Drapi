@@ -63,7 +63,8 @@ class RefreshTokenRoute extends RouteFoundation {
       $this->context['user']['langcode'],
     );
 
-    Cache::make(D9M7_CACHE_KEY . ":session:$accessTok", $sessionUser->getCacheStructData());
+    $cacheName = D9M7_CACHE_KEY . ":session_" . $accessTok;
+    Cache::make($cacheName, $sessionUser->getCacheStructData());
 
     Logger::l('User with id @userId has refreshed their access token.', [
       '@userId' => $this->context['user']['id'],

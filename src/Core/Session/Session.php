@@ -50,7 +50,8 @@ class Session implements SessionInterface {
           // we also create a cache entry for the entity
           $sessionUser = SessionUser::fromEntityId($this->entityId);
           if ($sessionUser) {
-            Cache::make(D9M7_CACHE_KEY . ":session:$this->token", $sessionUser->getCacheStructData());
+            $cacheName = D9M7_CACHE_KEY . ":session_" . $this->token;
+            Cache::make($cacheName, $sessionUser->getCacheStructData());
           }
         }
         return $tokenId;
@@ -200,10 +201,10 @@ class Session implements SessionInterface {
     $query->innerJoin('users_field_data', 'ufd', "$shortName.entity_id = ufd.uid");
     $query->fields('ufd', ['status', 'langcode']);
 
-    $query->innerJoin('user__roles', 'u__r', "u__r.bundle = '$bundleUser' AND $shortName.entity_id = u__r.entity_id");
+    $query->leftJoin('user__roles', 'u__r', "u__r.bundle = '$bundleUser' AND $shortName.entity_id = u__r.entity_id");
     $query->fields('u__r', ['roles_target_id']);
 
-    $query->innerJoin('config', 'cf', "CONCAT('user.role.', u__r.roles_target_id) = cf.name");
+    $query->leftJoin('config', 'cf', "CONCAT('user.role.', u__r.roles_target_id) = cf.name");
     $query->fields('cf', ['data']);
 
     $result = $query->execute()->fetchAll();
@@ -215,9 +216,11 @@ class Session implements SessionInterface {
     foreach ($result as $row) {
       $roles[] = $row->roles_target_id;
 
-      $roleData = unserialize($row->data);
-      if (isset($roleData['permissions']) && is_array($roleData['permissions'])) {
-        $permissions = array_merge($permissions, $roleData['permissions']);
+      if (!empty($row->data)) {
+        $roleData = unserialize($row->data);
+        if (isset($roleData['permissions']) && is_array($roleData['permissions'])) {
+          $permissions = array_merge($permissions, $roleData['permissions']);
+        }
       }
     }
 
@@ -244,7 +247,8 @@ class Session implements SessionInterface {
         ->condition('token_type', JsonWebTokenInterface::TOKEN_ACCESS);
 
       if ($query->execute() > 0) {
-        Cache::invalidate(D9M7_CACHE_KEY . ":session:$token");
+        $cacheName = D9M7_CACHE_KEY . ":session_" . $token;
+        Cache::invalidate($cacheName);
         return true;
       } else { return false; }
     }
@@ -288,7 +292,8 @@ class Session implements SessionInterface {
 
       if (empty($result) || empty($result['token_parent_id'])) return false;
 
-      Cache::invalidate(D9M7_CACHE_KEY . ":session:$token");
+      $cacheName = D9M7_CACHE_KEY . ":session_" . $token;
+      Cache::invalidate($cacheName);
 
       $result = $database->delete(self::TABLE_NAME)
         ->condition('id', $result['token_parent_id'])
@@ -323,7 +328,8 @@ class Session implements SessionInterface {
       $tokens = [];
       foreach ($result as $tok => $_) {
         $tokens[] = $tok;
-        Cache::invalidate(D9M7_CACHE_KEY . ":session:$tok");
+        $cacheName = D9M7_CACHE_KEY . ":session_" . $tok;
+        Cache::invalidate($cacheName);
       }
 
       $result = $database->delete(self::TABLE_NAME)

@@ -60,8 +60,14 @@ class Reply extends Response implements ReplyInterface {
     // only for GET requests
     if ($this->useCache && strtolower($request->getMethod()) === 'get') {
       $requestUri = $request->getPathInfo();
+      $cacheName = D9M7_CACHE_KEY . ":url:$requestUri";
 
-      Cache::make(D9M7_CACHE_KEY . ":url:$requestUri", [
+      if (!empty($route['useMiddleware']) && in_array('auth', $route['useMiddleware'])) {
+       $token = $request->headers->get('authorization');
+        if ($token && preg_match('/^Bearer\s+(\S+)$/', $token, $matches)) $cacheName = D9M7_CACHE_KEY . ":token_" . $matches[1] . ":url_$requestUri";
+      }
+
+      Cache::make($cacheName, [
         'data' => $this->data,
         'status' => $status,
         'headers' => $this->headers,

@@ -35,7 +35,15 @@ class RouteCacheControlSubscriber implements EventSubscriberInterface {
     $requestUri = $request->getPathInfo();
     $requestUriSplit = mb_split('/', ltrim($requestUri, '/'));
 
-    $cacheHit = Cache::find(D9M7_CACHE_KEY . ":url:$requestUri");
+    // if we have token we try to find cache by it
+    $authorization = $request->headers->get('authorization');
+    if (!empty($authorization) && preg_match('/^Bearer\s+(\S+)$/', $authorization, $matches)) {
+      $cacheNameAuth = D9M7_CACHE_KEY . ":token_" . $matches[1] . ":url_" . $requestUri;
+    }
+
+    $cacheName = D9M7_CACHE_KEY . ":url_" . $requestUri;
+    $cacheHit = !empty($cacheNameAuth) ? Cache::find($cacheNameAuth) : Cache::find($cacheName);
+
     if (!$cacheHit) return;
 
     $config = Drupal::configFactory()->getEditable(D9M7_CONFIG_KEY);
@@ -61,7 +69,6 @@ class RouteCacheControlSubscriber implements EventSubscriberInterface {
     }
 
     if (!$route) return;
-
     // check access
     if (
       (empty($route['roles'])) &&
@@ -87,13 +94,14 @@ class RouteCacheControlSubscriber implements EventSubscriberInterface {
       if (!$isOk->valid || $isOk->expired || $isOk->error) return;
 
       $payload = JsonWebToken::payloadFrom($matches[1]);
-      if (!isset($payload['userId']) || !is_numeric($payload['userId']) || $payload['userId'] < 0) return;
+      if (!isset($payload['data']['userId']) || !is_numeric($payload['data']['userId']) || $payload['data']['userId'] < 0) return;
 
       // first, we check the cache
       // if there is token stored in the cache
       // the session exists, because the token was verified,
       // and we do not need to query the database
-      $hit = Cache::find(D9M7_CACHE_KEY . ":session:$matches[1]");
+      $cacheName = D9M7_CACHE_KEY . ":session_" . md5($matches[1]);
+      $hit = Cache::find($cacheName);
       if ($hit) {
         if (!empty($hit['roles'])) {
           $s1 = sort($hit['roles']);
@@ -134,7 +142,8 @@ class RouteCacheControlSubscriber implements EventSubscriberInterface {
 
       // all ok
       // we can return the response and set the cache for the future hits
-      Cache::make(D9M7_CACHE_KEY . ":session:$matches[1]", $sessionUser->getCacheStructData());
+      $cacheName = D9M7_CACHE_KEY . ":session_" . md5($matches[1]);
+      Cache::make($cacheName, $sessionUser->getCacheStructData());
       $event->setResponse(
         new Reply($cacheHit['data'], $cacheHit['status'], $cacheHit['headers'], true)
       );
