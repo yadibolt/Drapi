@@ -42,7 +42,8 @@ class RouteCacheControlSubscriber implements EventSubscriberInterface {
     }
 
     $cacheName = D9M7_CACHE_KEY . ":url_" . $requestUri;
-    $cacheHit = !empty($cacheNameAuth) ? Cache::find($cacheNameAuth) : Cache::find($cacheName);
+    $cacheHit = !empty($cacheNameAuth) ? Cache::find($cacheNameAuth) : null;
+    if ($cacheHit === null) $cacheHit = Cache::find($cacheName);
 
     if (!$cacheHit) return;
 

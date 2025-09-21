@@ -4,6 +4,7 @@ namespace Drupal\drift_eleven\Core\HTTP\Response;
 
 use Drupal;
 use Drupal\drift_eleven\Core\Cache\Cache;
+use Drupal\drift_eleven\Core\Cache\CacheInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -60,18 +61,23 @@ class Reply extends Response implements ReplyInterface {
     // only for GET requests
     if ($this->useCache && strtolower($request->getMethod()) === 'get') {
       $requestUri = $request->getPathInfo();
-      $cacheName = D9M7_CACHE_KEY . ":url:$requestUri";
+      $cacheName = D9M7_CACHE_KEY . ":url_$requestUri";
+      $cacheTags = [];
 
       if (!empty($route['useMiddleware']) && in_array('auth', $route['useMiddleware'])) {
        $token = $request->headers->get('authorization');
         if ($token && preg_match('/^Bearer\s+(\S+)$/', $token, $matches)) $cacheName = D9M7_CACHE_KEY . ":token_" . $matches[1] . ":url_$requestUri";
       }
 
+      if (!empty($route['cacheTags']) && is_array($route['cacheTags'])) {
+        $cacheTags = $route['cacheTags'];
+      }
+
       Cache::make($cacheName, [
         'data' => $this->data,
         'status' => $status,
         'headers' => $this->headers,
-      ]);
+      ], CacheInterface::DURATION_DEFAULT, $cacheTags);
     }
   }
 

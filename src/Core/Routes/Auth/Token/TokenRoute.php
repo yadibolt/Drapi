@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Routes\Token;
+namespace Drupal\drift_eleven\Core\Routes\Auth\Token;
 
 use Drupal\drift_eleven\Core\Auth\JsonWebToken;
 use Drupal\drift_eleven\Core\Auth\JsonWebTokenInterface;
@@ -16,7 +16,7 @@ use Drupal\drift_eleven\Core\Route\RouteFoundation;
  * path= 'auth/token'
  * permissions= ['access content']
  * roles= []
- * useMiddleware= ['auth_anonym', 'request']
+ * useMiddleware= ['request']
  * useCache= false
  * @route-end
  */

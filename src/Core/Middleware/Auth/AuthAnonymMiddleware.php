@@ -47,12 +47,12 @@ class AuthAnonymMiddleware implements MiddlewareInterface {
       ], 401);
     }
 
-    if ($payload['data']['userId'] > 0) {
+    /*if ($payload['data']['userId'] > 0) {
       return new Reply([
         'message' => 'Already logged in.',
         'actionId' => ReplyInterface::ACTION_ALREADY_LOGGED_IN,
       ], 403);
-    }
+    }*/
 
     $context = $this->request->attributes->get('context', []);
     self::setRequestAttributes($this->request, 'context', [

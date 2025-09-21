@@ -39,9 +39,9 @@ class UserRoute extends RouteFoundation {
       'id' => $user->id(),
       'name' => $user->getAccountName(),
       'email' => $user->getEmail(),
-      'created' => $user->getCreatedTime(),
-      'changed' => $user->getChangedTime(),
-      'status' => $user->isActive(),
+      'createdAt' => $user->getCreatedTime(),
+      'changedAt' => $user->getChangedTime(),
+      'active' => $user->isActive(),
     ], 200);
   }
 }

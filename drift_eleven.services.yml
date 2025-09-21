@@ -6,7 +6,7 @@ services:
   # $settings['cache']['bins']['drift_eleven'] = 'cache.backend.apcu';
   # ###
   cache.drift_eleven:
-    class: Drupal\Core\Cache\CacheBackendInterface
+    class: Drupal\Core\Cache\ApcuBackend
     factory: cache_factory:get
     arguments: ['drift_eleven']
 
@@ -25,5 +25,11 @@ services:
   # route middlewares control
   drift_eleven.service.route_middleware_control_subscriber:
     class: Drupal\drift_eleven\EventSubscriber\RouteMiddlewareControlSubscriber
+    tags:
+      - { name: event_subscriber }
+
+  # custom cache invalidation tags
+  drift_eleven.service.config_cache_control_subscriber:
+    class: Drupal\drift_eleven\EventSubscriber\ConfigCacheControlSubscriber
     tags:
       - { name: event_subscriber }

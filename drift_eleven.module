@@ -1,7 +1,10 @@
 <?php
 
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\RendererInterface;
 use Drupal\drift_eleven\Core\Cache\Cache;
+use Drupal\drift_eleven\Core\Logger\Logger;
+use Drupal\drift_eleven\Core\Logger\LoggerInterface;
 
 require_once __DIR__ . '/globals.inc';
 
@@ -54,4 +57,16 @@ function drift_eleven_theme(array $existing, string $type, string $theme, string
 
 function drift_eleven_cache_flush(): void {
   Cache::flush();
+}
+
+function drift_eleven_entity_insert(EntityInterface $entity): void {
+  Cache::invalidateEntity($entity);
+}
+
+function drift_eleven_entity_update(EntityInterface $entity): void {
+  Cache::invalidateEntity($entity);
+}
+
+function drift_eleven_entity_delete(EntityInterface $entity): void {
+  Cache::invalidateEntity($entity);
 }

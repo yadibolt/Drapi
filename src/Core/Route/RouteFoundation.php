@@ -2,6 +2,7 @@
 
 namespace Drupal\drift_eleven\Core\Route;
 
+use Drupal;
 use Drupal\drift_eleven\Core\HTTP\Response\Reply;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,6 +17,11 @@ abstract class RouteFoundation implements RouteFoundationInterface {
    * @var array $context
    */
   protected array $context = [];
+  /**
+   * Cache tags to add to the response
+   * @var array $cacheTags
+   */
+  protected array $cacheTags = [];
   /**
    * User agent string from request headers
    * @var string $userAgent
@@ -89,5 +95,22 @@ abstract class RouteFoundation implements RouteFoundationInterface {
     return new Reply([
       'message' => 'This has to be overridden!',
     ], 501);
+  }
+
+  public function setCacheTags(array $tags): void {
+    $configCtx = D9M7_PROJECT_ID . '.settings';
+    $config = Drupal::configFactory()->getEditable($configCtx);
+    $routeRegistry = $config->get('routeRegistry') ?: [];
+
+    $routeId = $this->request->attributes->get('_route');
+    if (isset($routeId) && is_string($routeId)) {
+      $routeRegistry[$routeId]['cacheTags'] = array_unique(array_merge($this->cacheTags, $tags));
+      $config->set('routeRegistry', $routeRegistry);
+      $config->save();
+    }
+
+    Drupal\drift_eleven\Core\Logger\Logger::l('ran', [], 'info');
+
+    $this->cacheTags = array_unique(array_merge($this->cacheTags, $tags));
   }
 }

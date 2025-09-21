@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Routes\Token;
+namespace Drupal\drift_eleven\Core\Routes\Auth\Token;
 
 use Drupal\drift_eleven\Core\Auth\JsonWebToken;
 use Drupal\drift_eleven\Core\Auth\JsonWebTokenInterface;
