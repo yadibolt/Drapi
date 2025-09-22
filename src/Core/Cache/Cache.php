@@ -42,31 +42,30 @@ class Cache implements CacheInterface {
 
   public static function invalidateEntity(EntityInterface|string $entity): void {
     $exists = Cache::find('cacheTags') ?: [];
-    $cacheTag1 = '';
 
     if (is_string($entity)) {
       if (isset($exists[$entity]) && is_array($exists[$entity])) {
-        unset($exists[$entity]);
+        foreach ($exists[$entity] as $cacheName) {
+          Drupal::cache(self::CACHE_BIN_KEY)->invalidate($cacheName);
+        }
       }
-      $cacheTag1 = $entity;
     } else {
       if ($entity->getEntityTypeId() === 'menu_link_content') {
         if (isset($exists['menu_link_content']) && is_array($exists['menu_link_content'])) {
-          unset($exists['menu_link_content']);
+          foreach ($exists['menu_link_content'] as $cacheName) {
+            Drupal::cache(self::CACHE_BIN_KEY)->invalidate($cacheName);
+          }
         }
-        $cacheTag1 = 'menu_link_content';
       } else {
         foreach ($entity->getCacheTags() as $cacheTag) {
-          if (isset($exists[$cacheTag]) && is_array($exists[$cacheTag])) {
-            unset($exists[$cacheTag]);
+          foreach ($exists[$cacheTag] as $cacheName) {
+            Drupal::cache(self::CACHE_BIN_KEY)->invalidate($cacheName);
           }
-          $cacheTag1 = $cacheTag;
         }
       }
     }
-
-    Drupal::cache(self::CACHE_BIN_KEY)->set($cacheTag1, $exists);
-    Logger::l('Invalidated entity cachetag: @cachetag', ['@cachetag' => $cacheTag1]);
+    // log the $exists for debugging
+    Logger::l('Current cacheTags after invalidation: @cacheTags', ['@cacheTags' => print_r($exists, true)]);
   }
 
   public static function flush(): void {

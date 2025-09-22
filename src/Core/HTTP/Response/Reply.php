@@ -82,17 +82,15 @@ class Reply extends Response implements ReplyInterface {
 
       // we also store the cache tags, so we can invalidate them later
       if (!empty($cacheTags)) {
-        $exists = Cache::find('cacheTags') ?: [];
-        Cache::invalidate('cacheTags');
-        foreach ($cacheTags as $cacheTag) {
-          $exists[$cacheTag][] = $cacheName;
-        }
-        Cache::make('cacheTags', $exists);
+        $storedCacheTags = Cache::find('cacheTags') ?: [];
 
-        Logger::l('Cached response for @cacheName with tags: @tags', [
-          '@cacheName' => $cacheName,
-          '@tags' => implode(', ', $cacheTags),
-        ], 'info');
+        foreach ($cacheTags as $cacheTag) {
+          if (!isset($storedCacheTags[$cacheTag])) $storedCacheTags[$cacheTag] = [];
+          $storedCacheTags[$cacheTag][] = $cacheName;
+        }
+
+        Drupal::cache(CacheInterface::CACHE_BIN_KEY)->set('cacheTags', $storedCacheTags);
+        Logger::l('Current cacheTags: @cacheTags', ['@cacheTags' => print_r($storedCacheTags, true)], 'info');
       }
     }
   }
