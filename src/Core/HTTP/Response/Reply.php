@@ -24,6 +24,12 @@ class Reply extends Response implements ReplyInterface {
     );
 
     if ($cached) {
+      $this->headers->set('Cache-Control', 'public, max-age=' . CacheInterface::DURATION_DEFAULT . ', must-revalidate');
+      $this->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + CacheInterface::DURATION_DEFAULT) . ' GMT');
+      $this->headers->set('X-DriftEleven-Cache-Hit', 'HIT');
+      $this->headers->set('X-DriftEleven-Cache', 'CACHED');
+      $this->headers->set('Pragma', 'cache');
+      $this->headers->set('Date', gmdate('D, d M Y H:i:s') . ' GMT');
       return;
     }
 
@@ -47,7 +53,18 @@ class Reply extends Response implements ReplyInterface {
     }
 
     // headers
+    $this->headers->set('Cache-Control', 'public, max-age=0, must-revalidate');
+    $this->headers->set('Expires', gmdate('D, d M Y H:i:s', time() + CacheInterface::DURATION_DEFAULT) . ' GMT');
+    $this->headers->set('Date', gmdate('D, d M Y H:i:s') . ' GMT');
+    if (strtolower($request->getMethod()) === 'get') {
+      $this->headers->set('X-DriftEleven-Cache', 'CACHEABLE');
+      $this->headers->set('X-DriftEleven-Cache-Hit', 'MISS');
+      $this->headers->set('Pragma', 'no-cache');
+    } else {
+      $this->headers->set('X-DriftEleven-Cache', 'NOT-CACHEABLE');
+    }
     $this->headers->set('Content-Type', 'application/json');
+
     if (!empty($headers) && is_array($headers)) $this->headers->replace($headers);
     if (!empty($headers) && $headers instanceof ResponseHeaderBag) $this->headers = $headers;
 
