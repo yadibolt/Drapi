@@ -5,6 +5,7 @@ namespace Drupal\drift_eleven\Core\HTTP\Response;
 use Drupal;
 use Drupal\drift_eleven\Core\Cache\Cache;
 use Drupal\drift_eleven\Core\Cache\CacheInterface;
+use Drupal\drift_eleven\Core\Logger\Logger;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -78,6 +79,21 @@ class Reply extends Response implements ReplyInterface {
         'status' => $status,
         'headers' => $this->headers,
       ], CacheInterface::DURATION_DEFAULT, $cacheTags);
+
+      // we also store the cache tags, so we can invalidate them later
+      if (!empty($cacheTags)) {
+        $exists = Cache::find('cacheTags') ?: [];
+        Cache::invalidate('cacheTags');
+        foreach ($cacheTags as $cacheTag) {
+          $exists[$cacheTag][] = $cacheName;
+        }
+        Cache::make('cacheTags', $exists);
+
+        Logger::l('Cached response for @cacheName with tags: @tags', [
+          '@cacheName' => $cacheName,
+          '@tags' => implode(', ', $cacheTags),
+        ], 'info');
+      }
     }
   }
 

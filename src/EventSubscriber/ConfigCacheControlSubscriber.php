@@ -23,11 +23,11 @@ class ConfigCacheControlSubscriber implements EventSubscriberInterface {
   }
 
   public function onConfigChange(ConfigCrudEvent $event): void {
-    /*$entity = $event->getConfig()->getName();
+    $entity = $event->getConfig()->getName();
     Logger::l('Config changed: @entityType', [ // TODO: REMOVE
       '@entityType' => $entity
     ], LoggerInterface::LEVEL_INFO);
 
-    Cache::invalidate($entity);*/
+    Cache::invalidateEntity($event->getConfig()->getName());
   }
 }
