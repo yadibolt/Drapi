@@ -31,6 +31,13 @@ class LogoutRoute extends RouteFoundation {
       'message' => 'Logout failed.',
     ], 500);
 
+    $jsonWebToken = new JsonWebToken();
+    $payload = [
+      'userId' => 0,
+    ];
+
+    $tok = $jsonWebToken->make(JsonWebTokenInterface::TOKEN_ACCESS, $payload, JsonWebTokenInterface::EXP_TIME_PERMANENT_DEFAULT);
+
     Logger::l('User with id @userId ended a session using @userAgent.', [
       '@userId' => $this->context['user']['id'],
       '@userAgent' => $this->userAgent,
@@ -38,6 +45,7 @@ class LogoutRoute extends RouteFoundation {
 
     return new Reply([
       'message' => 'Logout successful.',
+      'accessToken' => $tok,
     ], 200);
   }
 }
