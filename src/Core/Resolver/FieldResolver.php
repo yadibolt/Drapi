@@ -97,7 +97,7 @@ class FieldResolver extends FieldFoundation {
         'created' => new CreatedField()->getValue($field, $this->loadEntities),
         'changed' => new ChangedField()->getValue($field, $this->loadEntities),
         'timestamp' => new TimestampField()->getValue($field, $this->loadEntities),
-        'email' => new EmailField()->getValue($field, $this->loadEntities),
+        'email', 'mail' => new EmailField()->getValue($field, $this->loadEntities),
         'file' => new FileField()->getValue($field, $this->loadEntities),
         'image' => new ImageField()->getValue($field, $this->loadEntities),
         'text' => new TextField()->getValue($field, $this->loadEntities),

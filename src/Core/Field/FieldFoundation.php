@@ -25,6 +25,7 @@ class FieldFoundation {
       'comment',
       'revision_id',
       'revision_user',
+      'content_translation_created',
       'reusable',
       'revision_default',
       'content_translation_source',
