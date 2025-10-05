@@ -32,6 +32,12 @@ abstract class RouteFoundation implements RouteFoundationInterface {
    * @var string $hostname
    */
   protected string $hostname = '';
+
+  /**
+   * Query parameters from the request URL
+   * @var array $queryParams
+   */
+  protected array $queryParams = [];
   /**
    * Data array parsed from request body (JSON or form-data)
    * @var array $data
@@ -54,6 +60,7 @@ abstract class RouteFoundation implements RouteFoundationInterface {
     $this->context = $request->attributes->get('context', []);
     $this->userAgent = substr($this->request->server->get('HTTP_USER_AGENT') ?: 'unknown', 0, 512);
     $this->hostname = $this->getClientIp($request);
+    $this->queryParams = $this->request->query->all() ?: [];
 
     if ($this->request->headers->has('Content-Type') && str_contains($this->request->headers->get('Content-Type'), 'application/json')) {
       $this->data = json_decode($this->request->getContent(), true) ?: [];
