@@ -5,7 +5,7 @@ namespace Drupal\drift_eleven\Core\Field;
 use Drupal\Core\Field\FieldItemListInterface;
 
 class ChangedField {
-  public function getValue(FieldItemListInterface $field, bool $loadEntity = false): ?array {
+  public function getValue(FieldItemListInterface $field, bool $loadEntity = false): null|string|int|float|array {
     $fieldName = $field->getName();
     $values = $field->getValue();
 
@@ -28,21 +28,15 @@ class ChangedField {
     return $this->formatValues($fieldName, [null]);
   }
 
-  protected function formatValues(string $fieldName, array $values): array {
+  protected function formatValues(string $fieldName, array $values): null|string|int|float|array {
     if (count($values) === 1) {
-      return [
-        $fieldName => $values[0]
-      ];
+      return $values[0];
     }
 
     if (count($values) > 1) {
-      return [
-        $fieldName => array_map(fn($v) => $v, $values)
-      ];
+      return array_map(fn($v) => $v, $values);
     }
 
-    return [
-      $fieldName => null
-    ];
+    return null;
   }
 }

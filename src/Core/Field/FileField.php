@@ -6,7 +6,7 @@ use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\file\Entity\File;
 
 class FileField {
-  public function getValue(FieldItemListInterface $field, bool $loadEntity = false): ?array {
+  public function getValue(FieldItemListInterface $field, bool $loadEntity = false): null|string|int|float|array {
     $fieldName = $field->getName();
     $values = $field->getValue();
 
@@ -49,21 +49,15 @@ class FileField {
     return $this->formatValues($fieldName, [$loadEntity ? $results : $vals]);
   }
 
-  protected function formatValues(string $fieldName, array $values): array {
+  protected function formatValues(string $fieldName, array $values): null|string|int|float|array {
     if (count($values) === 1) {
-      return [
-        $fieldName => $values[0]
-      ];
+      return $values[0];
     }
 
     if (count($values) > 1) {
-      return [
-        $fieldName => array_map(fn($v) => $v, $values)
-      ];
+      return array_map(fn($v) => $v, $values);
     }
 
-    return [
-      $fieldName => null
-    ];
+    return null;
   }
 }

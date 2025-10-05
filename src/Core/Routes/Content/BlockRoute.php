@@ -36,7 +36,11 @@ class BlockRoute extends RouteFoundation {
 
     $fields = $block->getFields();
     $fieldResolver = new Drupal\drift_eleven\Core\Resolver\FieldResolver();
-    $resolvedFields = $fieldResolver->setFields($fields)->resolveFields(true);
+    $resolvedFields = $fieldResolver->setFields($fields, [
+      'customFieldsOnly' => false,
+      'includeProtectedFields' => false,
+      'loadEntities' => true,
+    ])->resolveFields();
 
     /*foreach ($block->getFields() as $fieldName => $field) {
       // just for now

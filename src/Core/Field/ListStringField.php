@@ -4,7 +4,7 @@ namespace Drupal\drift_eleven\Core\Field;
 
 use Drupal\Core\Field\FieldItemListInterface;
 
-class LanguageField {
+class ListStringField {
   public function getValue(FieldItemListInterface $field, bool $loadEntity = false): null|string|int|float|array {
     $fieldName = $field->getName();
     $values = $field->getValue();

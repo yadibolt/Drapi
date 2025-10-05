@@ -4,14 +4,14 @@ namespace Drupal\drift_eleven\Core\Field;
 
 use Drupal\Core\Field\FieldItemListInterface;
 
-class LanguageField {
+class DatetimeField {
   public function getValue(FieldItemListInterface $field, bool $loadEntity = false): null|string|int|float|array {
     $fieldName = $field->getName();
     $values = $field->getValue();
 
     if (count($values) === 1) {
       if (!empty($values[0]) && isset($values[0]['value'])) {
-        return $this->formatValues($fieldName, [(string)$values[0]['value']]);
+        return $this->formatValues($fieldName, [$values[0]['value']]);
       }
     }
 
@@ -19,7 +19,7 @@ class LanguageField {
       $vals = [];
       foreach ($values as $value) {
         if (!empty($value) && isset($value['value'])) {
-          $vals[] = (string)$value['value'];
+          $vals[] = $value['value'];
         }
       }
       return $this->formatValues($fieldName, $vals);
