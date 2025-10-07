@@ -32,7 +32,7 @@ class FileField {
       $files = File::loadMultiple($vals);
       foreach ($files as $file) {
         $results[] = [
-          'id' => $file->id(),
+          'id' => (int)$file->id(),
           'url' => $file->createFileUrl(false),
           'title' => $file->getFilename(),
           'filename' => $file->getFilename(),
