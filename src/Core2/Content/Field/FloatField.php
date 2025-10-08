@@ -2,10 +2,16 @@
 
 namespace Drupal\drift_eleven\Core2\Content\Field;
 
+use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\drift_eleven\Core2\Content\Field\Base\FieldBase;
 use Drupal\drift_eleven\Core2\Content\Field\Interface\FieldInterface;
 
 class FloatField extends FieldBase implements FieldInterface {
+
+  public function __construct(FieldItemListInterface $field){
+    parent::__construct($field);
+  }
+
   public function getFieldValues(array $options = []): null|string|int|float|array {
     $values = $this->getValues();
 
