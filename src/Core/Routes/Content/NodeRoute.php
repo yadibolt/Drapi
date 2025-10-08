@@ -3,13 +3,9 @@
 namespace Drupal\drift_eleven\Core\Routes\Content;
 
 use Drupal;
-use Drupal\block_content\Entity\BlockContent;
-use Drupal\Core\Menu\MenuTreeParameters;
 use Drupal\drift_eleven\Core\HTTP\Response\Reply;
 use Drupal\drift_eleven\Core\Resolver\FieldResolver;
 use Drupal\drift_eleven\Core\Route\RouteFoundation;
-use Drupal\path_alias\Entity\PathAlias;
-use Symfony\Component\Filesystem\Path;
 
 /**
  * @route
@@ -20,7 +16,7 @@ use Symfony\Component\Filesystem\Path;
  * path= 'api/content'
  * permissions= ['access content']
  * roles= []
- * useMiddleware= ['auth_anonym', 'request']
+ * useMiddleware= ['auth', 'request']
  * useCache= false
  * @route-end
  */

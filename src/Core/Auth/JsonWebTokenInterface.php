@@ -8,7 +8,7 @@ interface JsonWebTokenInterface {
    * This is set to 1 hour (3600 seconds) by default and is overridden in the configuration.
    * @var int
    */
-  public const int ACCESS_EXP_TIME_DEFAULT = 3600;
+  public const int ACCESS_EXP_TIME_DEFAULT = 10;
   /**
    * Expiration time for JWT refresh tokens in seconds.
    * This is set to 1 week (604800 seconds) by default and is overridden in the configuration.
