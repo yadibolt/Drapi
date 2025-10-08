@@ -11,7 +11,7 @@ use Drupal\taxonomy\Entity\Term;
 use Drupal\user\Entity\User;
 
 class EntityReferenceField extends FieldBase implements FieldInterface {
-  public function getFieldValues($options = []): null|string|int|float|array {
+  public function getFieldValues(array $options = []): null|string|int|float|array {
     $this->handleOptions($options);
 
     $values = $this->getValues();

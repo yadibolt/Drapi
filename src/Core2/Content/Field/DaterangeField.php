@@ -6,7 +6,7 @@ use Drupal\drift_eleven\Core2\Content\Field\Base\FieldBase;
 use Drupal\drift_eleven\Core2\Content\Field\Interface\FieldInterface;
 
 class DaterangeField extends FieldBase implements FieldInterface {
-  public function getFieldValues($options = []): null|string|int|float|array {
+  public function getFieldValues(array $options = []): null|string|int|float|array {
     $values = $this->getValues();
 
     if (count($values) === 1 && !empty($values[0]) && isset($values[0]['value'])) {
