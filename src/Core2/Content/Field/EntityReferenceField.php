@@ -5,10 +5,13 @@ namespace Drupal\drift_eleven\Core2\Content\Field;
 use Drupal\Core\Field\FieldItemListInterface;
 use Drupal\drift_eleven\Core2\Content\Field\Base\FieldBase;
 use Drupal\drift_eleven\Core2\Content\Field\Interface\FieldInterface;
+use Drupal\drift_eleven\Core2\Content\Field\Resolver\FieldResolver;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
+use Drupal\media\Entity\MediaType;
 use Drupal\node\Entity\Node;
 use Drupal\taxonomy\Entity\Term;
+use Drupal\user\Entity\Role;
 use Drupal\user\Entity\User;
 
 class EntityReferenceField extends FieldBase implements FieldInterface {
@@ -19,7 +22,7 @@ class EntityReferenceField extends FieldBase implements FieldInterface {
     $this->handleOptions($options);
 
     $values = $this->getValues();
-    $targetType = $this->field->getFieldDefinition()->getType();
+    $targetType = $this->field->getFieldDefinition()->getSetting('target_type');
 
     $arrayValues = [];
     if (count($values) === 1 && !empty($values[0]) && isset($values[0]['target_id'])) {
@@ -35,7 +38,7 @@ class EntityReferenceField extends FieldBase implements FieldInterface {
     }
 
     if ($this->getLoadEntities()) {
-      $entities[] = $this->getEntityFields($targetType, $arrayValues);
+      $entities = $this->getEntityFields($targetType, $arrayValues);
       return $this->flattenValues($entities);
     } else {
       return $this->flattenValues($arrayValues);
@@ -61,9 +64,12 @@ class EntityReferenceField extends FieldBase implements FieldInterface {
     return match ($entityType) {
       'node' => Node::loadMultiple($ids),
       'user' => User::loadMultiple($ids),
+      'user_role' => Role::loadMultiple($ids),
       'taxonomy_term' => Term::loadMultiple($ids),
       'file' => File::loadMultiple($ids),
       'media' => Media::loadMultiple($ids),
+      'media_type' => MediaType::loadMultiple($ids),
+      default => [],
     };
   }
 }

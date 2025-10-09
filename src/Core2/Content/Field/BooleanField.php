@@ -11,6 +11,8 @@ class BooleanField extends FieldBase implements FieldInterface {
     parent::__construct($field);
   }
   public function getFieldValues(array $options = []): null|string|int|float|array {
+    $this->handleOptions($options);
+
     $values = $this->getValues();
 
     if (count($values) === 1 && !empty($values[0]) && isset($values[0]['value'])) {

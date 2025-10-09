@@ -1,10 +1,58 @@
 <?php
 
-namespace Drupal\drift_eleven\Core2\Content\Field;
+namespace Drupal\drift_eleven\Core2\Content\Field\Resolver;
+
+use Drupal\drift_eleven\Core2\Content\Field\BooleanField;
+use Drupal\drift_eleven\Core2\Content\Field\DaterangeField;
+use Drupal\drift_eleven\Core2\Content\Field\EntityReferenceField;
+use Drupal\drift_eleven\Core2\Content\Field\FileField;
+use Drupal\drift_eleven\Core2\Content\Field\FloatField;
+use Drupal\drift_eleven\Core2\Content\Field\IntegerField;
+use Drupal\drift_eleven\Core2\Content\Field\LinkField;
+use Drupal\drift_eleven\Core2\Content\Field\PathField;
+use Drupal\drift_eleven\Core2\Content\Field\StringField;
+use Drupal\drift_eleven\Core2\Content\Field\TextField;
 
 class FieldResolver {
   protected const array FIELD_TYPE_HANDLERS = [
+    // bool
     'boolean' => BooleanField::class,
+    // int
+    'integer' => IntegerField::class,
+    'list_integer' => IntegerField::class,
+    'timestamp' => IntegerField::class,
+    'created' => IntegerField::class,
+    'changed' => IntegerField::class,
+    // float
+    'float' => FloatField::class,
+    'list_float' => FloatField::class,
+    'decimal' => FloatField::class,
+    // string
+    'string' => StringField::class,
+    'string_long' => StringField::class,
+    'list_string' => StringField::class,
+    'email' => StringField::class,
+    'mail' => StringField::class,
+    'uuid' => StringField::class,
+    'telephone' => StringField::class,
+    'datetime' => StringField::class,
+    'language' => StringField::class,
+    // text
+    'text' => TextField::class,
+    'text_long' => TextField::class,
+    'text_with_summary' => TextField::class,
+    // path
+    'path' => PathField::class,
+    // none
+    'password' => null,
+    // daterange
+    'daterange' => DaterangeField::class,
+    // entity reference
+    'entity_reference' => EntityReferenceField::class,
+    // file
+    'file' => FileField::class,
+    'image' => FileField::class,
+    'link' => LinkField::class,
   ];
   protected array $fields = [];
   protected bool $loadCustom;
@@ -12,9 +60,9 @@ class FieldResolver {
   protected bool $loadProtected;
 
   public function __construct() {
-    $this->loadEntities = false;
+    $this->loadEntities = true;
     $this->loadCustom = true;
-    $this->loadProtected = false;
+    $this->loadProtected = true;
   }
 
   public function resolve(): array {
@@ -22,29 +70,28 @@ class FieldResolver {
 
     $resolved = [];
     foreach ($this->fields as $fieldName => $field) {
-      $definition = $field->getDefinition();
+      $definition = $field->getFieldDefinition();
       $type = $definition->getType();
 
-      if (in_array($fieldName, $this->getBaseFieldNames()) && $this->loadCustom) continue;
+      if (!in_array($fieldName, $this->getBaseFieldNames()) && !$this->loadCustom) continue;
       if (in_array($fieldName, $this->getProtectedFieldNames()) && !$this->loadProtected) continue;
 
       if (!isset(self::FIELD_TYPE_HANDLERS[$type])) continue;
 
+      $strippedFieldName = $fieldName;
+      if (str_starts_with($fieldName, 'field_')) $strippedFieldName = substr($fieldName, 6);
+
       $handler = self::FIELD_TYPE_HANDLERS[$type];
       if ($handler === null) {
-        $resolved[$fieldName] = null;
+        $resolved[$strippedFieldName] = null;
         continue;
       }
 
-      if ($handler === EntityReferenceField::class) {
-        $resolved[$fieldName] = new $handler($field)->getFieldValues([
-          'load_entities' => $this->getLoadEntities(),
-          'load_custom' => $this->getLoadCustom(),
-          'load_protected' => $this->getLoadProtected(),
-        ]);
-      } else {
-        $resolved[$fieldName] = new $handler($field)->getFieldValues();
-      }
+      $resolved[$strippedFieldName] = new $handler($field)->getFieldValues([
+        'load_entities' => $this->getLoadEntities(),
+        'load_custom' => $this->getLoadCustom(),
+        'load_protected' => $this->getLoadProtected(),
+      ]);
     }
 
     return $resolved;
@@ -86,6 +133,8 @@ class FieldResolver {
     return [
       'nid',
       'vid',
+      'info',
+      'title',
       'type',
       'langcode',
       'status',

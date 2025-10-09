@@ -34,13 +34,21 @@ class BlockRoute extends RouteFoundation {
     // imitate field resolver
     $resolvedFields = [];
 
+    // new implementation:
     $fields = $block->getFields();
+    $resolvedFields = new Drupal\drift_eleven\Core2\Content\Field\Resolver\FieldResolver()->setFields($fields, [
+      'load_entities' => true,
+      'load_custom' => true,
+      'load_protected' => false,
+    ])->resolve();
+
+    /*$fields = $block->getFields();
     $fieldResolver = new Drupal\drift_eleven\Core\Resolver\FieldResolver();
     $resolvedFields = $fieldResolver->setFields($fields, [
       'customFieldsOnly' => true,
       'includeProtectedFields' => false,
       'loadEntities' => true,
-    ])->resolveFields();
+    ])->resolveFields();*/
 
     /*foreach ($block->getFields() as $fieldName => $field) {
       // just for now
