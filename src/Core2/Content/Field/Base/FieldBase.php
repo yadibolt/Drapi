@@ -8,6 +8,7 @@ class FieldBase {
   protected bool $loadEntities;
   protected bool $loadCustom;
   protected bool $loadProtected;
+  protected bool $stripFieldPrefixes;
   protected FieldItemListInterface $field;
   protected int|null|string $fieldName;
   protected mixed $values;
@@ -17,6 +18,7 @@ class FieldBase {
     $this->loadEntities = false;
     $this->loadCustom = true;
     $this->loadProtected = false;
+    $this->stripFieldPrefixes = false;
     $this->fieldName = $field->getName();
     $this->values = $field->getValue();
   }
@@ -54,6 +56,7 @@ class FieldBase {
     if (isset($options['load_entities']) && is_bool($options['load_entities'])) $this->setLoadEntities($options['load_entities']);
     if (isset($options['load_custom']) && is_bool($options['load_custom'])) $this->setLoadCustom($options['load_custom']);
     if (isset($options['load_protected']) && is_bool($options['load_protected'])) $this->setLoadProtected($options['load_protected']);
+    if (isset($options['strip_field_prefixes']) && is_bool($options['strip_field_prefixes'])) $this->setStripFieldPrefixes($options['strip_field_prefixes']);
 
     return $this;
   }
@@ -68,6 +71,10 @@ class FieldBase {
   }
   public function setLoadProtected(bool $loadProtected): self {
     $this->loadProtected = $loadProtected;
+    return $this;
+  }
+  public function setStripFieldPrefixes(bool $stripFieldPrefixes): self {
+    $this->stripFieldPrefixes = $stripFieldPrefixes;
     return $this;
   }
   public function setField(FieldItemListInterface $field): self {
@@ -91,6 +98,9 @@ class FieldBase {
   }
   public function getLoadProtected(): bool {
     return $this->loadProtected;
+  }
+  public function getStripFieldPrefixes(): bool {
+    return $this->stripFieldPrefixes;
   }
   public function getField(): FieldItemListInterface {
     return $this->field;

@@ -46,7 +46,7 @@ class FileField extends FieldBase implements FieldInterface {
 
     $result = [];
     foreach ($loaderValues as $loaderValue) {
-      $result[] = new FileEntity([
+      $result[] = FileEntity::make([
         'id' => $loaderValue->id(),
         'alt' => $loaderValue->hasField('alt') ? $loaderValue->get('alt')->value : null,
         'title' => $loaderValue->hasField('title') ? $loaderValue->get('title')->value : null,

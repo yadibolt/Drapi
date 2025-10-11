@@ -15,4 +15,8 @@ class Cache extends CacheBase implements CacheInterface {
     $this->setCacheBinKey($def_cacheBinKey);
     $this->setCacheDuration($def_cacheDuration);
   }
+
+  public static function make(): Cache {
+    return new self();
+  }
 }

@@ -7,7 +7,8 @@ use Drupal\drift_eleven\Core2\Cache\Enum\CacheIntent;
 
 interface CacheInterface {
   public function get(string $key, CacheIntent $intent): mixed;
-  public function make(string $key, CacheIntent $intent, mixed $data, array $tags = []): bool;
+  public function create(string $key, CacheIntent $intent, mixed $data, array $tags = []): bool;
+  public static function make(): CacheBase;
   public function delete(string $key, CacheIntent $intent): void;
   public function flush(): void;
   public function invalidateTags(array $tags): void;

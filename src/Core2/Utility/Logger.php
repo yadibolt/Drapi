@@ -17,10 +17,14 @@ class Logger {
     if (!empty($level)) $this->level = $level->value;
   }
 
-  public function l(string $message, array $context = []): void {
-    $logger = Drupal::logger($this->level);
+  public static function l(string $channel = self::LOGGER_CHANNEL, LoggerIntent $level = LoggerIntent::DEBUG, string $message = '', array $context = []): void {
+    $innerLogger = new self(
+      channel: $channel,
+      level: $level,
+    );
+    $logger = Drupal::logger($innerLogger->level);
 
-    match($this->level) {
+    match($innerLogger->level) {
       'debug' => $logger->debug($message, $context),
       'error' => $logger->error($message, $context),
       'notice' => $logger->notice($message, $context),

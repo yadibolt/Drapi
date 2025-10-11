@@ -27,7 +27,7 @@ class CacheBase {
 
     return unserialize($record);
   }
-  public function make(string $key, CacheIntent $intent, mixed $data, array $tags = []): bool {
+  public function create(string $key, CacheIntent $intent, mixed $data, array $tags = []): bool {
     $key = $this->makeKey($key, $intent);
 
     if ($this->exists($key)) return false;

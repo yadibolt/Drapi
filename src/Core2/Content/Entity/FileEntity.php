@@ -29,6 +29,10 @@ class FileEntity extends EntityBase {
     }
   }
 
+  public static function make(array $values = []): self {
+    return new self($values);
+  }
+
   /**
    * @return array<string, array{
    *  id: int,

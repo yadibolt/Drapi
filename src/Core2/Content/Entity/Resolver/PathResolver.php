@@ -22,6 +22,10 @@ class PathResolver {
     }
   }
 
+  public static function make(string $destination): self {
+    return new self($destination);
+  }
+
   public function resolve(): ?EntityInterface {
     if (empty($this->destination)) return null;
 
