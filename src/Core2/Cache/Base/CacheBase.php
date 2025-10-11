@@ -15,8 +15,16 @@ class CacheBase {
   protected int $duration = self::CACHE_DURATION;
 
   public function __construct(string $binKey = self::CACHE_BIN_KEY, int $duration = self::CACHE_DURATION) {
-    if (!empty($binKey)) $this->binKey = $binKey;
-    if ($duration > 0) $this->duration = $duration;
+    if (!empty($binKey)) {
+      $this->binKey = $binKey;
+    } else {
+      $this->binKey = self::CACHE_BIN_KEY;
+    }
+    if ($duration > 0) {
+      $this->duration = $duration;
+    } else {
+      $this->duration = self::CACHE_DURATION;
+    }
   }
 
   public function get(string $key, CacheIntent $intent): mixed {
@@ -27,6 +35,9 @@ class CacheBase {
 
     return unserialize($record);
   }
+  public function getCacheTags(): object|array {
+    return Drupal::cache(self::CACHE_TAGS_BIN_KEY)->get('cache_tags') ?? [];
+  }
   public function create(string $key, CacheIntent $intent, mixed $data, array $tags = []): bool {
     $key = $this->makeKey($key, $intent);
 
@@ -34,7 +45,7 @@ class CacheBase {
     $data = serialize($data);
 
     $tagsCacheBin = Drupal::cache(self::CACHE_TAGS_BIN_KEY);
-    $cacheTags = $tagsCacheBin->get('cacheTags') ?? [];
+    $cacheTags = $tagsCacheBin->get('cache_tags') ?? [];
 
     foreach ($tags as $tag) {
       if (!isset($cacheTags[$tag])) $cacheTags[$tag] = [];
@@ -42,7 +53,7 @@ class CacheBase {
     }
 
     Drupal::cache($this->binKey)->set($key, $data, $this->getCacheDurationTimestamp());
-    $tagsCacheBin->set('cacheTags', $cacheTags, CACHE::PERMANENT);
+    $tagsCacheBin->set('cache_tags', $cacheTags, CACHE::PERMANENT);
     return true;
   }
   public function delete(string $key, CacheIntent $intent): void {
@@ -57,7 +68,7 @@ class CacheBase {
     $cacheIdsToInvalidate = [];
 
     $tagsCacheBin = Drupal::cache(self::CACHE_TAGS_BIN_KEY);
-    $cacheTags = $tagsCacheBin->get('cacheTags') ?? [];
+    $cacheTags = $tagsCacheBin->get('cache_tags') ?? [];
     foreach ($tags as $tag) {
       if (isset($cacheTags[$tag]) && is_array($cacheTags[$tag])) {
         foreach ($cacheTags[$tag] as $cacheName => $_) {
@@ -69,7 +80,7 @@ class CacheBase {
     }
 
     Drupal::cache($this->binKey)->deleteMultiple($cacheIdsToInvalidate);
-    $tagsCacheBin->set('cacheTags', $cacheTags, CACHE::PERMANENT);
+    $tagsCacheBin->set('cache_tags', $cacheTags, CACHE::PERMANENT);
   }
 
   protected function exists(string $key): bool {
