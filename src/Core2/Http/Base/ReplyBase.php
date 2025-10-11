@@ -15,7 +15,7 @@ class ReplyBase extends Response {
 
   protected array|string $data = [];
   protected bool $responseCached = false;
-  protected bool $cacheable = false;
+  protected bool $responseCacheable = false;
   protected array $route = [];
 
   public function __construct(array|string $data, int $status = 200, array|ResponseHeaderBag $headers = []) {
@@ -39,7 +39,7 @@ class ReplyBase extends Response {
     if ($this->responseCached) return;
 
     $this->setRoute();
-    $this->setCacheable();
+    $this->setResponseCacheable();
     $this->setHeaders();
     $this->setStatusCode($status);
 
@@ -50,7 +50,7 @@ class ReplyBase extends Response {
     // caching responses is limited to GET requests only, with non-error status codes.
     $request = $this->getCurrentRequest();
     $requestMethod = $request->getMethod();
-    if (strtolower($requestMethod) === 'get' && $this->cacheable && $status < 400) {
+    if (strtolower($requestMethod) === 'get' && $this->responseCacheable && $status < 400) {
       $cacheTags = [];
       $userToken = '';
       $usesAuthorizationMiddleware = !empty($this->route['use_middleware']) && in_array('auth', $this->route['use_middleware']);
@@ -129,7 +129,7 @@ class ReplyBase extends Response {
     }
 
     // cache did not hit but is cacheable
-    if ($this->cacheable) {
+    if ($this->responseCacheable) {
       $this->headers->set('Cache-Control', 'public, max-age=0, must-revalidate');
       $this->headers->set(HTTP_HEADER_CACHEABLE_NAME_DEFAULT, HTTP_HEADER_CACHEABLE_DEFAULT);
       $this->headers->set(HTTP_HEADER_CACHE_NAME_DEFAULT, HTTP_HEADER_NOT_CACHED_DEFAULT);
@@ -147,15 +147,15 @@ class ReplyBase extends Response {
     $this->headers->set('Date', gmdate('D, d M Y H:i:s') . ' GMT');
     $this->headers->set('Pragma', 'no-cache');
   }
-  protected function setCacheable(): void {
+  protected function setResponseCacheable(): void {
     if (empty($this->route)) return;
 
     if (isset($this->route['use_cache'])) {
-      $this->cacheable = (bool)$this->route['use_cache'] ?? false;
+      $this->responseCacheable = (bool)$this->route['use_cache'] ?? false;
       return;
     }
 
-    $this->cacheable = false;
+    $this->responseCacheable = false;
   }
 
   protected function getRoute(): array {
