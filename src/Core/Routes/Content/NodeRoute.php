@@ -17,7 +17,7 @@ use Drupal\drift_eleven\Core\Route\RouteFoundation;
  * permissions= ['access content']
  * roles= []
  * useMiddleware= ['auth_anonym', 'request']
- * useCache= false
+ * useCache= true
  * @route-end
  */
 class NodeRoute extends RouteFoundation {

@@ -17,6 +17,8 @@ class Reply extends Response implements ReplyInterface {
   protected bool $useCache = false;
 
   public function __construct(array|string $data, int $status = 200, array|ResponseHeaderBag $headers = [], bool $cached = false) {
+    var_dump('heeh', $headers, $cached);
+
     parent::__construct(
       $cached ? $data : '',
       $status,
