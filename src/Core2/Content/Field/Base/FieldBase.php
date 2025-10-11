@@ -29,15 +29,9 @@ class FieldBase {
   }
 
   protected function handleOptions(array $options): self {
-    if (isset($options['load_entities']) && is_bool($options['load_entities'])) {
-      $this->setLoadEntities($options['load_entities']);
-    }
-    if (isset($options['load_custom']) && is_bool($options['load_custom'])) {
-      $this->setLoadCustom($options['load_custom']);
-    }
-    if (isset($options['load_protected']) && is_bool($options['load_protected'])) {
-      $this->setLoadProtected($options['load_protected']);
-    }
+    if (isset($options['load_entities']) && is_bool($options['load_entities'])) $this->setLoadEntities($options['load_entities']);
+    if (isset($options['load_custom']) && is_bool($options['load_custom'])) $this->setLoadCustom($options['load_custom']);
+    if (isset($options['load_protected']) && is_bool($options['load_protected'])) $this->setLoadProtected($options['load_protected']);
 
     return $this;
   }

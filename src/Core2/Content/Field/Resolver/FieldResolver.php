@@ -58,11 +58,13 @@ class FieldResolver {
   protected bool $loadCustom;
   protected bool $loadEntities;
   protected bool $loadProtected;
+  protected bool $stripFieldPrefixes;
 
   public function __construct() {
     $this->loadEntities = true;
     $this->loadCustom = true;
     $this->loadProtected = true;
+    $this->stripFieldPrefixes = false;
   }
 
   public function resolve(): array {
@@ -79,7 +81,7 @@ class FieldResolver {
       if (!isset(self::FIELD_TYPE_HANDLERS[$type])) continue;
 
       $strippedFieldName = $fieldName;
-      if (str_starts_with($fieldName, 'field_')) $strippedFieldName = substr($fieldName, 6);
+      if ($this->getStripFieldPrefixes() && str_starts_with($fieldName, 'field_')) $strippedFieldName = substr($fieldName, 6);
 
       $handler = self::FIELD_TYPE_HANDLERS[$type];
       if ($handler === null) {
@@ -98,15 +100,9 @@ class FieldResolver {
   }
 
   protected function handleOptions(array $options): self {
-    if (isset($options['load_entities']) && is_bool($options['load_entities'])) {
-      $this->setLoadEntities($options['load_entities']);
-    }
-    if (isset($options['load_custom']) && is_bool($options['load_custom'])) {
-      $this->setLoadCustom($options['load_custom']);
-    }
-    if (isset($options['load_protected']) && is_bool($options['load_protected'])) {
-      $this->setLoadProtected($options['load_protected']);
-    }
+    if (isset($options['load_entities']) && is_bool($options['load_entities'])) $this->setLoadEntities($options['load_entities']);
+    if (isset($options['load_custom']) && is_bool($options['load_custom'])) $this->setLoadCustom($options['load_custom']);
+    if (isset($options['load_protected']) && is_bool($options['load_protected'])) $this->setLoadProtected($options['load_protected']);
 
     return $this;
   }
@@ -118,6 +114,10 @@ class FieldResolver {
   }
   public function setLoadEntities(bool $loadEntities): self {
     $this->loadEntities = $loadEntities;
+    return $this;
+  }
+  public function setStripFieldPrefixes(bool $stripFieldPrefixes): self {
+    $this->stripFieldPrefixes = $stripFieldPrefixes;
     return $this;
   }
   public function setLoadCustom(bool $loadCustom): self {
@@ -175,5 +175,8 @@ class FieldResolver {
   }
   public function getLoadProtected(): bool {
     return $this->loadProtected;
+  }
+  public function getStripFieldPrefixes(): bool {
+    return $this->stripFieldPrefixes;
   }
 }
