@@ -25,7 +25,10 @@ class JWT {
     $this->token = $token;
 
     if ($this->tokenSecret === JWT_SECRET_DEFAULT) {
-      new Logger(level: LoggerIntent::WARNING)->l('The JWT secret is set to default. You should immediately change the secret key in the configuration!');
+      Logger::l(
+        level: LoggerIntent::WARNING,
+        message: 'The JWT secret is set to default. You should immediately change the secret key in the configuration!',
+      );
     }
   }
 
