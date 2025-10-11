@@ -12,7 +12,7 @@ class AuthMiddleware extends MiddlewareBase implements MiddlewareInterface {
   public static function make(): self {
     return new self();
   }
-  public function getId(): string {
+  public static function getId(): string {
     return 'auth';
   }
   public function process(): ?Reply {

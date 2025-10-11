@@ -5,6 +5,7 @@ namespace Drupal\drift_eleven\Core2\Http\Base;
 use Drupal;
 use Drupal\drift_eleven\Core2\Cache\Cache;
 use Drupal\drift_eleven\Core2\Cache\Enum\CacheIntent;
+use Drupal\drift_eleven\Core2\Http\Middleware\AuthMiddleware;
 use Drupal\drift_eleven\Core2\Http\Trait\RequestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -56,7 +57,7 @@ class ReplyBase extends Response {
     if (strtolower($requestMethod) === 'get' && $this->responseCacheable && $status < 400) {
       $cacheTags = [];
       $userToken = '';
-      $usesAuthorizationMiddleware = !empty($this->route['use_middleware']) && in_array('auth', $this->route['use_middleware']);
+      $usesAuthorizationMiddleware = !empty($this->route['use_middleware']) && in_array(AuthMiddleware::getId(), $this->route['use_middleware']);
 
       if ($usesAuthorizationMiddleware) {
         $authorizationHeader = $request->headers->get('authorization');
