@@ -82,6 +82,16 @@ class JWT {
     );
   }
 
+  public static function payloadFrom(string $token): ?array {
+    if (empty($token)) return null;
+
+    $parts = explode('.', $token);
+    if (count($parts) !== 3) return null;
+
+    $payload = Base64::decode($parts[1]);
+    return json_decode($payload, true);
+  }
+
   protected function checkTTL(string $payloadPart): bool {
     $payload = json_decode(Base64::decode($payloadPart));
     if (empty($payload) || !isset($payload['exp'])) return true;

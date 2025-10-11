@@ -5,11 +5,14 @@ namespace Drupal\drift_eleven\Core2\Http\Base;
 use Drupal;
 use Drupal\drift_eleven\Core2\Cache\Cache;
 use Drupal\drift_eleven\Core2\Cache\Enum\CacheIntent;
+use Drupal\drift_eleven\Core2\Http\Trait\RequestTrait;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class ReplyBase extends Response {
+  use RequestTrait;
+
   protected const int DEPTH = 512;
   protected const int FLAGS = 0;
 
@@ -102,17 +105,7 @@ class ReplyBase extends Response {
   }
 
   protected function setRoute(): self {
-    $routeId = $this->getCurrentRequest()->attributes->get('_route');
-
-    if ($routeId) {
-      $configuration = Drupal::configFactory()->get(ROUTE_CONFIG_NAME_DEFAULT);
-      $routeRegistry = $configuration->get('route_registry');
-
-      if (isset($routeRegistry[$routeId])) {
-        $this->route = $routeRegistry[$routeId];
-      }
-    }
-
+    $this->route = $this->getCurrentRoute();
     return $this;
   }
   protected function setHeaders(): void {
@@ -160,8 +153,5 @@ class ReplyBase extends Response {
 
   protected function getRoute(): array {
     return $this->route;
-  }
-  protected function getCurrentRequest(): Request {
-    return Drupal::service('request_stack')->getCurrentRequest();
   }
 }
