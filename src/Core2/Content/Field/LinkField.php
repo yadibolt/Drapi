@@ -17,9 +17,9 @@ class LinkField extends FieldBase implements FieldInterface {
 
     if (count($values) === 1 && !empty($values[0])) {
       $link = [
-        'uri' => $values[0]['uri'] ?: null,
-        'title' => $values[0]['title'] ?: null,
-        'options' => $values[0]['options'] ?: [],
+        'uri' => $values[0]['uri'] ?? null,
+        'title' => $values[0]['title'] ?? null,
+        'options' => $values[0]['options'] ?? [],
       ];
 
       return $this->flattenValues([$link]);
@@ -30,9 +30,9 @@ class LinkField extends FieldBase implements FieldInterface {
       foreach ($values as $value) {
         if (!empty($value) && isset($value['value'])) {
           $arrayValues[] = [
-            'uri' => $values[0]['uri'] ?: null,
-            'title' => $values[0]['title'] ?: null,
-            'options' => $values[0]['options'] ?: [],
+            'uri' => $values[0]['uri'] ?? null,
+            'title' => $values[0]['title'] ?? null,
+            'options' => $values[0]['options'] ?? [],
           ];
         }
       }

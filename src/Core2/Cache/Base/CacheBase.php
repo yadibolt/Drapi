@@ -34,7 +34,7 @@ class CacheBase {
     $data = serialize($data);
 
     $tagsCacheBin = Drupal::cache(self::CACHE_TAGS_BIN_KEY);
-    $cacheTags = $tagsCacheBin->get('cacheTags') ?: [];
+    $cacheTags = $tagsCacheBin->get('cacheTags') ?? [];
 
     foreach ($tags as $tag) {
       if (!isset($cacheTags[$tag])) $cacheTags[$tag] = [];
@@ -57,7 +57,7 @@ class CacheBase {
     $cacheIdsToInvalidate = [];
 
     $tagsCacheBin = Drupal::cache(self::CACHE_TAGS_BIN_KEY);
-    $cacheTags = $tagsCacheBin->get('cacheTags') ?: [];
+    $cacheTags = $tagsCacheBin->get('cacheTags') ?? [];
     foreach ($tags as $tag) {
       if (isset($cacheTags[$tag]) && is_array($cacheTags[$tag])) {
         foreach ($cacheTags[$tag] as $cacheName => $_) {

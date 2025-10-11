@@ -22,3 +22,10 @@ const LOGGER_LEVEL_DEFAULT = 'debug';
 const CACHE_BIN_KEY_DEFAULT = 'de_bin';
 const CACHE_TAGS_BIN_KEY_DEFAULT = 'de_tags_bin';
 const CACHE_DURATION_DEFAULT = 3600;
+
+const JWT_CONFIG_NAME_DEFAULT = 'de_jwt_config';
+const JWT_SECRET_DEFAULT = 'change_me_please';
+const JWT_ACCESS_TOKEN_TTL_DEFAULT = 3600;
+const JWT_REFRESH_TOKEN_TTL_DEFAULT = 604800;
+const JWT_SIGNATURE_HASH_DEFAULT = 'de-994993lke91049m23';
+const JWT_ISSUER_DEFAULT = 'drift_eleven.com';

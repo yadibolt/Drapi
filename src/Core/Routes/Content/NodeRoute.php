@@ -16,7 +16,7 @@ use Drupal\drift_eleven\Core\Route\RouteFoundation;
  * path= 'api/content'
  * permissions= ['access content']
  * roles= []
- * useMiddleware= ['auth', 'request']
+ * useMiddleware= ['auth_anonym', 'request']
  * useCache= false
  * @route-end
  */
@@ -24,8 +24,11 @@ class NodeRoute extends RouteFoundation {
   public function handle(): Reply {
     $destination = !empty($this->queryParams['destination']) ? $this->queryParams['destination'] : '';
 
-    $entityPathResolver = new Drupal\drift_eleven\Core\Resolver\EntityPathResolver();
-    $entity = $entityPathResolver->setDestination($destination, [])->resolve();
+    /*$entityPathResolver = new Drupal\drift_eleven\Core\Resolver\EntityPathResolver();
+    $entity = $entityPathResolver->setDestination($destination, [])->resolve();*/
+
+    $pathResolver = new Drupal\drift_eleven\Core2\Content\Entity\Resolver\PathResolver($destination);
+    $entity = $pathResolver->resolve();
 
     if (!$entity) {
       return new Reply([

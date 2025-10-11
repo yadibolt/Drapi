@@ -17,9 +17,9 @@ class PathField extends FieldBase implements FieldInterface {
 
     if (count($values) === 1 && !empty($values[0])) {
       $path = [
-        'alias' => $values[0]['alias'] ?: null,
-        'pid' => $values[0]['pid'] ?: null,
-        'langcode' => $values[0]['langcode'] ?: null,
+        'alias' => $values[0]['alias'] ?? null,
+        'pid' => $values[0]['pid'] ?? null,
+        'langcode' => $values[0]['langcode'] ?? null,
       ];
 
       return $this->flattenValues([$path]);
@@ -30,9 +30,9 @@ class PathField extends FieldBase implements FieldInterface {
       foreach ($values as $value) {
         if (!empty($value) && isset($value['value'])) {
           $arrayValues[] = [
-            'alias' => $values[0]['alias'] ?: null,
-            'pid' => $values[0]['pid'] ?: null,
-            'langcode' => $values[0]['langcode'] ?: null,
+            'alias' => $values[0]['alias'] ?? null,
+            'pid' => $values[0]['pid'] ?? null,
+            'langcode' => $values[0]['langcode'] ?? null,
           ];
         }
       }

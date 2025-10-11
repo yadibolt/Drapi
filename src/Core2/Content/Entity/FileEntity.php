@@ -42,7 +42,7 @@ class FileEntity extends EntityBase {
    *  url: string,
    *  filemime: string,
    *  filesize: int,
-   *  status: string,
+   *  status: string<'temporary'|'permanent'>,
    *  created: int,
    *  changed: int
    * }>

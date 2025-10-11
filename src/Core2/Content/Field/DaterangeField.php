@@ -17,8 +17,8 @@ class DaterangeField extends FieldBase implements FieldInterface {
 
     if (count($values) === 1 && !empty($values[0]) && isset($values[0]['value'])) {
       $daterange = [
-        'start' => $values[0]['value'] ?: null,
-        'end' => $values[0]['end_value'] ?: null,
+        'start' => $values[0]['value'] ?? null,
+        'end' => $values[0]['end_value'] ?? null,
       ];
 
       return $this->flattenValues([$daterange]);
@@ -29,8 +29,8 @@ class DaterangeField extends FieldBase implements FieldInterface {
       foreach ($values as $value) {
         if (!empty($value) && isset($value['value'])) {
           $arrayValues[] = [
-            'start' => $values[0]['value'] ?: null,
-            'end' => $values[0]['end_value'] ?: null,
+            'start' => $values[0]['value'] ?? null,
+            'end' => $values[0]['end_value'] ?? null,
           ];
         }
       }
