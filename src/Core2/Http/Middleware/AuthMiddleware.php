@@ -7,6 +7,7 @@ use Drupal\drift_eleven\Core2\Http\Enum\ReplyIntent;
 use Drupal\drift_eleven\Core2\Http\Middleware\Base\MiddlewareBase;
 use Drupal\drift_eleven\Core2\Http\Middleware\Interface\MiddlewareInterface;
 use Drupal\drift_eleven\Core2\Http\Reply;
+use Drupal\drift_eleven\Core2\Session\Session;
 
 class AuthMiddleware extends MiddlewareBase implements MiddlewareInterface {
   public static function make(): self {
