@@ -10,7 +10,7 @@ class LinkField extends FieldBase implements FieldInterface {
   public function __construct(FieldItemListInterface $field){
     parent::__construct($field);
   }
-  public function getFieldValues(array $options = []): null|string|int|float|array {
+  public function getFieldValues(array $options = []): ?array {
     $this->handleOptions($options);
 
     $values = $this->getValues();

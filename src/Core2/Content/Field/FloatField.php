@@ -12,7 +12,7 @@ class FloatField extends FieldBase implements FieldInterface {
     parent::__construct($field);
   }
 
-  public function getFieldValues(array $options = []): null|string|int|float|array {
+  public function getFieldValues(array $options = []): null|array|float {
     $this->handleOptions($options);
 
     $values = $this->getValues();

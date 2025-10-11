@@ -3,6 +3,7 @@
 namespace Drupal\drift_eleven\Core2\Content\Field;
 
 use Drupal\Core\Field\FieldItemListInterface;
+use Drupal\drift_eleven\Core2\Content\Entity\FileEntity;
 use Drupal\drift_eleven\Core2\Content\Field\Base\FieldBase;
 use Drupal\drift_eleven\Core2\Content\Field\Interface\FieldInterface;
 use Drupal\file\Entity\File;
@@ -11,7 +12,7 @@ class FileField extends FieldBase implements FieldInterface {
   public function __construct(FieldItemListInterface $field){
     parent::__construct($field);
   }
-  public function getFieldValues(array $options = []): null|string|int|float|array {
+  public function getFieldValues(array $options = []): null|array|int {
     $this->handleOptions($options);
 
     $values = $this->getValues();
@@ -38,11 +39,14 @@ class FileField extends FieldBase implements FieldInterface {
   }
 
   protected function getEntityFields(array $ids): ?array {
+    if (empty($ids)) return null;
+
     $loaderValues = $this->getEntityLoaderValues($ids);
+    if (empty($loaderValues)) return null;
 
     $result = [];
     foreach ($loaderValues as $loaderValue) {
-      $result[] = [
+      $result[] = new FileEntity([
         'id' => $loaderValue->id(),
         'alt' => $loaderValue->hasField('alt') ? $loaderValue->get('alt')->value : null,
         'title' => $loaderValue->hasField('title') ? $loaderValue->get('title')->value : null,
@@ -57,13 +61,13 @@ class FileField extends FieldBase implements FieldInterface {
         'status' => $loaderValue->isPermanent() ? 'permanent' : 'temporary',
         'created' => $loaderValue->getCreatedTime(),
         'changed' => $loaderValue->getChangedTime(),
-      ];
+      ]);
     }
 
     return $result;
   }
 
-  protected function getEntityLoaderValues(array $ids): array {
+  protected function getEntityLoaderValues(array $ids): ?array {
     return File::loadMultiple($ids);
   }
 }

@@ -21,9 +21,31 @@ class FieldBase {
     $this->values = $field->getValue();
   }
 
-  public function flattenValues(array $values): null|string|int|float|array {
-    if (count($values) === 1) return $values[0];
-    if (count($values) > 1) return array_map(fn($v) => $v, $values);
+  public function flattenValues(?array $values): null|bool|string|int|float|array {
+    if (empty($values)) return null;
+
+    if (count($values) === 1) {
+      if (is_object($values[0])) {
+        if (method_exists($values[0], 'toArray')) {
+          return $values[0]->toArray();
+        }
+      } else {
+        return $values[0];
+      }
+    }
+    if (count($values) > 1) {
+      $arrayValues = [];
+      foreach ($values as $value) {
+        if (is_object($value)) {
+          if (method_exists($value, 'toArray')) {
+            $arrayValues[] = $value->toArray();
+          }
+        } else {
+          $arrayValues[] = $value;
+        }
+      }
+      return $arrayValues;
+    }
 
     return null;
   }

@@ -18,7 +18,7 @@ class EntityReferenceField extends FieldBase implements FieldInterface {
   public function __construct(FieldItemListInterface $field){
     parent::__construct($field);
   }
-  public function getFieldValues(array $options = []): null|string|int|float|array {
+  public function getFieldValues(array $options = []): null|int|array {
     $this->handleOptions($options);
 
     $values = $this->getValues();
@@ -45,8 +45,12 @@ class EntityReferenceField extends FieldBase implements FieldInterface {
     }
   }
 
-  protected function getEntityFields(string $entityType, array $ids): array {
+  protected function getEntityFields(string $entityType, array $ids): ?array {
+    if (empty($ids)) return null;
+
     $loaderValues = $this->getEntityLoaderValues($entityType, $ids);
+
+    if (empty($loaderValues)) return null;
 
     $result = [];
     foreach ($loaderValues as $loaderValue) {
