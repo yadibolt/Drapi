@@ -7,7 +7,9 @@ use Drupal\drift_eleven\Core2\Http\Enum\ReplyIntent;
 use Drupal\drift_eleven\Core2\Http\Middleware\Base\MiddlewareBase;
 use Drupal\drift_eleven\Core2\Http\Middleware\Interface\MiddlewareInterface;
 use Drupal\drift_eleven\Core2\Http\Reply;
+use Drupal\drift_eleven\Core2\Session\Enum\SubjectIntent;
 use Drupal\drift_eleven\Core2\Session\Session;
+use Drupal\drift_eleven\Core2\Session\Subject;
 
 class AuthMiddleware extends MiddlewareBase implements MiddlewareInterface {
   public static function make(): self {
@@ -48,7 +50,7 @@ class AuthMiddleware extends MiddlewareBase implements MiddlewareInterface {
     }
 
     if ($payload['data']['type'] === SubjectIntent::ANONYMOUS) {
-      $subject = Session::make($matches[1])->getSubject();
+      $subject = Subject::makeAnonymous();
 
       if (!$this->checkRequirements($subject)) return Reply::make([
         'action_id' => ReplyIntent::REQUIREMENTS_NOT_MET,
@@ -115,11 +117,12 @@ class AuthMiddleware extends MiddlewareBase implements MiddlewareInterface {
 
     if (!isset($payload['data']['user_id'])) return false;
     if (!is_numeric($payload['data']['user_id'])) return false;
-    if ((int)$payload['data']['user_id'] <= 0) return false;
 
     if (!isset($payload['data']['type'])) return false;
     if (!is_string($payload['data']['type'])) return false;
     if (!in_array($payload['data']['type'], [SubjectIntent::AUTHENTICATED, SubjectIntent::ANONYMOUS])) return false;
+
+    if ((int)$payload['data']['user_id'] <= 0 && $payload['data']['type'] === SubjectIntent::AUTHENTICATED) return false;
 
     return true;
   }

@@ -27,6 +27,7 @@ const JWT_CONFIG_NAME_DEFAULT = 'de_jwt_config';
 const JWT_SECRET_DEFAULT = 'change_me_please';
 const JWT_ACCESS_TOKEN_TTL_DEFAULT = 3600;
 const JWT_REFRESH_TOKEN_TTL_DEFAULT = 604800;
+const JWT_RESET_PASSWORD_TTL_DEFAULT = 900;
 const JWT_SIGNATURE_HASH_DEFAULT = 'de-994993lke91049m23';
 const JWT_ISSUER_DEFAULT = 'drift_eleven.com';
 
@@ -42,3 +43,9 @@ const HTTP_HEADER_NOT_CACHEABLE_DEFAULT = 'NOT-CACHEABLE';
 
 const ROUTE_CONFIG_NAME_DEFAULT = 'de_routes_config';
 const ROUTE_CACHE_TOKEN_ADDER_DEFAULT = '--add-token:';
+
+const SESSION_TABLE_NAME_DEFAULT = 'drift_eleven_sessions';
+const SESSION_RECORD_TTL_DEFAULT = 604800 * 2;
+
+const SUBJECT_RESET_PASSWORD_TABLE_NAME_DEFAULT = 'drift_eleven_password_resets';
+

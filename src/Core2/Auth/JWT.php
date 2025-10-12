@@ -14,6 +14,7 @@ class JWT {
 
   protected int $accessTokenTTL;
   protected int $refreshTokenTTL;
+  protected int $resetPasswordTTL;
   protected string $tokenSecret;
   protected string $token;
 
@@ -22,6 +23,7 @@ class JWT {
     $this->tokenSecret = $configuration->get('token_secret') ?? JWT_SECRET_DEFAULT;
     $this->accessTokenTTL = $configuration->get('access_token_ttl') ?? JWT_ACCESS_TOKEN_TTL_DEFAULT;
     $this->refreshTokenTTL = $configuration->get('refresh_token_ttl') ?? JWT_REFRESH_TOKEN_TTL_DEFAULT;
+    $this->resetPasswordTTL = $configuration->get('reset_password_ttl') ?? JWT_RESET_PASSWORD_TTL_DEFAULT;
     $this->token = $token;
 
     if ($this->tokenSecret === JWT_SECRET_DEFAULT) {
@@ -37,6 +39,7 @@ class JWT {
     $ttl = match($tokenType) {
       JWTIntent::ACCESS_TOKEN => $jwt->accessTokenTTL,
       JWTIntent::REFRESH_TOKEN => $jwt->refreshTokenTTL,
+      JWTIntent::RESET_PASSWORD => $jwt->resetPasswordTTL,
     };
 
     if (!empty($tokenTTL)) $ttl = $tokenTTL;

@@ -29,9 +29,10 @@ class Middleware extends MiddlewareBase {
         throw new InvalidArgumentException('Middleware ' . get_class($mw) . ' must implement MiddlewareInterface');
       }
 
-      if (in_array($mw->getId(), $routeMiddlewares)) {
-        $middlewareResult = $mw->process();
-        if ($middlewareResult !== null) return $middlewareResult;
+      $instance = $mw::make();
+      if (in_array($instance::getId(), $routeMiddlewares)) {
+        $result = $instance->process();
+        if ($result !== null) return $result;
       }
     }
 
