@@ -2,77 +2,16 @@
 
 namespace Drupal\drift_eleven\Core\Cache;
 
-use Drupal;
-use Drupal\Core\Entity\EntityInterface;
-use Drupal\drift_eleven\Core\Logger\Logger;
-use stdClass;
+use Drupal\drift_eleven\Core\Cache\Interface\CacheInterface;
+use Drupal\drift_eleven\Core\Cache\Base\CacheBase;
 
-class Cache implements CacheInterface {
-  public static function find(string $key): ?array {
-    $record = Drupal::cache(self::CACHE_BIN_KEY)->get($key);
-    return !empty($record) ? self::format($record) : null;
+class Cache extends CacheBase implements CacheInterface {
+  public function __construct(string $binKey = '') {
+    parent::__construct($binKey);
+    // TODO implement configuration options here, providing default values for now.
   }
 
-  public static function make(string $key, mixed $data, int $cacheDuration = self::DURATION_DEFAULT, array $cacheTags = []): void {
-    /*
-     * Examples of cache tags (https://www.drupal.org/docs/drupal-apis/cache-api/cache-tags)
-     *
-     * By convention, identifiers follow the format thing:identifier.
-     * When there is no concept of multiple instances of a thing, the format is simply thing.
-     * The only rule is that identifiers cannot contain spaces.
-     *
-     * node:5 — cache tag for Node entity 5 (invalidated whenever it changes)
-     * user:3 — cache tag for User entity 3 (invalidated whenever it changes)
-     * node_list — list cache tag for Node entities (invalidated whenever any Node entity is updated, deleted or created, i.e., when a listing of nodes may need to change). Applicable to any entity type in following format: {entity_type}_list.
-     * node_list:article — list cache tag for the article bundle (content type). Applicable to any entity + bundle type in following format: {entity_type}_list:{bundle}.
-     * config:node_type_list — list cache tag for Node type entities (invalidated whenever any content types are updated, deleted or created). Applicable to any entity type in the following format: config:{entity_bundle_type}_list.
-     * config:system.performance — cache tag for the system.performance configuration
-     * library_info — cache tag for asset libraries
-     */
-
-    if (self::find($key)) return;
-    Drupal::cache(self::CACHE_BIN_KEY)->set($key, $data, time() + $cacheDuration, $cacheTags);
-  }
-
-  public static function invalidate(string $key): void {
-    if (self::find($key)) {
-      Drupal::cache(self::CACHE_BIN_KEY)->invalidate($key);
-    }
-  }
-
-  public static function invalidateEntity(EntityInterface|string $entity): void {
-    $exists = Cache::find('cacheTags') ?: [];
-
-    if (is_string($entity)) {
-      if (isset($exists[$entity]) && is_array($exists[$entity])) {
-        foreach ($exists[$entity] as $cacheName) {
-          Drupal::cache(self::CACHE_BIN_KEY)->invalidate($cacheName);
-        }
-      }
-    } else {
-      if ($entity->getEntityTypeId() === 'menu_link_content') {
-        if (isset($exists['menu_link_content']) && is_array($exists['menu_link_content'])) {
-          foreach ($exists['menu_link_content'] as $cacheName) {
-            Drupal::cache(self::CACHE_BIN_KEY)->invalidate($cacheName);
-          }
-        }
-      } else {
-        foreach ($entity->getCacheTags() as $cacheTag) {
-          foreach ($exists[$cacheTag] as $cacheName) {
-            Drupal::cache(self::CACHE_BIN_KEY)->invalidate($cacheName);
-          }
-        }
-      }
-    }
-    // log the $exists for debugging
-    Logger::l('Current cacheTags after invalidation: @cacheTags', ['@cacheTags' => print_r($exists, true)]);
-  }
-
-  public static function flush(): void {
-    Drupal::cache(self::CACHE_BIN_KEY)->deleteAll();
-  }
-
-  public static function format(stdClass $cacheRecord): ?array {
-    return !empty($cacheRecord->data) ? $cacheRecord->data : null;
+  public static function make(string $binKey = ''): self {
+    return new self($binKey);
   }
 }

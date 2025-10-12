@@ -3,33 +3,27 @@ services:
   # make sure to edit the settings.php and include the cache backend
   # of your choice. preferably set to APCU (...or MemCached, Redis etc.):
   # ###
-  # $settings['cache']['bins']['drift_eleven'] = 'cache.backend.apcu';
+  # $settings['cache']['bins']['de_bin'] = 'cache.backend.apcu';
   # ###
   cache.drift_eleven:
     class: Drupal\Core\Cache\ApcuBackend
-    factory: cache_factory:get
+    factory: ['@cache_factory', 'get']
     arguments: ['drift_eleven']
 
   # route registry
   drift_eleven.service.route_subscriber:
-    class: Drupal\drift_eleven\EventSubscriber\RouteSubscriber
+    class: Drupal\drift_eleven\EventSubscriber\Routes
     tags:
       - { name: event_subscriber }
 
   # cache control
   drift_eleven.service.route_cache_control_subscriber:
-    class: Drupal\drift_eleven\EventSubscriber\RouteCacheControlSubscriber
-    tags:
-      - { name: event_subscriber }
-
-  # route middlewares control
-  drift_eleven.service.route_middleware_control_subscriber:
-    class: Drupal\drift_eleven\EventSubscriber\RouteMiddlewareControlSubscriber
+    class: Drupal\drift_eleven\EventSubscriber\CacheControl
     tags:
       - { name: event_subscriber }
 
   # custom cache invalidation tags
   drift_eleven.service.config_cache_control_subscriber:
-    class: Drupal\drift_eleven\EventSubscriber\ConfigCacheControlSubscriber
+    class: Drupal\drift_eleven\EventSubscriber\ConfigurationCacheControl
     tags:
       - { name: event_subscriber }

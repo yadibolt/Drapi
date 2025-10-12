@@ -1,5 +1,5 @@
 <?php
-
+/*
 // project globals
 const D9M7_PROJECT_NAME = 'Drift Eleven';
 const D9M7_PROJECT_ID = 'drift_eleven';
@@ -11,7 +11,7 @@ const D9M7_CORE_ROUTES_DIR = __DIR__ . '\src\Core\Routes';
 const D9M7_CONFIG_KEY = 'drift_eleven.settings';
 const D9M7_LOGGER_KEY = 'drift_eleven.logger';
 const D9M7_CACHE_KEY = 'drift_eleven.cache';
-const D9M7_CACHE_BIN_KEY = 'drift_eleven';
+const D9M7_CACHE_BIN_KEY = 'drift_eleven';*/
 
 
 // v2
@@ -19,8 +19,8 @@ const LOGGER_DEBUG = true;
 const LOGGER_CHANNEL_DEFAULT = 'de_channel';
 const LOGGER_LEVEL_DEFAULT = 'debug';
 
-const CACHE_BIN_KEY_DEFAULT = 'de_bin';
-const CACHE_TAGS_BIN_KEY_DEFAULT = 'de_tags_bin';
+const CACHE_BIN_KEY_DEFAULT = 'drift_eleven';
+const CACHE_TAGS_BIN_KEY_DEFAULT = 'drift_eleven';
 const CACHE_DURATION_DEFAULT = 3600;
 
 const JWT_CONFIG_NAME_DEFAULT = 'de_jwt_config';
@@ -44,10 +44,10 @@ const HTTP_HEADER_NOT_CACHEABLE_DEFAULT = 'NOT-CACHEABLE';
 const ROUTE_CONFIG_NAME_DEFAULT = 'de_routes_config';
 const ROUTE_NAME_PREFIX_DEFAULT = 'de_route';
 const ROUTE_CACHE_TOKEN_ADDER_DEFAULT = '--add-token:';
-const ROUTE_CONFIG_CORE_ROUTES_PATH_DEFAULT = __DIR__ . '\src\Core\Routes';
+const ROUTE_CONFIG_CORE_ROUTES_PATH_DEFAULT = __DIR__ . '\src\Routes';
 
-const SESSION_TABLE_NAME_DEFAULT = 'drift_eleven_sessions';
+const SESSION_TABLE_NAME_DEFAULT = 'drift_eleven_session';
 const SESSION_RECORD_TTL_DEFAULT = 604800 * 2;
 
-const SUBJECT_RESET_PASSWORD_TABLE_NAME_DEFAULT = 'drift_eleven_password_resets';
+const SUBJECT_RESET_PASSWORD_TABLE_NAME_DEFAULT = 'drift_eleven_password_reset';
 
