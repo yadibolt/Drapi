@@ -15,7 +15,7 @@ class Routes extends RouteSubscriberBase {
     $routeRegistry = $configuration->get('route_registry') ?: [];
 
     $coreRoutes = RouteRegistry::make()->scanDirectory(ROUTE_CONFIG_CORE_ROUTES_PATH_DEFAULT);
-    $otherRoutes = [];
+    $otherRoutes = []; // TODO implement scanning other module dirs for routes
 
     foreach ([$coreRoutes, $otherRoutes] as $routeCollection) {
       if (!is_array($routeCollection) || empty($routeCollection)) continue;
