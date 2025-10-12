@@ -4,6 +4,7 @@ namespace Drupal\drift_eleven\Core2\Cache\Base;
 
 use Drupal;
 use Drupal\Core\Cache\Cache;
+use Drupal\Core\Entity\EntityInterface;
 use Drupal\drift_eleven\Core2\Cache\Enum\CacheIntent;
 
 class CacheBase {
@@ -77,6 +78,54 @@ class CacheBase {
       }
 
       $cacheTags[$tag] = [];
+    }
+
+    Drupal::cache($this->binKey)->deleteMultiple($cacheIdsToInvalidate);
+    $tagsCacheBin->set('cache_tags', $cacheTags, CACHE::PERMANENT);
+  }
+  public function invalidateEntityTags(EntityInterface|string $entity): void {
+    $tagsCacheBin = Drupal::cache(self::CACHE_TAGS_BIN_KEY);
+    $cacheTags = $tagsCacheBin->get('cache_tags') ?? [];
+
+    if (is_string($entity)) {
+      $cacheIdsToInvalidate = [];
+
+      if (isset($cacheTags[$entity]) && is_array($cacheTags[$entity])) {
+        foreach ($cacheTags[$entity] as $cacheName => $_) {
+          $cacheIdsToInvalidate[] = $cacheName;
+        }
+        $cacheTags[$entity] = [];
+      }
+
+      Drupal::cache($this->binKey)->deleteMultiple($cacheIdsToInvalidate);
+      $tagsCacheBin->set('cache_tags', $cacheTags, CACHE::PERMANENT);
+      return;
+    }
+
+    if ($entity->getEntityTypeId() === 'menu_link_content') {
+      $cacheIdsToInvalidate = [];
+
+      if (isset($cacheTags['menu_link_content']) && is_array($cacheTags['menu_link_content'])) {
+        foreach ($cacheTags['menu_link_content'] as $cacheName => $_) {
+          $cacheIdsToInvalidate[] = $cacheName;
+        }
+        $cacheTags['menu_link_content'] = [];
+      }
+
+      Drupal::cache($this->binKey)->deleteMultiple($cacheIdsToInvalidate);
+      $tagsCacheBin->set('cache_tags', $cacheTags, CACHE::PERMANENT);
+      return;
+    }
+
+    $cacheIdsToInvalidate = [];
+
+    foreach ($entity->getCacheTags() as $cacheTag) {
+      if (isset($cacheTags[$cacheTag]) && is_array($cacheTags[$cacheTag])) {
+        foreach ($cacheTags[$cacheTag] as $cacheName => $_) {
+          $cacheIdsToInvalidate[] = $cacheName;
+        }
+        $cacheTags[$cacheTag] = [];
+      }
     }
 
     Drupal::cache($this->binKey)->deleteMultiple($cacheIdsToInvalidate);
