@@ -8,7 +8,7 @@ class SubjectBase {
   protected array $roles;
   protected array $permissions;
   protected string $langcode;
-  protected bool $authenticated = false;
+  protected bool $authenticated;
 
   public function __construct(int $id, bool $authenticated, bool $active, array $roles = [], array $permissions = [], string $langcode = 'en') {
     $this->id = $id;
