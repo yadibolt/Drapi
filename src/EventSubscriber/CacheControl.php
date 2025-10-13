@@ -39,11 +39,32 @@ class CacheControl implements EventSubscriberInterface{
         $userToken = $matches[1] ?? '';
       }
 
-      $cacheIdentifier = $request->getRequestUri();
-      if (!empty($userToken)) $cacheIdentifier .= ROUTE_CACHE_TOKEN_ADDER_DEFAULT . $userToken;
-
       $cache = Cache::make();
+      $cacheIdentifier = $request->getRequestUri();
+
+      // 1. with adder
+      // with adder, additional checks run before it can be accessed
+      if (!empty($userToken)) $cacheIdentifier .= ROUTE_CACHE_TOKEN_ADDER_DEFAULT . $userToken;
       $cacheHit = $cache->get($cacheIdentifier, CacheIntent::URL);
+
+      // 2. without adder - default uri with query params
+      if (empty($cacheHit)) {
+        $cacheIdentifier = $request->getRequestUri();
+        $cacheHit = $cache->get($cacheIdentifier, CacheIntent::URL);
+
+        // since the adder is not present, this has to be public GET route
+        // therefore we can return the cache hit directly
+        if (!empty($cacheHit)) {
+          $cacheHit = $this->createCachedResponse($cache, $cacheIdentifier, $cacheHit);
+          if ($cacheHit === null) return;
+
+          $event->setResponse(
+            Reply::make($cacheHit['data'], $cacheHit['status'], $cacheHit['headers'])
+          );
+          $event->stopPropagation();
+        }
+      }
+
       if (empty($cacheHit)) return;
 
       $configuration = Drupal::configFactory()->get(ROUTE_CONFIG_NAME_DEFAULT);
@@ -76,7 +97,7 @@ class CacheControl implements EventSubscriberInterface{
         if ($cacheHit === null) return;
 
         $event->setResponse(
-          Reply::make($cacheHit['data'], $cacheHit['status']. $cacheHit['headers'])
+          Reply::make($cacheHit['data'], $cacheHit['status'], $cacheHit['headers'])
         );
         $event->stopPropagation();
       } else {
@@ -99,7 +120,7 @@ class CacheControl implements EventSubscriberInterface{
         if ($cacheHit === null) return;
 
         $event->setResponse(
-          Reply::make($cacheHit['data'], $cacheHit['status']. $cacheHit['headers'])
+          Reply::make($cacheHit['data'], $cacheHit['status'], $cacheHit['headers'])
         );
         $event->stopPropagation();
       }
@@ -157,8 +178,14 @@ class CacheControl implements EventSubscriberInterface{
         $cacheTags = $this->route['cache_tags'] ?? [];
       }
 
+      if (is_string($cacheHit['data']) && json_validate($cacheHit['data'])) {
+        $cacheHit['data'] = json_decode($cacheHit['data'], true);
+      }
+
       $cacheHit['data']['timestamp'] = time();
       $cacheHit['headers_replaced'] = true;
+
+      if (is_array($cacheHit['data'])) $cacheHit['data'] = json_encode($cacheHit['data']);
 
       $cache->create($cacheIdentifier, CacheIntent::URL, $cacheHit, $cacheTags);
 

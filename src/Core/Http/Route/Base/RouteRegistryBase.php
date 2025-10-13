@@ -5,7 +5,7 @@ namespace Drupal\drift_eleven\Core\Http\Route\Base;
 use Drupal;
 use Drupal\drift_eleven\Core\Content\Trait\FileTrait;
 
-class RouteRegistryBase {
+abstract class RouteRegistryBase {
   use FileTrait;
 
   protected string $directoryPath;

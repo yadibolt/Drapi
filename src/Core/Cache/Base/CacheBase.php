@@ -7,7 +7,7 @@ use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\drift_eleven\Core\Cache\Enum\CacheIntent;
 
-class CacheBase {
+abstract class CacheBase {
   protected const string CACHE_BIN_KEY = CACHE_BIN_KEY_DEFAULT;
   protected const string CACHE_TAGS_BIN_KEY = CACHE_TAGS_BIN_KEY_DEFAULT;
   protected const int CACHE_DURATION = CACHE_DURATION_DEFAULT;
@@ -32,12 +32,9 @@ class CacheBase {
     $key = $this->makeKey($key, $intent);
 
     $record = Drupal::cache($this->binKey)->get($key);
-    if (empty($record)) return null;
+    if (empty($record) || empty($record->data)) return null;
 
-    return unserialize($record);
-  }
-  public function getCacheTags(): object|array {
-    return Drupal::cache(self::CACHE_TAGS_BIN_KEY)->get('cache_tags') ?? [];
+    return unserialize($record->data);
   }
   public function create(string $key, CacheIntent $intent, mixed $data, array $tags = []): bool {
     $key = $this->makeKey($key, $intent);
@@ -46,15 +43,15 @@ class CacheBase {
     $data = serialize($data);
 
     $tagsCacheBin = Drupal::cache(self::CACHE_TAGS_BIN_KEY);
-    $cacheTags = $tagsCacheBin->get('cache_tags') ?? [];
 
     foreach ($tags as $tag) {
-      if (!isset($cacheTags[$tag])) $cacheTags[$tag] = [];
-      if (!isset($cacheTags[$tag][$key])) $cacheTags[$tag][$key] = 1;
+      $cacheTags = $tagsCacheBin->get($tag) ?? [];
+      if (!isset($cacheTags[$key])) $cacheTags[$key] = 1;
+
+      $tagsCacheBin->set($tag, $cacheTags, CACHE::PERMANENT);
     }
 
     Drupal::cache($this->binKey)->set($key, $data, $this->getCacheDurationTimestamp());
-    $tagsCacheBin->set('cache_tags', $cacheTags, CACHE::PERMANENT);
     return true;
   }
   public function delete(string $key, CacheIntent $intent): void {

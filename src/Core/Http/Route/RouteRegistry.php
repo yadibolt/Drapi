@@ -30,12 +30,12 @@ class RouteRegistry extends RouteRegistryBase {
       $route = Route::fromDocComment($filePath);
       if ($route === null) continue;
 
-      if (isset($this->registry[$route->getId()])) {
-        $enabled = $this->registry[$route->getId()]['enabled'] ?: true;
+      if (isset($this->registry[ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId()])) {
+        $enabled = $this->registry[ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId()]['enabled'] ?: true;
         $route->setEnabled($enabled);
       }
 
-      $this->registry[] = $route;
+      $this->registry[ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId()] = $route;
     }
 
     return $this->registry;

@@ -10,6 +10,11 @@ services:
     factory: ['@cache_factory', 'get']
     arguments: ['drift_eleven']
 
+  cache.drift_eleven_cache_tags:
+    class: Drupal\Core\Cache\ApcuBackend
+    factory: [ '@cache_factory', 'get' ]
+    arguments: [ 'drift_eleven_cache_tags' ]
+
   # route registry
   drift_eleven.service.route_subscriber:
     class: Drupal\drift_eleven\EventSubscriber\Routes

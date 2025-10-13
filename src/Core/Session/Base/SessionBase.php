@@ -10,7 +10,7 @@ use Drupal\drift_eleven\Core\Session\Enum\SubjectIntent;
 use Drupal\drift_eleven\Core\Session\Subject;
 use Exception;
 
-class SessionBase {
+abstract class SessionBase {
   protected int $id;
   protected int $entityId;
   protected string $token;

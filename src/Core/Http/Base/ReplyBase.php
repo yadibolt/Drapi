@@ -10,7 +10,7 @@ use Drupal\drift_eleven\Core\Http\Trait\RequestTrait;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
-class ReplyBase extends Response {
+abstract class ReplyBase extends Response {
   use RequestTrait;
 
   protected const int DEPTH = 512;
@@ -72,7 +72,7 @@ class ReplyBase extends Response {
       $cacheIdentifier = $request->getRequestUri();
       if (!empty($userToken)) $cacheIdentifier .= ROUTE_CACHE_TOKEN_ADDER_DEFAULT . $userToken;
 
-      Cache::make(CACHE_BIN_KEY_DEFAULT)->create($cacheIdentifier, CacheIntent::URL, [
+      Cache::make()->create($cacheIdentifier, CacheIntent::URL, [
         'data' => $this->data,
         'status' => $status,
         'headers' => $this->headers,

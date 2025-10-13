@@ -16,6 +16,6 @@ class ConfigurationCacheControl implements EventSubscriberInterface{
     ];
   }
   public function onConfigChange(ConfigCrudEvent $event): void {
-    Cache::make()->invalidateEntityTags($event->getConfig()->getName());
+    Cache::make(CACHE_TAGS_BIN_KEY_DEFAULT)->invalidateEntityTags($event->getConfig()->getName());
   }
 }

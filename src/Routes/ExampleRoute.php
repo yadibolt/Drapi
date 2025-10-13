@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core2\Routes;
+namespace Drupal\drift_eleven\Routes;
 
 
 use Drupal\drift_eleven\Core\Http\Reply;
@@ -25,7 +25,7 @@ use Drupal\drift_eleven\Core\Http\Route\Interface\RouteHandlerInterface;
 class ExampleRoute extends RouteHandlerBase implements RouteHandlerInterface {
   public function handle(): Reply {
     return Reply::make([
-      'message' => 'Yay!'
+      'message' => 'Yay! 1'
     ], 200);
   }
 }

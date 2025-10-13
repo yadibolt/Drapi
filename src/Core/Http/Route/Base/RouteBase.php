@@ -16,7 +16,7 @@ use ReflectionException;
 use ReflectionMethod;
 use Symfony\Component\Routing\Route;
 
-class RouteBase {
+abstract class RouteBase {
   use FileTrait;
 
   public const array ALLOWED_SCHEMES = [
@@ -42,14 +42,14 @@ class RouteBase {
   protected bool $enabled;
   protected string $filePath;
   //
-  protected string $classNamespace;
-  protected string $classNamespaceName;
-  protected string $classDocComment;
-  protected string $classClassName;
-  protected string $classShortName;
-  protected array $classInterfaces;
-  protected array $classPublicMethods;
-  protected string $classParentClass;
+  protected string $classNamespace = '';
+  protected string $classNamespaceName = '';
+  protected string $classDocComment = '';
+  protected string $classClassName = '';
+  protected string $classShortName = '';
+  protected array $classInterfaces = [];
+  protected array $classPublicMethods = [];
+  protected string $classParentClass = '';
 
   /**
    * @throws Exception
@@ -66,9 +66,6 @@ class RouteBase {
     $this->useCache = $useCache;
     $this->enabled = true;
     $this->filePath = $filePath;
-
-    if (!$this->check() && !empty($filePath)) throw new Exception('Route assertions or validations have failed');
-
     $this->classNamespace = $this->_getClassNamespace();
     $this->classNamespaceName = $this->_getClassNamespaceName();
     $this->classDocComment = $this->_getClassDocComment();
@@ -77,18 +74,49 @@ class RouteBase {
     $this->classInterfaces = $this->_getClassInterfaces();
     $this->classPublicMethods = $this->_getClassPublicMethods();
     $this->classParentClass = $this->_getParentClassName();
+
+    if (!$this->check() && !empty($filePath)) throw new Exception('Route assertions or validations have failed');
   }
   protected function check(): bool {
     $asserters = [
-      RouteClassAsserter::class,        // checks class declaration
-      RouteMethodAsserter::class,       // checks for required methods
-      RouteDocCommentAsserter::class,   // checks for doc comments
-      RouteExtendsAsserter::class,      // checks if class extends a base class
-      RouteImplementsAsserter::class    // checks if class implements an interface
+      [
+        'class' => RouteClassAsserter::class, // checks class declaration
+        'errorMessage' => 'RouteClassAsserter have failed for ' . $this->filePath,
+      ],
+      [
+        'class' => RouteMethodAsserter::class, // checks for required methods
+        'errorMessage' => 'RouteMethodAsserter have failed for ' . $this->filePath,
+      ],
+      [
+        'class' => RouteDocCommentAsserter::class, // checks for doc comments
+        'errorMessage' => 'RouteDocCommentAsserter have failed for ' . $this->filePath,
+      ],
+      [
+        'class' => RouteExtendsAsserter::class, // checks if class extends a base class
+        'errorMessage' => 'RouteExtendsAsserter have failed for ' . $this->filePath,
+      ],
+      [
+        'class' => RouteImplementsAsserter::class, // checks if class implements an interface
+        'errorMessage' => 'RouteImplementsAsserter have failed for ' . $this->filePath,
+      ]
     ];
 
-    return array_all($asserters, fn($asserter) => call_user_func([$asserter, 'assert'], $this));
+    foreach ($asserters as $asserter) {
+      if (!class_exists($asserter['class'])) {
+        Logger::l(
+          level: LoggerIntent::CRITICAL, message: 'Asserter class @asserterClass does not exist.', context: ['@asserterClass' => $asserter['class']]
+        ); return false;
+      }
 
+      $asserterInstance = new $asserter['class']();
+      if (!call_user_func([$asserterInstance, 'assert'], $this)) {
+        Logger::l(
+          level: LoggerIntent::CRITICAL, message: $asserter['errorMessage']
+        ); return false;
+      }
+    }
+
+    return true;
   }
   public function toArray(): array {
     return [
@@ -100,7 +128,7 @@ class RouteBase {
       'permissions' => $this->permissions,
       'roles' => $this->roles,
       'use_middleware' => $this->useMiddleware,
-      'useCache' => $this->useCache,
+      'use_cache' => $this->useCache,
       'enabled' => $this->enabled,
       'class_namespace' => $this->classNamespace,
       'class_namespace_name' => $this->classNamespaceName,

@@ -4,7 +4,7 @@ namespace Drupal\drift_eleven\Core\Content\Field\Base;
 
 use Drupal\Core\Field\FieldItemListInterface;
 
-class FieldBase {
+abstract class FieldBase {
   protected bool $loadEntities;
   protected bool $loadCustom;
   protected bool $loadProtected;

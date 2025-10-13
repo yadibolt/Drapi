@@ -2,7 +2,7 @@
 
 namespace Drupal\drift_eleven\Core\Session\Base;
 
-class SubjectBase {
+abstract class SubjectBase {
   protected int $id;
   protected bool $active;
   protected array $roles;

@@ -20,10 +20,10 @@ const LOGGER_CHANNEL_DEFAULT = 'de_channel';
 const LOGGER_LEVEL_DEFAULT = 'debug';
 
 const CACHE_BIN_KEY_DEFAULT = 'drift_eleven';
-const CACHE_TAGS_BIN_KEY_DEFAULT = 'drift_eleven';
-const CACHE_DURATION_DEFAULT = 3600;
+const CACHE_TAGS_BIN_KEY_DEFAULT = 'drift_eleven_cache_tags';
+const CACHE_DURATION_DEFAULT = 60;
 
-const JWT_CONFIG_NAME_DEFAULT = 'de_jwt_config';
+const JWT_CONFIG_NAME_DEFAULT = 'drift_eleven.jwt_config';
 const JWT_SECRET_DEFAULT = 'change_me_please';
 const JWT_ACCESS_TOKEN_TTL_DEFAULT = 3600;
 const JWT_REFRESH_TOKEN_TTL_DEFAULT = 604800;
@@ -41,7 +41,7 @@ const HTTP_HEADER_CACHEABLE_NAME_DEFAULT = 'X-DriftEleven-Cacheable';
 const HTTP_HEADER_CACHEABLE_DEFAULT = 'CACHEABLE';
 const HTTP_HEADER_NOT_CACHEABLE_DEFAULT = 'NOT-CACHEABLE';
 
-const ROUTE_CONFIG_NAME_DEFAULT = 'de_routes_config';
+const ROUTE_CONFIG_NAME_DEFAULT = 'drift_eleven.routes_config';
 const ROUTE_NAME_PREFIX_DEFAULT = 'de_route';
 const ROUTE_CACHE_TOKEN_ADDER_DEFAULT = '--add-token:';
 const ROUTE_CONFIG_CORE_ROUTES_PATH_DEFAULT = __DIR__ . '\src\Routes';

@@ -57,16 +57,17 @@ function drift_eleven_theme(array $existing, string $type, string $theme, string
 
 function drift_eleven_cache_flush(): void {
   Cache::make()->flush();
+  Cache::make(CACHE_TAGS_BIN_KEY_DEFAULT)->flush();
 }
 
 function drift_eleven_entity_insert(EntityInterface $entity): void {
-  Cache::make()->invalidateEntityTags($entity);
+  Cache::make(CACHE_TAGS_BIN_KEY_DEFAULT)->invalidateEntityTags($entity);
 }
 
 function drift_eleven_entity_update(EntityInterface $entity): void {
-  Cache::make()->invalidateEntityTags($entity);
+  Cache::make(CACHE_TAGS_BIN_KEY_DEFAULT)->invalidateEntityTags($entity);
 }
 
 function drift_eleven_entity_delete(EntityInterface $entity): void {
-  Cache::make()->invalidateEntityTags($entity);
+  Cache::make(CACHE_TAGS_BIN_KEY_DEFAULT)->invalidateEntityTags($entity);
 }

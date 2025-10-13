@@ -2,6 +2,7 @@
 
 namespace Drupal\drift_eleven\Core\Http\Route\Asserters;
 
+use Drupal\drift_eleven\Core\Http\Middleware\Middleware;
 use Drupal\drift_eleven\Core\Http\Route\Asserters\Interface\RouteAsserterInterface;
 use Drupal\drift_eleven\Core\Utility\Enum\LoggerIntent;
 use Drupal\drift_eleven\Core\Utility\Logger;
@@ -59,7 +60,7 @@ class RouteDocCommentAsserter implements RouteAsserterInterface {
     // @useMiddleware
     if (isset($classDocComment['useMiddleware']) && !is_array($classDocComment['useMiddleware'])) return false;
     if (isset($classDocComment['useMiddleware'])) {
-      if (array_any($classDocComment['useMiddleware'], fn($middleware) => !in_array($middleware, $route::ALLOWED_MIDDLEWARES))) {
+      if (array_any($classDocComment['useMiddleware'], fn($middleware) => !in_array($middleware, Middleware::AVAILABLE_MIDDLEWARES))) {
         return false;
       }
     }

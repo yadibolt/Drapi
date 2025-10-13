@@ -8,6 +8,9 @@ use Drupal\drift_eleven\Core\Http\Reply;
 use http\Exception\InvalidArgumentException;
 
 class Middleware extends MiddlewareBase {
+  public const array AVAILABLE_MIDDLEWARES = [
+    'auth', 'request',
+  ];
   protected array $middlewares = [
     AuthMiddleware::class,
     RequestMiddleware::class,
