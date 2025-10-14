@@ -13,6 +13,7 @@ class JWT {
   protected const string HASH_ALGO = 'sha512';
 
   protected int $accessTokenTTL;
+  protected int $accessTokenUnlimitedTTL;
   protected int $refreshTokenTTL;
   protected int $resetPasswordTTL;
   protected string $tokenSecret;
@@ -22,6 +23,7 @@ class JWT {
     $configuration = Drupal::configFactory()->get(JWT_CONFIG_NAME_DEFAULT);
     $this->tokenSecret = $configuration->get('token_secret') ?? JWT_SECRET_DEFAULT;
     $this->accessTokenTTL = $configuration->get('access_token_ttl') ?? JWT_ACCESS_TOKEN_TTL_DEFAULT;
+    $this->accessTokenUnlimitedTTL = $configuration->get('access_token_unlimited_ttl') ?? JWT_ACCESS_TOKEN_UNLIMITED_TTL_DEFAULT;
     $this->refreshTokenTTL = $configuration->get('refresh_token_ttl') ?? JWT_REFRESH_TOKEN_TTL_DEFAULT;
     $this->resetPasswordTTL = $configuration->get('reset_password_ttl') ?? JWT_RESET_PASSWORD_TTL_DEFAULT;
     $this->token = $token;
@@ -38,6 +40,7 @@ class JWT {
     $jwt = new self();
     $ttl = match($tokenType) {
       JWTIntent::ACCESS_TOKEN => $jwt->accessTokenTTL,
+      JWTIntent::ACCESS_TOKEN_UNLIMITED => $jwt->accessTokenUnlimitedTTL,
       JWTIntent::REFRESH_TOKEN => $jwt->refreshTokenTTL,
       JWTIntent::RESET_PASSWORD => $jwt->resetPasswordTTL,
     };
