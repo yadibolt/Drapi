@@ -96,7 +96,7 @@ class JWT {
   }
 
   protected function checkTTL(string $payloadPart): bool {
-    $payload = json_decode(Base64::decode($payloadPart));
+    $payload = json_decode(Base64::decode($payloadPart), true);
     if (empty($payload) || !isset($payload['exp'])) return true;
     return !($payload['exp'] > time());
   }

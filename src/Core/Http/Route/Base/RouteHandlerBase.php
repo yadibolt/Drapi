@@ -3,6 +3,7 @@
 namespace Drupal\drift_eleven\Core\Http\Route\Base;
 
 use Drupal;
+use Drupal\drift_eleven\Core\Cache\Cache;
 use Drupal\drift_eleven\Core\Http\Reply;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -48,15 +49,19 @@ abstract class RouteHandlerBase {
     if (!$this->routeId) return;
     if (!isset($routeRegistry[$this->routeId])) return;
 
-    $currentCacheTags = $routeRegistry[$this->routeId]['cache_tags'];
-    if (!is_array($currentCacheTags)) return;
-    if (array_diff($currentCacheTags, $tags) === [] && array_diff($tags, $currentCacheTags) === []) return;
-
+    $currentCacheTags = $routeRegistry[$this->routeId]['cache_tags'] ?? [];
     $mergedTags = array_unique(array_merge($currentCacheTags, $tags));
     $routeRegistry[$this->routeId]['cache_tags'] = $mergedTags;
     $this->cacheTags = $mergedTags;
 
     $configuration->set('route_registry', $routeRegistry);
     $configuration->save();
+  }
+
+  protected function getRequestLangcode(): string {
+    return $this->context['request']['langcode'] ?? 'en';
+  }
+  protected function getUriToken(string $token): ?string {
+    return $this->currentRequest->get($token);
   }
 }

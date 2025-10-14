@@ -5,7 +5,8 @@ namespace Drupal\drift_eleven\Core\Http\Middleware;
 use Drupal\drift_eleven\Core\Http\Middleware\Base\MiddlewareBase;
 use Drupal\drift_eleven\Core\Http\Middleware\Interface\MiddlewareInterface;
 use Drupal\drift_eleven\Core\Http\Reply;
-use http\Exception\InvalidArgumentException;
+use InvalidArgumentException;
+use Symfony\Component\HttpFoundation\Request;
 
 class Middleware extends MiddlewareBase {
   public const array AVAILABLE_MIDDLEWARES = [
@@ -24,12 +25,14 @@ class Middleware extends MiddlewareBase {
     return new self();
   }
 
-  public function apply(): ?Reply {
-    $routeMiddlewares = $this->getCurrentRoute()['use_middleware'] ?? [];
+  public function apply(array $route): ?Reply {
+    $routeMiddlewares = $route['use_middleware'] ?? [];
 
     foreach ($this->middlewares as $mw) {
-      if (!($mw instanceof MiddlewareInterface)) {
-        throw new InvalidArgumentException('Middleware ' . get_class($mw) . ' must implement MiddlewareInterface');
+      $instance = new $mw();
+
+      if (!($instance instanceof MiddlewareInterface)) {
+        throw new InvalidArgumentException('Middleware ' . get_class($instance) . ' must implement MiddlewareInterface');
       }
 
       $instance = $mw::make();

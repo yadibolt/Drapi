@@ -43,15 +43,16 @@ abstract class CacheBase {
     $data = serialize($data);
 
     $tagsCacheBin = Drupal::cache(self::CACHE_TAGS_BIN_KEY);
-
     foreach ($tags as $tag) {
-      $cacheTags = $tagsCacheBin->get($tag) ?? [];
+      $tagRecord = $tagsCacheBin->get($tag);
+      $cacheTags = $tagRecord && !empty($tagRecord->data) ? $tagRecord->data : [];
       if (!isset($cacheTags[$key])) $cacheTags[$key] = 1;
 
       $tagsCacheBin->set($tag, $cacheTags, CACHE::PERMANENT);
     }
 
     Drupal::cache($this->binKey)->set($key, $data, $this->getCacheDurationTimestamp());
+
     return true;
   }
   public function delete(string $key, CacheIntent $intent): void {
@@ -63,70 +64,72 @@ abstract class CacheBase {
     Drupal::cache(self::CACHE_TAGS_BIN_KEY)->deleteAll();
   }
   public function invalidateTags(array $tags): void {
+    $cacheTagsToInvalidate = [];
     $cacheIdsToInvalidate = [];
 
     $tagsCacheBin = Drupal::cache(self::CACHE_TAGS_BIN_KEY);
-    $cacheTags = $tagsCacheBin->get('cache_tags') ?? [];
     foreach ($tags as $tag) {
-      if (isset($cacheTags[$tag]) && is_array($cacheTags[$tag])) {
-        foreach ($cacheTags[$tag] as $cacheName => $_) {
-          $cacheIdsToInvalidate[] = $cacheName;
-        }
-      }
+      $tagRecords = $tagsCacheBin->get($tag);
+      $records = $tagRecords && !empty($tagRecords->data) ? $tagRecords->data : [];
 
-      $cacheTags[$tag] = [];
+      if (!empty($records) && is_array($records)) {
+        $cacheIdsToInvalidate = array_merge($cacheIdsToInvalidate, array_keys($records));
+        $cacheTagsToInvalidate[] = $tag;
+      }
     }
 
     Drupal::cache($this->binKey)->deleteMultiple($cacheIdsToInvalidate);
-    $tagsCacheBin->set('cache_tags', $cacheTags, CACHE::PERMANENT);
+    $tagsCacheBin->deleteMultiple($cacheTagsToInvalidate);
   }
   public function invalidateEntityTags(EntityInterface|string $entity): void {
     $tagsCacheBin = Drupal::cache(self::CACHE_TAGS_BIN_KEY);
-    $cacheTags = $tagsCacheBin->get('cache_tags') ?? [];
+
+    $cacheTagsToInvalidate = [];
+    $cacheIdsToInvalidate = [];
 
     if (is_string($entity)) {
-      $cacheIdsToInvalidate = [];
+      $tag = $entity;
+      $tagRecords = $tagsCacheBin->get($tag);
+      $records = $tagRecords && !empty($tagRecords->data) ? $tagRecords->data : [];
 
-      if (isset($cacheTags[$entity]) && is_array($cacheTags[$entity])) {
-        foreach ($cacheTags[$entity] as $cacheName => $_) {
-          $cacheIdsToInvalidate[] = $cacheName;
-        }
-        $cacheTags[$entity] = [];
-      }
+      if (empty($records) || !is_array($records)) return;
+
+      $cacheIdsToInvalidate = array_merge($cacheIdsToInvalidate, array_keys($records));
+      $cacheTagsToInvalidate[] = $tag;
 
       Drupal::cache($this->binKey)->deleteMultiple($cacheIdsToInvalidate);
-      $tagsCacheBin->set('cache_tags', $cacheTags, CACHE::PERMANENT);
+      $tagsCacheBin->deleteMultiple($cacheTagsToInvalidate);
       return;
     }
 
     if ($entity->getEntityTypeId() === 'menu_link_content') {
-      $cacheIdsToInvalidate = [];
+      $tag = 'menu_link_content';
+      $tagRecords = $tagsCacheBin->get($tag);
+      $records = $tagRecords && !empty($tagRecords->data) ? $tagRecords->data : [];
 
-      if (isset($cacheTags['menu_link_content']) && is_array($cacheTags['menu_link_content'])) {
-        foreach ($cacheTags['menu_link_content'] as $cacheName => $_) {
-          $cacheIdsToInvalidate[] = $cacheName;
-        }
-        $cacheTags['menu_link_content'] = [];
-      }
+      if (empty($records) || !is_array($records)) return;
+
+      $cacheIdsToInvalidate = array_merge($cacheIdsToInvalidate, array_keys($records));
+      $cacheTagsToInvalidate[] = $tag;
 
       Drupal::cache($this->binKey)->deleteMultiple($cacheIdsToInvalidate);
-      $tagsCacheBin->set('cache_tags', $cacheTags, CACHE::PERMANENT);
+      $tagsCacheBin->deleteMultiple($cacheTagsToInvalidate);
       return;
     }
 
-    $cacheIdsToInvalidate = [];
+    $tags = $entity->getCacheTags();
+    foreach ($tags as $tag) {
+      $tagRecords = $tagsCacheBin->get($tag);
+      $records = $tagRecords && !empty($tagRecords->data) ? $tagRecords->data : [];
 
-    foreach ($entity->getCacheTags() as $cacheTag) {
-      if (isset($cacheTags[$cacheTag]) && is_array($cacheTags[$cacheTag])) {
-        foreach ($cacheTags[$cacheTag] as $cacheName => $_) {
-          $cacheIdsToInvalidate[] = $cacheName;
-        }
-        $cacheTags[$cacheTag] = [];
-      }
+      if (empty($records) || !is_array($records)) return;
+
+      $cacheIdsToInvalidate = array_merge($cacheIdsToInvalidate, array_keys($records));
+      $cacheTagsToInvalidate[] = $tag;
     }
 
     Drupal::cache($this->binKey)->deleteMultiple($cacheIdsToInvalidate);
-    $tagsCacheBin->set('cache_tags', $cacheTags, CACHE::PERMANENT);
+    $tagsCacheBin->deleteMultiple($cacheTagsToInvalidate);
   }
 
   protected function exists(string $key): bool {

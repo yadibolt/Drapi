@@ -54,7 +54,7 @@ class EntityReferenceField extends FieldBase implements FieldInterface {
 
     $result = [];
     foreach ($loaderValues as $loaderValue) {
-      $result[] = new FieldResolver()->setFields($loaderValue->getFields(), [
+      $result[] = FieldResolver::make($loaderValue->getFields(), [
         'load_entities' => $this->getLoadEntities(),
         'load_custom' => $this->getLoadCustom(),
         'load_protected' => $this->getLoadProtected(),

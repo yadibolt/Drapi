@@ -11,12 +11,15 @@ use Drupal\drift_eleven\Core\Http\Reply;
 use Drupal\drift_eleven\Core\Session\Enum\SubjectIntent;
 use Drupal\drift_eleven\Core\Session\Session;
 use Drupal\drift_eleven\Core\Session\Subject;
+use Drupal\drift_eleven\EventSubscriber\Trait\RouteTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 class CacheControl implements EventSubscriberInterface{
+  use RouteTrait;
+
   protected const int PRIORITY = 999;
 
   public static function getSubscribedEvents(): array {
@@ -67,26 +70,9 @@ class CacheControl implements EventSubscriberInterface{
 
       if (empty($cacheHit)) return;
 
-      $configuration = Drupal::configFactory()->get(ROUTE_CONFIG_NAME_DEFAULT);
-      $routeRegistry = $configuration->get('route_registry') ?? [];
-      $routeRef = null;
-      $uriParts = mb_split('/', ltrim($request->getRequestUri(), '/'));
+      [$route, $configuration] = $this->getCurrentRoute($request);
 
-      foreach ($routeRegistry as $route) {
-        if (isset($route['path'])) continue;
-
-        $parts = mb_split('/', $route['path']);
-        if (count($parts) !== count($uriParts)) continue;
-
-        for ($i = 0; $i < count($parts); $i++) {
-          if (str_starts_with($parts[$i], '{') && str_ends_with($parts[$i], '}')) continue;
-          if ($parts[$i] !== $uriParts[$i]) continue 2;
-        }
-
-        $routeRef = $route;
-      }
-
-      if (empty($routeRef)) return;
+      if (empty($route)) return;
 
       $rolesEmpty = empty($route['roles']);
       $permissionsEmpty = empty($route['permissions']) || ((count($route['permissions']) === 1) && $route['permissions'][0] === 'access content');
@@ -114,7 +100,7 @@ class CacheControl implements EventSubscriberInterface{
         $subject = Session::make($userToken)->find()?->getSubject();
         if (!$subject) return;
         if (!$subject->isActive()) return;
-        if (!$this->checkRequirements($subject, $routeRef)) return;
+        if (!$this->checkRequirements($subject, $route)) return;
 
         $cacheHit = $this->createCachedResponse($cache, $cacheIdentifier, $cacheHit);
         if ($cacheHit === null) return;

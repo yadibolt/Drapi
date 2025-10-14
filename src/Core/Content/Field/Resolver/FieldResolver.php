@@ -67,8 +67,11 @@ class FieldResolver {
     $this->stripFieldPrefixes = false;
   }
 
-  public static function make(): self {
-    return new self();
+  public static function make(array $fields, array $options = []): self {
+    $instance = new self();
+    $instance->handleOptions($options);
+    $instance->fields = $fields;
+    return $instance;
   }
 
   public function resolve(): array {
@@ -103,19 +106,12 @@ class FieldResolver {
 
     return $resolved;
   }
-
   protected function handleOptions(array $options): self {
     if (isset($options['load_entities']) && is_bool($options['load_entities'])) $this->setLoadEntities($options['load_entities']);
     if (isset($options['load_custom']) && is_bool($options['load_custom'])) $this->setLoadCustom($options['load_custom']);
     if (isset($options['load_protected']) && is_bool($options['load_protected'])) $this->setLoadProtected($options['load_protected']);
     if (isset($options['strip_field_prefixes']) && is_bool($options['strip_field_prefixes'])) $this->setStripFieldPrefixes($options['strip_field_prefixes']);
 
-    return $this;
-  }
-
-  public function setFields(array $fields, array $options = []): self {
-    $this->handleOptions($options);
-    $this->fields = $fields;
     return $this;
   }
   public function setLoadEntities(bool $loadEntities): self {
