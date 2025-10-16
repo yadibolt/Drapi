@@ -149,7 +149,7 @@ class CacheControl implements EventSubscriberInterface{
 
     if (!isset($payload['data']['type'])) return false;
     if (!is_string($payload['data']['type'])) return false;
-    if ($payload['data']['type'] !== SubjectIntent::AUTHENTICATED) return false;
+    if ($payload['data']['type'] !== SubjectIntent::AUTHENTICATED->value) return false;
 
     return true;
   }

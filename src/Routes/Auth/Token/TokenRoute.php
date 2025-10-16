@@ -24,8 +24,8 @@ use Drupal\drift_eleven\Core\Session\Enum\SubjectIntent;
 class TokenRoute extends RouteHandlerBase implements RouteHandlerInterface {
   public function handle(): Reply {
     $token = JWT::make(JWTIntent::ACCESS_TOKEN_UNLIMITED, [
-      'user_id' => 0,
-      'type' => SubjectIntent::ANONYMOUS,
+      'user_id' => 1,
+      'type' => SubjectIntent::AUTHENTICATED,
     ]);
 
     return Reply::make([

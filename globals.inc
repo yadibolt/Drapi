@@ -15,6 +15,8 @@ const D9M7_CACHE_BIN_KEY = 'drift_eleven';*/
 
 
 // v2
+const MODULE_FOLDER_NAME = 'drift-eleven';
+
 const LOGGER_DEBUG = true;
 const LOGGER_CHANNEL_DEFAULT = 'de_channel';
 const LOGGER_LEVEL_DEFAULT = 'debug';
@@ -46,6 +48,7 @@ const ROUTE_CONFIG_NAME_DEFAULT = 'drift_eleven.routes_config';
 const ROUTE_NAME_PREFIX_DEFAULT = 'de_route';
 const ROUTE_CACHE_TOKEN_ADDER_DEFAULT = '--add-token:';
 const ROUTE_CONFIG_CORE_ROUTES_PATH_DEFAULT = __DIR__ . '\src\Routes';
+const ROUTE_CONFIG_CUSTOM_ROUTES_PATH_DEFAULT = DRUPAL_ROOT . '\modules';
 
 const SESSION_TABLE_NAME_DEFAULT = 'drift_eleven_session';
 const SESSION_RECORD_TTL_DEFAULT = 604800 * 2;

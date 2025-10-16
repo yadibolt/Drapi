@@ -2,7 +2,6 @@
 
 namespace Drupal\drift_eleven\Routes;
 
-
 use Drupal\block_content\Entity\BlockContent;
 use Drupal\drift_eleven\Core\Content\Field\Resolver\FieldResolver;
 use Drupal\drift_eleven\Core\Http\Reply;

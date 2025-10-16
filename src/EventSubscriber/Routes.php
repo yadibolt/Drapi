@@ -12,17 +12,15 @@ class Routes extends RouteSubscriberBase {
     $configuration = Drupal::configFactory()->getEditable(ROUTE_CONFIG_NAME_DEFAULT);
     $routeRegistry = $configuration->get('route_registry') ?: [];
 
-    $coreRoutes = RouteRegistry::make(ROUTE_CONFIG_CORE_ROUTES_PATH_DEFAULT)->scanDirectory();
-    $otherRoutes = []; // TODO implement scanning other module dirs for routes
+    $routeReg = RouteRegistry::make(ROUTE_CONFIG_CORE_ROUTES_PATH_DEFAULT);
+    $routeReg->scanDirectory(); // register core routes
+    $routeReg->setDirectoryPath(ROUTE_CONFIG_CUSTOM_ROUTES_PATH_DEFAULT);
+    $routeReg->scanDirectories('Ext'); // register custom routes
 
-    foreach ([$coreRoutes, $otherRoutes] as $routeCollection) {
-      if (!is_array($routeCollection) || empty($routeCollection)) continue;
-
-      foreach ($routeCollection as $route) {
-        $name = ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId();
-        $collection->add($name, $route->toSymfonyRoute());
-        $routeRegistry[$name] = $route->toArray();
-      }
+    foreach ($routeReg->getRegistry() as $route) {
+      $name = ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId();
+      $collection->add($name, $route->toSymfonyRoute());
+      $routeRegistry[$name] = $route->toArray();
     }
 
     $configuration->set('route_registry', $routeRegistry);

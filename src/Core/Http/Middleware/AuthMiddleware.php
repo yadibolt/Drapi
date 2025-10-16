@@ -113,16 +113,16 @@ class AuthMiddleware extends MiddlewareBase implements MiddlewareInterface {
   }
   protected function checkPayload(array $payload): bool {
     if (empty($payload)) return false;
-    if (!isset($payload['data']))
+    if (!isset($payload['data'])) return false;
 
     if (!isset($payload['data']['user_id'])) return false;
     if (!is_numeric($payload['data']['user_id'])) return false;
 
     if (!isset($payload['data']['type'])) return false;
     if (!is_string($payload['data']['type'])) return false;
-    if (!in_array($payload['data']['type'], [SubjectIntent::AUTHENTICATED, SubjectIntent::ANONYMOUS])) return false;
 
-    if ((int)$payload['data']['user_id'] <= 0 && $payload['data']['type'] === SubjectIntent::AUTHENTICATED) return false;
+    if (!in_array($payload['data']['type'], [SubjectIntent::AUTHENTICATED->value, SubjectIntent::ANONYMOUS->value])) return false;
+    if ((int)$payload['data']['user_id'] <= 0 && $payload['data']['type'] === SubjectIntent::AUTHENTICATED->value) return false;
 
     return true;
   }
