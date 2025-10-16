@@ -27,7 +27,7 @@ class RouteRegistry extends RouteRegistryBase {
 
       if (!$this->isPHPFile($filePath)) continue;
 
-      $route = Route::fromDocComment($filePath);
+      $route = Route::fromAttributes($filePath);
       if ($route === null) continue;
 
       if (isset($this->registry[ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId()])) {

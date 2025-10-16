@@ -2,6 +2,12 @@
 
 namespace Drupal\drift_eleven\Core\Content\Trait;
 
+use Drupal\drift_eleven\Core\Utility\Enum\LoggerIntent;
+use Drupal\drift_eleven\Core\Utility\Logger;
+use ReflectionAttribute;
+use ReflectionClass;
+use ReflectionException;
+
 trait FileTrait {
   use PathTrait;
 
@@ -28,20 +34,45 @@ trait FileTrait {
     if (!self::isFile($filePath)) return null;
     return pathinfo($filePath, PATHINFO_EXTENSION);
   }
-  public static function getFileDocComment(string $filePath): ?string {
-    if (!(pathinfo($filePath, PATHINFO_EXTENSION) === 'php' && is_file($filePath) && is_readable($filePath))) return null;
+  /**
+   * @return ReflectionAttribute[]|null
+   */
+  public static function getFileAttributes(string $filePath): ?array {
+    if (file_exists($filePath) && !(pathinfo($filePath, PATHINFO_EXTENSION) === 'php' && is_file($filePath) && is_readable($filePath))) return null;
+
+    $classNamespace = null;
 
     $content = file_get_contents($filePath);
-    if ($content === false) return null;
-
-    // taken from https://www.php.net/manual/en/tokens.php
-    $tokens = token_get_all($content);
-    foreach ($tokens as $token) {
-      if (is_array($token) && $token[0] === T_DOC_COMMENT) {
-        return $token[1];
-      }
+    if (!$content) {
+      Logger::l(
+        level: LoggerIntent::CRITICAL, message: 'Could not read file at @filePath.', context: ['@filePath' => $filePath]
+      ); return null;
     }
 
-    return null;
+    if (preg_match('/namespace\s+([^;]+);/', $content, $matches)) {
+      $classNamespace = trim($matches[1]);
+    }
+
+    if (!$classNamespace) return null;
+
+    $fileName = pathinfo($filePath, PATHINFO_FILENAME);
+    $classClassName = $classNamespace . '\\' . $fileName;
+
+    include_once $filePath;
+
+    if (!class_exists($classClassName, false)) {
+      Logger::l(
+        level: LoggerIntent::CRITICAL, message: 'Class @classClassName does not exist.', context: ['@classClassName' => $classClassName]
+      ); return null;
+    }
+
+    try {
+      $reflection = new ReflectionClass($classClassName);
+      return $reflection->getAttributes();
+    } catch (ReflectionException $e) {
+      Logger::l(
+        level: LoggerIntent::CRITICAL, message: 'Could not create ReflectionClass for @classClassName. @error', context: ['@classClassName' => $classClassName, '@error' => $e->getMessage()]
+      ); return null;
+    }
   }
 }

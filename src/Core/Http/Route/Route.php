@@ -2,11 +2,11 @@
 
 namespace Drupal\drift_eleven\Core\Http\Route;
 
-use Drupal\drift_eleven\Core\Http\Route\Asserters\RouteDocCommentAsserter;
 use Drupal\drift_eleven\Core\Http\Route\Base\RouteBase;
 use Drupal\drift_eleven\Core\Utility\Enum\LoggerIntent;
 use Drupal\drift_eleven\Core\Utility\Logger;
 use Exception;
+use ReflectionAttribute;
 
 class Route extends RouteBase {
   /**
@@ -15,32 +15,32 @@ class Route extends RouteBase {
   public static function make(string $id, string $name, string $method, string $description, string $path, array $permissions, array $roles, array $useMiddleware, bool $useCache, string $filePath = ''): self {
     return new self($id, $name, $method, $description, $path, $permissions, $roles, $useMiddleware, $useCache, $filePath);
   }
-  public static function fromDocComment(string $filePath): ?self {
-    $classDocComment = self::getFileDocComment($filePath);
-    if (empty($classDocComment)) {
-      Logger::l(
-        level: LoggerIntent::ERROR, message: 'Route base doc comment is empty.'
-      );
-    }
+  public static function fromAttributes(string $filePath): ?self {
+    $attributes = self::getFileAttributes($filePath);
 
-    $values = RouteDocCommentAsserter::parseDocComment($classDocComment);
+    if (empty($attributes)) return null;
+    if (!(reset($attributes) instanceof ReflectionAttribute)) return null;
+
+    $args = reset($attributes)->getArguments();
+    if (empty($args)) return null;
+
     try {
       return self::make(
-        id: $values['id'],
-        name: $values['name'],
-        method: $values['method'],
-        description: $values['description'] ?? '',
-        path: $values['path'],
-        permissions: $values['permissions'] ?? [],
-        roles: $values['roles'] ?? [],
-        useMiddleware: $values['useMiddleware'] ?? [],
-        useCache: $values['useCache'] ?? false,
+        id: $args['id'],
+        name: $args['name'],
+        method: $args['method'],
+        description: $args['description'] ?? '',
+        path: $args['path'],
+        permissions: $args['permissions'] ?? [],
+        roles: $args['roles'] ?? [],
+        useMiddleware: $args['useMiddleware'] ?? [],
+        useCache: $args['useCache'] ?? false,
         filePath: $filePath
       );
     } catch (Exception $e) {
       Logger::l(
         level: LoggerIntent::ERROR,
-        message: 'Error creating Route from doc comment: @error',
+        message: 'Error creating Route from attributes: @error',
         context: ['@error' => $e->getMessage()]
       );
     }

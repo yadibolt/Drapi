@@ -4,7 +4,6 @@ namespace Drupal\drift_eleven\Core\Http\Route\Base;
 
 use Drupal\drift_eleven\Core\Content\Trait\FileTrait;
 use Drupal\drift_eleven\Core\Http\Route\Asserters\RouteClassAsserter;
-use Drupal\drift_eleven\Core\Http\Route\Asserters\RouteDocCommentAsserter;
 use Drupal\drift_eleven\Core\Http\Route\Asserters\RouteExtendsAsserter;
 use Drupal\drift_eleven\Core\Http\Route\Asserters\RouteImplementsAsserter;
 use Drupal\drift_eleven\Core\Http\Route\Asserters\RouteMethodAsserter;
@@ -44,7 +43,6 @@ abstract class RouteBase {
   //
   protected string $classNamespace = '';
   protected string $classNamespaceName = '';
-  protected string $classDocComment = '';
   protected string $classClassName = '';
   protected string $classShortName = '';
   protected array $classInterfaces = [];
@@ -68,7 +66,6 @@ abstract class RouteBase {
     $this->filePath = $filePath;
     $this->classNamespace = $this->_getClassNamespace();
     $this->classNamespaceName = $this->_getClassNamespaceName();
-    $this->classDocComment = $this->_getClassDocComment();
     $this->classClassName = $this->_getClassClassName();
     $this->classShortName = $this->_getClassShortName();
     $this->classInterfaces = $this->_getClassInterfaces();
@@ -86,10 +83,6 @@ abstract class RouteBase {
       [
         'class' => RouteMethodAsserter::class, // checks for required methods
         'errorMessage' => 'RouteMethodAsserter have failed for ' . $this->filePath,
-      ],
-      [
-        'class' => RouteDocCommentAsserter::class, // checks for doc comments
-        'errorMessage' => 'RouteDocCommentAsserter have failed for ' . $this->filePath,
       ],
       [
         'class' => RouteExtendsAsserter::class, // checks if class extends a base class
@@ -132,7 +125,6 @@ abstract class RouteBase {
       'enabled' => $this->enabled,
       'class_namespace' => $this->classNamespace,
       'class_namespace_name' => $this->classNamespaceName,
-      'class_doc_comment' => $this->classDocComment,
       'class_class_name' => $this->classClassName,
       'class_short_name' => $this->classShortName,
       'class_interfaces' => $this->classInterfaces,
@@ -210,9 +202,6 @@ abstract class RouteBase {
   public function getClassNamespaceName(): string {
     return $this->classNamespaceName;
   }
-  public function getClassDocComment(): string {
-    return $this->classDocComment;
-  }
   public function getClassClassName(): string {
     return $this->classClassName;
   }
@@ -279,10 +268,6 @@ abstract class RouteBase {
   }
   public function setClassNamespaceName(string $classNamespaceName): self {
     $this->classNamespaceName = $classNamespaceName;
-    return $this;
-  }
-  public function setClassDocComment(string $classDocComment): self {
-    $this->classDocComment = $classDocComment;
     return $this;
   }
   public function setClassClassName(string $classClassName): self {
@@ -353,10 +338,6 @@ abstract class RouteBase {
 
     $parent = $reflection->getParentClass();
     return $parent ? $parent->getName() : null;
-  }
-  protected function _getClassDocComment(): ?string {
-    $reflection = $this->_getClassReflection();
-    return $reflection?->getDocComment() ?: null;
   }
   protected function _getClassClassName(): ?string {
     $reflection = $this->_getClassReflection();
