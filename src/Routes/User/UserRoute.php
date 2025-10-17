@@ -28,7 +28,7 @@ class UserRoute extends RouteHandlerBase {
 
     if (!$user) return Reply::make([
       'message' => 'Unauthorized.',
-    ], 400);
+    ], 401);
 
     return Reply::make([
       'message' => 'Success.',
