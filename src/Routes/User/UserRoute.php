@@ -5,10 +5,7 @@ namespace Drupal\drift_eleven\Routes\User;
 use Drupal\drift_eleven\Core\Http\Reply;
 use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandler;
 use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandlerBase;
-use Drupal\drift_eleven\Core\Session\Session;
 use Drupal\drift_eleven\Core\Session\Subject;
-use Drupal\drift_eleven\Core\Utility\Enum\LoggerIntent;
-use Drupal\drift_eleven\Core\Utility\Logger;
 
 #[RouteHandler(
   id: 'api:user',
@@ -23,8 +20,9 @@ use Drupal\drift_eleven\Core\Utility\Logger;
 )]
 class UserRoute extends RouteHandlerBase {
   public function handle(): Reply {
+    $ctx = $this->getMiddlewareContext();
     /** @var Subject|null $user */
-    $user = $this->context['user'] ?? null;
+    $user = $ctx['user'] ?? null;
 
     if (!$user) return Reply::make([
       'message' => 'Unauthorized.',

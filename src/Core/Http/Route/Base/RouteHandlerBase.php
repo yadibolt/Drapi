@@ -67,4 +67,7 @@ abstract class RouteHandlerBase implements RouteHandlerInterface {
   protected function getRequestData(): array {
     return $this->data;
   }
+  protected function getMiddlewareContext(): array {
+    return $this->context;
+  }
 }

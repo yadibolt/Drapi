@@ -23,10 +23,11 @@ use Drupal\drift_eleven\Core\Utility\Logger;
 )]
 class LogoutRoute extends RouteHandlerBase {
   public function handle(): Reply {
+    $ctx = $this->getMiddlewareContext();
     /** @var string|null $token */
-    $token = $this->context['token'] ?? null;
+    $token = $ctx['token'] ?? null;
     /** @var Subject|null $user */
-    $user = $this->context['user'] ?? null;
+    $user = $ctx['user'] ?? null;
 
     if (!$token) return Reply::make([
       'message' => 'No token provided.',
