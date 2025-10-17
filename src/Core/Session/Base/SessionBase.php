@@ -31,6 +31,10 @@ abstract class SessionBase {
     $query = $this->conn->select(SESSION_TABLE_NAME_DEFAULT, 'a')
       ->fields('a')
       ->condition('access_token', $this->token);
+
+    $query->innerJoin('users_field_data', 'ufd', 'a.entity_id = ufd.uid');
+    $query->fields('ufd', ['langcode', 'status']);
+
     $record = $query->execute()->fetchAll();
 
     if (empty($record)) return null;
@@ -49,15 +53,17 @@ abstract class SessionBase {
 
     if (!$invokeWithUser) return $this;
 
-    $query->innerJoin('user__roles', 'b', "b.bundle = 'user' AND a.uid = b.entity_id");
-    $query->fields('b', ['roles_target_id']);
-    $query->innerJoin('config', 'c', "b.roles_target_id = c.name");
-    $query->fields('c', ['data']);
+    $rolesQuery = $this->conn->select('user__roles', 'a')
+      ->fields('a')
+      ->condition('a.entity_id', $this->entityId);
 
-    $record = $query->execute()->fetchAll();
+    $rolesQuery->innerJoin('config', 'c', "CONCAT('user.role.', a.roles_target_id) = c.name");
+    $rolesQuery->fields('c', ['data']);
+
+    $extra = $rolesQuery->execute()->fetchAll();
 
     $roles = []; $permissions = [];
-    foreach ($record as $row) {
+    foreach ($extra as $row) {
       $roles[] = $row->roles_target_id;
 
       $roleData = unserialize($row->data);
@@ -67,12 +73,12 @@ abstract class SessionBase {
     }
 
     $this->subject = Subject::make(
-      id: $record[0]->entity_id,
-      active: (bool)$record[0]->status,
+      id: $record->entity_id,
+      active: (bool)$record->status,
       authenticated: true,
       roles: $roles,
       permissions: $permissions,
-      langcode: $record[0]->langcode,
+      langcode: $record->langcode,
     );
 
     return $this;

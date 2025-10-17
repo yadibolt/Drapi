@@ -3,11 +3,11 @@
 namespace Drupal\drift_eleven\Core\Http\Route\Base;
 
 use Drupal;
-use Drupal\drift_eleven\Core\Cache\Cache;
 use Drupal\drift_eleven\Core\Http\Reply;
+use Drupal\drift_eleven\Core\Http\Route\Interface\RouteHandlerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
-abstract class RouteHandlerBase {
+abstract class RouteHandlerBase implements RouteHandlerInterface {
   protected Request $currentRequest;
   protected string $routeId;
   protected array $context = [];
@@ -63,5 +63,8 @@ abstract class RouteHandlerBase {
   }
   protected function getUriToken(string $token): ?string {
     return $this->currentRequest->get($token);
+  }
+  protected function getRequestData(): array {
+    return $this->data;
   }
 }

@@ -49,7 +49,7 @@ class AuthMiddleware extends MiddlewareBase implements MiddlewareInterface {
       );
     }
 
-    if ($payload['data']['type'] === SubjectIntent::ANONYMOUS) {
+    if ($payload['data']['type'] === SubjectIntent::ANONYMOUS->value) {
       $subject = Subject::makeAnonymous();
 
       if (!$this->checkRequirements($subject)) return Reply::make([

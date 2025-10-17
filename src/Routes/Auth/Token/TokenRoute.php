@@ -7,7 +7,6 @@ use Drupal\drift_eleven\Core\Auth\JWT;
 use Drupal\drift_eleven\Core\Http\Reply;
 use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandler;
 use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandlerBase;
-use Drupal\drift_eleven\Core\Http\Route\Interface\RouteHandlerInterface;
 use Drupal\drift_eleven\Core\Session\Enum\SubjectIntent;
 
 #[RouteHandler(
@@ -21,7 +20,7 @@ use Drupal\drift_eleven\Core\Session\Enum\SubjectIntent;
   useMiddleware: ['request'],
   useCache: false
 )]
-class TokenRoute extends RouteHandlerBase implements RouteHandlerInterface {
+class TokenRoute extends RouteHandlerBase {
   public function handle(): Reply {
     $token = JWT::make(JWTIntent::ACCESS_TOKEN_UNLIMITED, [
       'user_id' => 0,
