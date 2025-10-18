@@ -18,9 +18,10 @@ class Routes extends RouteSubscriberBase {
     $routeReg->scanDirectories('Ext'); // register custom routes
 
     foreach ($routeReg->getRegistry() as $route) {
+      $route = unserialize($route);
       $name = ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId();
       $collection->add($name, $route->toSymfonyRoute());
-      $routeRegistry[$name] = $route->toArray();
+      $routeRegistry[$name] = serialize($route);
     }
 
     $configuration->set('route_registry', $routeRegistry);

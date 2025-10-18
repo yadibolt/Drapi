@@ -6,6 +6,7 @@ use Drupal;
 use Drupal\drift_eleven\Core\Cache\Cache;
 use Drupal\drift_eleven\Core\Cache\Enum\CacheIntent;
 use Drupal\drift_eleven\Core\Http\Middleware\AuthMiddleware;
+use Drupal\drift_eleven\Core\Http\Route\Route;
 use Drupal\drift_eleven\Core\Http\Trait\RequestTrait;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
@@ -19,7 +20,7 @@ abstract class ReplyBase extends Response {
   protected array|string $data = [];
   protected bool $responseCached = false;
   protected bool $responseCacheable = false;
-  protected array $route = [];
+  protected Route $route;
 
   public function __construct(array|string $data, int $status = 200, array|ResponseHeaderBag $headers = []) {
     if (!is_array($headers) && $headers instanceof ResponseHeaderBag) {
@@ -142,16 +143,10 @@ abstract class ReplyBase extends Response {
   }
   protected function setResponseCacheable(): void {
     if (empty($this->route)) return;
-
-    if (isset($this->route['use_cache'])) {
-      $this->responseCacheable = (bool)$this->route['use_cache'] ?? false;
-      return;
-    }
-
-    $this->responseCacheable = false;
+    $this->responseCacheable = $this->route->getUseCache() ?? false;
   }
 
-  protected function getRoute(): array {
+  protected function getRoute(): Route {
     return $this->route;
   }
 }

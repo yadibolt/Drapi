@@ -31,11 +31,14 @@ class RouteRegistry extends RouteRegistryBase {
       if ($route === null) continue;
 
       if (isset($this->registry[ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId()])) {
-        $enabled = $this->registry[ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId()]['enabled'] ?: true;
-        $route->setEnabled($enabled);
+        /** @var Route $routeDef */
+        $routeRef = $this->registry[ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId()];
+        $routeRef = unserialize($routeRef);
+        $routeEnabled = $routeRef->isEnabled() ?? false;
+        $route->setEnabled($routeEnabled);
       }
 
-      $this->registry[ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId()] = $route;
+      $this->registry[ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId()] = serialize($route);
     }
 
     return $this->registry;

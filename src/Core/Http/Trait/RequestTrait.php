@@ -3,6 +3,7 @@
 namespace Drupal\drift_eleven\Core\Http\Trait;
 
 use Drupal;
+use Drupal\drift_eleven\Core\Http\Route\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 trait RequestTrait {
@@ -12,7 +13,7 @@ trait RequestTrait {
   protected function getCurrentRequest(): Request {
     return Drupal::service('request_stack')->getCurrentRequest();
   }
-  protected function getCurrentRoute(): array {
+  protected function getCurrentRoute(): ?Route {
     $routeId = $this->getCurrentRequest()->attributes->get('_route');
 
     if ($routeId) {
@@ -20,10 +21,10 @@ trait RequestTrait {
       $routeRegistry = $configuration->get('route_registry');
 
       if (isset($routeRegistry[$routeId])) {
-        return $routeRegistry[$routeId];
+        return unserialize($routeRegistry[$routeId]);
       }
     }
 
-    return [];
+    return null;
   }
 }
