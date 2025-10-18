@@ -26,15 +26,13 @@ class Subject extends SubjectBase {
     $userId = Subject::getByMail($mail);
     if ($userId <= 0) return null;
 
-    $token = JWT::make(JWTIntent::RESET_PASSWORD, [
+    return JWT::make(JWTIntent::RESET_PASSWORD, [
       'user_id' => $userId,
       'mail' => $mail,
       'langcode' => $langcode,
     ]);
-
-    return str_replace('.', '-', $token); // so it can be used in URLs
   }
-  public static function getForgotPasswordRecord(string $token): bool {
+  public static function forgotPasswordRecordExists(string $token): bool {
     $query = Drupal::database()->select(SUBJECT_RESET_PASSWORD_TABLE_NAME_DEFAULT, 'a')
       ->fields('a')
       ->condition('token', $token);
@@ -43,26 +41,23 @@ class Subject extends SubjectBase {
     if (empty($record)) return false;
 
     $record = reset($record);
-    if ($record->expires_at < time()) return false;
+    if ($record->expires_at > time()) return false;
 
     return true;
   }
   public static function insertForgotPasswordToken(string $token): bool {
-    $token = str_replace('-', '.', $token);
     $payload = JWT::payloadFrom($token);
 
     if (empty($payload) || !isset($payload['data']) || !isset($payload['data']['user_id']) || !isset($payload['data']['mail']) || !isset($payload['data']['langcode'])) {
       return false;
     }
 
-    $token = str_replace('.', '-', $token);
     $userId = (int)$payload['data']['user_id'];
     $mail = $payload['data']['mail'];
     $langcode = $payload['data']['langcode'];
     $expiresAt = $payload['exp'] ?? JWT_RESET_PASSWORD_TTL_DEFAULT;
 
-    self::deleteForgotPasswordRecords($mail);
-
+    if (!self::deleteForgotPasswordRecords($mail)) return false;
     $query = Drupal::database()->insert(SUBJECT_RESET_PASSWORD_TABLE_NAME_DEFAULT)
       ->fields([
         'entity_id' => $userId,
@@ -73,7 +68,6 @@ class Subject extends SubjectBase {
         'created_at' => time(),
         'updated_at' => time()
       ]);
-
     try {
       if (!$query->execute()) return false;
     } catch (Exception $e) {
@@ -82,9 +76,11 @@ class Subject extends SubjectBase {
 
     return true;
   }
-  public static function deleteForgotPasswordRecords(string $mail): void {
+  public static function deleteForgotPasswordRecords(string $mail): bool {
     Drupal::database()->delete(SUBJECT_RESET_PASSWORD_TABLE_NAME_DEFAULT)
       ->condition('mail', $mail)
       ->execute();
+
+    return true;
   }
 }

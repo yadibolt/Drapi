@@ -26,7 +26,7 @@ use Drupal\user\UserInterface;
   description: 'Route for user password reset.',
   permissions: ['access content'],
   roles: [],
-  useMiddleware: ['request'],
+  useMiddleware: ['request', 'auth'],
   useCache: false
 )]
 class ResetRoute extends RouteHandlerBase {
@@ -47,7 +47,11 @@ class ResetRoute extends RouteHandlerBase {
       $this->getRequestLangcode()
     );
 
-    if ($token) Subject::insertForgotPasswordToken($token);
+    if ($token) {
+      if (!Subject::insertForgotPasswordToken($token)) return Reply::make([
+        'message' => 'Server error.',
+      ], 500);
+    }
 
     // TODO send mail
 
