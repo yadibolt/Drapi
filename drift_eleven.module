@@ -8,7 +8,6 @@ use Drupal\drift_eleven\Core\Logger\LoggerInterface;
 
 require_once __DIR__ . '/globals.inc';
 
-// TODO: Change this is temporary
 function drift_eleven_mail(string $key, array &$message, array $params): void {
   /** @var RendererInterface $renderer */
   $renderer = Drupal::service('renderer');
@@ -17,18 +16,12 @@ function drift_eleven_mail(string $key, array &$message, array $params): void {
     case 'send_mail':
       if (isset($params['headers'])) $message['headers'] = array_merge($message['headers'], $params['headers']);
       if (!empty($params['from'])) $message['from'] = $params['from'];
-
-      $message['subject'] = $params['subject'];
-      $message['body'][] = (string)$renderer->renderRoot($params['body']);
-
-      break;
-    case 'send_mail_with_attachments':
-      if (isset($params['headers'])) $message['headers'] = array_merge($message['headers'], $params['headers']);
-      if (!empty($params['from'])) $message['from'] = $params['from'];
-
       $message['subject'] = $params['subject'];
       $message['attachments'] = $params['attachments'];
       $message['body'][] = (string)$renderer->renderRoot($params['body']);
+      break;
+    default:
+      break;
   }
 }
 
@@ -37,12 +30,12 @@ function drift_eleven_mail(string $key, array &$message, array $params): void {
  */
 function drift_eleven_theme(array $existing, string $type, string $theme, string $path): array {
   return [
-    'user_forgot_password_mail' => [
+    'user_password_reset_mail' => [
       'variables' => [
         'params' => [],
       ],
     ],
-    'user_forgot_password_confirmation_mail' => [
+    'user_password_reset_confirmation_mail' => [
       'variables' => [
         'params' => [],
       ],

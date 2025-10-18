@@ -73,4 +73,7 @@ abstract class RouteHandlerBase implements RouteHandlerInterface {
   protected function getQueryParams(): array {
     return $this->queryParams;
   }
+  protected function getFiles(): array {
+    return $this->files;
+  }
 }
