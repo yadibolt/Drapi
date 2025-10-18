@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Auth\Enum;
+namespace Drupal\drapi\Core\Auth\Enum;
 
 enum JWTIntent: string {
   case ACCESS_TOKEN = 'access_token';

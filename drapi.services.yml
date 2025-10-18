@@ -1,0 +1,30 @@
+services:
+  cache.drapi:
+    class: Drupal\Core\Cache\ApcuBackend
+    factory: ['@cache_factory', 'get']
+    arguments: ['drapi']
+
+  cache.drapi_cache_tags:
+    class: Drupal\Core\Cache\ApcuBackend
+    factory: [ '@cache_factory', 'get' ]
+    arguments: [ 'drapi_cache_tags' ]
+
+  drapi.service.route_subscriber:
+    class: Drupal\drapi\EventSubscriber\Routes
+    tags:
+      - { name: event_subscriber }
+
+  drapi.service.middleware_control_subscriber:
+    class: Drupal\drapi\EventSubscriber\MiddlewareControl
+    tags:
+      - { name: event_subscriber }
+
+  drapi.service.route_cache_control_subscriber:
+    class: Drupal\drapi\EventSubscriber\CacheControl
+    tags:
+      - { name: event_subscriber }
+
+  drapi.service.config_cache_control_subscriber:
+    class: Drupal\drapi\EventSubscriber\ConfigurationCacheControl
+    tags:
+      - { name: event_subscriber }

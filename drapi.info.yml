@@ -1,0 +1,5 @@
+name: Drupal Rest API (Drapi)
+description: Provides a Symfony based RESTful API with Drupal integration. Allows developers to build headless applications that interact with Drupal content and services.
+package: Drapi
+type: module
+core_version_requirement: ^11

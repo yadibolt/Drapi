@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Middleware\Interface;
+namespace Drupal\drapi\Core\Http\Middleware\Interface;
 
-use Drupal\drift_eleven\Core\Http\Reply;
+use Drupal\drapi\Core\Http\Reply;
 
 interface MiddlewareInterface {
   public static function make(): self;

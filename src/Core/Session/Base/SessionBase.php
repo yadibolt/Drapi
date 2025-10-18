@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Session\Base;
+namespace Drupal\drapi\Core\Session\Base;
 
 use Drupal;
 use Drupal\Core\Database\Connection;
-use Drupal\drift_eleven\Core\Auth\Enum\JWTIntent;
-use Drupal\drift_eleven\Core\Auth\JWT;
-use Drupal\drift_eleven\Core\Session\Enum\SubjectIntent;
-use Drupal\drift_eleven\Core\Session\Subject;
+use Drupal\drapi\Core\Auth\Enum\JWTIntent;
+use Drupal\drapi\Core\Auth\JWT;
+use Drupal\drapi\Core\Session\Enum\SubjectIntent;
+use Drupal\drapi\Core\Session\Subject;
 use Exception;
 
 abstract class SessionBase {

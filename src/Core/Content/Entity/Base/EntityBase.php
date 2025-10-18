@@ -1,6 +1,7 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Content\Entity\Base;
+namespace Drupal\drapi\Core\Content\Entity\Base;
+
 abstract class EntityBase {
   protected function unpackValues(array $values): self {
     foreach ($values as $key => $value) {

@@ -1,0 +1,5 @@
+drapi.permission.administer:
+  title: 'Administer Drapi Module'
+  description: 'Gives full control over the Drapi module settings and configurations.'
+
+

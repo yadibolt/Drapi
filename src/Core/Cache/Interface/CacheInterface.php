@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Cache\Interface;
+namespace Drupal\drapi\Core\Cache\Interface;
 
-use Drupal\drift_eleven\Core\Cache\Base\CacheBase;
-use Drupal\drift_eleven\Core\Cache\Enum\CacheIntent;
+use Drupal\drapi\Core\Cache\Base\CacheBase;
+use Drupal\drapi\Core\Cache\Enum\CacheIntent;
 
 interface CacheInterface {
   public function get(string $key, CacheIntent $intent): mixed;

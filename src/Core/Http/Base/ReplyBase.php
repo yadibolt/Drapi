@@ -1,13 +1,12 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Base;
+namespace Drupal\drapi\Core\Http\Base;
 
-use Drupal;
-use Drupal\drift_eleven\Core\Cache\Cache;
-use Drupal\drift_eleven\Core\Cache\Enum\CacheIntent;
-use Drupal\drift_eleven\Core\Http\Middleware\AuthMiddleware;
-use Drupal\drift_eleven\Core\Http\Route\Route;
-use Drupal\drift_eleven\Core\Http\Trait\RequestTrait;
+use Drupal\drapi\Core\Cache\Cache;
+use Drupal\drapi\Core\Cache\Enum\CacheIntent;
+use Drupal\drapi\Core\Http\Middleware\AuthMiddleware;
+use Drupal\drapi\Core\Http\Route\Route;
+use Drupal\drapi\Core\Http\Trait\RequestTrait;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 

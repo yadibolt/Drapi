@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Session;
+namespace Drupal\drapi\Core\Session;
 
 use Drupal;
-use Drupal\drift_eleven\Core\Auth\Enum\JWTIntent;
-use Drupal\drift_eleven\Core\Auth\JWT;
-use Drupal\drift_eleven\Core\Session\Base\SubjectBase;
+use Drupal\drapi\Core\Auth\Enum\JWTIntent;
+use Drupal\drapi\Core\Auth\JWT;
+use Drupal\drapi\Core\Session\Base\SubjectBase;
 use Exception;
 
 class Subject extends SubjectBase {

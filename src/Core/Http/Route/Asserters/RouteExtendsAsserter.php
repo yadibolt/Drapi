@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Route\Asserters;
+namespace Drupal\drapi\Core\Http\Route\Asserters;
 
-use Drupal\drift_eleven\Core\Http\Route\Route;
-use Drupal\drift_eleven\Core\Http\Route\Asserters\Interface\RouteAsserterInterface;
+use Drupal\drapi\Core\Http\Route\Route;
+use Drupal\drapi\Core\Http\Route\Asserters\Interface\RouteAsserterInterface;
 
 class RouteExtendsAsserter implements RouteAsserterInterface {
   public static function assert(Route $route): bool {
@@ -11,7 +11,7 @@ class RouteExtendsAsserter implements RouteAsserterInterface {
     if (empty($route->getClassParentClass())) return false;
 
     // 2. Parent class must be 'RouteHandlerBase'
-    if ($route->getClassParentClass() !== 'Drupal\drift_eleven\Core\Http\Route\Base\RouteHandlerBase') return false;
+    if ($route->getClassParentClass() !== 'Drupal\drapi\Core\Http\Route\Base\RouteHandlerBase') return false;
 
     return true;
   }

@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Route\Asserters;
+namespace Drupal\drapi\Core\Http\Route\Asserters;
 
-use Drupal\drift_eleven\Core\Http\Route\Asserters\Interface\RouteAsserterInterface;
+use Drupal\drapi\Core\Http\Route\Asserters\Interface\RouteAsserterInterface;
 
 class RouteMethodAsserter implements RouteAsserterInterface {
   public static function assert($route): bool {

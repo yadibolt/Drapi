@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Middleware;
+namespace Drupal\drapi\Core\Http\Middleware;
 
-use Drupal\drift_eleven\Core\Http\Enum\ReplyIntent;
-use Drupal\drift_eleven\Core\Http\Middleware\Base\MiddlewareBase;
-use Drupal\drift_eleven\Core\Http\Middleware\Interface\MiddlewareInterface;
-use Drupal\drift_eleven\Core\Http\Reply;
+use Drupal\drapi\Core\Http\Enum\ReplyIntent;
+use Drupal\drapi\Core\Http\Middleware\Base\MiddlewareBase;
+use Drupal\drapi\Core\Http\Middleware\Interface\MiddlewareInterface;
+use Drupal\drapi\Core\Http\Reply;
 
 class RequestMiddleware extends MiddlewareBase implements MiddlewareInterface {
   public static function make(): self {

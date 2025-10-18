@@ -1,17 +1,13 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Middleware;
+namespace Drupal\drapi\Core\Http\Middleware;
 
-use Drupal\drift_eleven\Core\Http\Middleware\Base\MiddlewareBase;
-use Drupal\drift_eleven\Core\Http\Middleware\Interface\MiddlewareInterface;
-use Drupal\drift_eleven\Core\Http\Reply;
+use Drupal\drapi\Core\Http\Middleware\Base\MiddlewareBase;
+use Drupal\drapi\Core\Http\Middleware\Interface\MiddlewareInterface;
+use Drupal\drapi\Core\Http\Reply;
 use InvalidArgumentException;
-use Symfony\Component\HttpFoundation\Request;
 
 class Middleware extends MiddlewareBase {
-  public const array AVAILABLE_MIDDLEWARES = [
-    'auth', 'request',
-  ];
   protected array $middlewares = [
     AuthMiddleware::class,
     RequestMiddleware::class,

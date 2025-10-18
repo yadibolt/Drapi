@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Session;
+namespace Drupal\drapi\Core\Session;
 
-use Drupal\drift_eleven\Core\Session\Base\SessionBase;
+use Drupal\drapi\Core\Session\Base\SessionBase;
 
 class Session extends SessionBase {
   public static function make(string $token = '', string $userAgent = '', string $ip = ''): self {

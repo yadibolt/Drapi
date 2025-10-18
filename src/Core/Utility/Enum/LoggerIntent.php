@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Utility\Enum;
+namespace Drupal\drapi\Core\Utility\Enum;
 
 enum LoggerIntent: string {
   case DEBUG = 'debug';

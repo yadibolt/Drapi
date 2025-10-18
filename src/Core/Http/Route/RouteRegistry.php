@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Route;
+namespace Drupal\drapi\Core\Http\Route;
 
 use DirectoryIterator;
-use Drupal\drift_eleven\Core\Http\Route\Base\RouteRegistryBase;
+use Drupal\drapi\Core\Http\Route\Base\RouteRegistryBase;
 
 class RouteRegistry extends RouteRegistryBase {
   public static function make(string $directoryPath): self {

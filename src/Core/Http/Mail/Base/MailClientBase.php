@@ -1,8 +1,12 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Mail\Base;
+namespace Drupal\drapi\Core\Http\Mail\Base;
 
-use Drupal;use Drupal\Component\Plugin\Exception\PluginNotFoundException;use Drupal\Core\File\MimeType\MimeTypeGuesser;use Drupal\Core\Mail\MailManager;use Exception;
+use Drupal;
+use Drupal\Component\Plugin\Exception\PluginNotFoundException;
+use Drupal\Core\File\MimeType\MimeTypeGuesser;
+use Drupal\Core\Mail\MailManager;
+use Exception;
 
 abstract class MailClientBase {
   protected MailManager $mailManager;

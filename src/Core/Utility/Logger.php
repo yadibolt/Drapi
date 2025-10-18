@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Utility;
+namespace Drupal\drapi\Core\Utility;
 
 use Drupal;
-use Drupal\drift_eleven\Core\Utility\Enum\LoggerIntent;
+use Drupal\drapi\Core\Utility\Enum\LoggerIntent;
 
 class Logger {
   protected const string LOGGER_CHANNEL = LOGGER_CHANNEL_DEFAULT;

@@ -1,17 +1,17 @@
 <?php
 
-namespace Drupal\drift_eleven\Routes\Auth\Token;
+namespace Drupal\drapi\Routes\Auth\Token;
 
-use Drupal\drift_eleven\Core\Auth\Enum\JWTIntent;
-use Drupal\drift_eleven\Core\Auth\JWT;
-use Drupal\drift_eleven\Core\Http\Reply;
-use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandler;
-use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandlerBase;
-use Drupal\drift_eleven\Core\Session\Enum\SubjectIntent;
+use Drupal\drapi\Core\Auth\Enum\JWTIntent;
+use Drupal\drapi\Core\Auth\JWT;
+use Drupal\drapi\Core\Http\Reply;
+use Drupal\drapi\Core\Http\Route\Base\RouteHandler;
+use Drupal\drapi\Core\Http\Route\Base\RouteHandlerBase;
+use Drupal\drapi\Core\Session\Enum\SubjectIntent;
 
 #[RouteHandler(
   id: 'auth:token:token',
-  name: '(Core) Token Route',
+  name: '[DrapiCore] Token Route',
   method: 'GET',
   path: 'auth/token',
   description: 'Route to get a token that is used for authorization',

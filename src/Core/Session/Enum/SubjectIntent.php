@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Session\Enum;
+namespace Drupal\drapi\Core\Session\Enum;
 
 enum SubjectIntent: string {
   case ANONYMOUS = 'anonymous';

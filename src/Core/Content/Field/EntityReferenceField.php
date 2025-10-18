@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Content\Field;
+namespace Drupal\drapi\Core\Content\Field;
 
 use Drupal\Core\Field\FieldItemListInterface;
-use Drupal\drift_eleven\Core\Content\Field\Base\FieldBase;
-use Drupal\drift_eleven\Core\Content\Field\Interface\FieldInterface;
-use Drupal\drift_eleven\Core\Content\Field\Resolver\FieldResolver;
+use Drupal\drapi\Core\Content\Field\Base\FieldBase;
+use Drupal\drapi\Core\Content\Field\Interface\FieldInterface;
+use Drupal\drapi\Core\Content\Field\Resolver\FieldResolver;
 use Drupal\file\Entity\File;
 use Drupal\media\Entity\Media;
 use Drupal\media\Entity\MediaType;

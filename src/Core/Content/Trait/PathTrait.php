@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Content\Trait;
+namespace Drupal\drapi\Core\Content\Trait;
 trait PathTrait {
   protected function isDirectory(string $directoryPath): bool {
     return is_dir($directoryPath);

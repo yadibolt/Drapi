@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Content\Field\Base;
+namespace Drupal\drapi\Core\Content\Field\Base;
 
 use Drupal\Core\Field\FieldItemListInterface;
 

@@ -1,18 +1,18 @@
 <?php
 
-namespace Drupal\drift_eleven\Routes\Auth;
+namespace Drupal\drapi\Routes\Auth;
 
-use Drupal\drift_eleven\Core\Http\Reply;
-use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandler;
-use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandlerBase;
-use Drupal\drift_eleven\Core\Session\Session;
-use Drupal\drift_eleven\Core\Session\Subject;
-use Drupal\drift_eleven\Core\Utility\Enum\LoggerIntent;
-use Drupal\drift_eleven\Core\Utility\Logger;
+use Drupal\drapi\Core\Http\Reply;
+use Drupal\drapi\Core\Http\Route\Base\RouteHandler;
+use Drupal\drapi\Core\Http\Route\Base\RouteHandlerBase;
+use Drupal\drapi\Core\Session\Session;
+use Drupal\drapi\Core\Session\Subject;
+use Drupal\drapi\Core\Utility\Enum\LoggerIntent;
+use Drupal\drapi\Core\Utility\Logger;
 
 #[RouteHandler(
   id: 'auth:logout',
-  name: '(Core) Logout Route',
+  name: '[DrapiCore] Logout Route',
   method: 'GET',
   path: 'auth/logout',
   description: 'Route for user logout',

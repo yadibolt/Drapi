@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\drift_eleven\EventSubscriber;
+namespace Drupal\drapi\EventSubscriber;
 
 use Drupal\Core\Config\ConfigCrudEvent;
 use Drupal\Core\Config\ConfigEvents;
-use Drupal\drift_eleven\Core\Cache\Cache;
+use Drupal\drapi\Core\Cache\Cache;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 
 class ConfigurationCacheControl implements EventSubscriberInterface{
@@ -16,6 +16,6 @@ class ConfigurationCacheControl implements EventSubscriberInterface{
     ];
   }
   public function onConfigChange(ConfigCrudEvent $event): void {
-    // Cache::make(CACHE_TAGS_BIN_KEY_DEFAULT)->invalidateEntityTags($event->getConfig()->getName());
+    Cache::make(CACHE_BIN_KEY_DEFAULT)->invalidateEntityTags($event->getConfig()->getName());
   }
 }

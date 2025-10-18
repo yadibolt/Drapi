@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Trait;
+namespace Drupal\drapi\Core\Http\Trait;
 
 use Drupal;
-use Drupal\drift_eleven\Core\Http\Route\Route;
+use Drupal\drapi\Core\Http\Route\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 trait RequestTrait {

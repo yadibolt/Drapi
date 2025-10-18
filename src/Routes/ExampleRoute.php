@@ -1,20 +1,22 @@
 <?php
 
-namespace Drupal\drift_eleven\Routes;
+namespace Drupal\drapi\Routes;
 
 use Drupal;
 use Drupal\Core\File\FileSystemInterface;
-use Drupal\drift_eleven\Core\Http\Mail\MailClient;use Drupal\drift_eleven\Core\Http\Reply;
-use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandler;
-use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandlerBase;
-use Drupal\file\FileRepositoryInterface;use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Drupal\drapi\Core\Http\Mail\MailClient;
+use Drupal\drapi\Core\Http\Reply;
+use Drupal\drapi\Core\Http\Route\Base\RouteHandler;
+use Drupal\drapi\Core\Http\Route\Base\RouteHandlerBase;
+use Drupal\file\FileRepositoryInterface;
+use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 #[RouteHandler(
-  id: 'drift_eleven:example',
-  name: 'Drift Eleven Example Route',
+  id: 'drapi:example',
+  name: 'Drapi Example (Testing) Route',
   method: 'POST',
   path: 'api/example',
-  description: 'An Example Drift Eleven Route',
+  description: 'Testing route for module Drapi',
   permissions: ['access content'],
   roles: [],
   useMiddleware: ['request'],
@@ -34,9 +36,9 @@ class ExampleRoute extends RouteHandlerBase {
       ->prepareDirectory($targetDir, FileSystemInterface::CREATE_DIRECTORY);
 
     $mailClient = MailClient::make(
-      moduleName: 'drift_eleven',
-      from: 'admin@drifteleven.com',
-      to: 'test@drifteleven.com',
+      moduleName: 'drapi',
+      from: 'admin@drapi.com',
+      to: 'test@drapi.com',
       subject: 'Test Email with Attachments',
       themeKey: 'user_registration_mail',
       themeParams: ['message' => 'This is a test email with attachments.'],

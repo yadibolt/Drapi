@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Route\Base;
+namespace Drupal\drapi\Core\Http\Route\Base;
 
 use Drupal;
-use Drupal\drift_eleven\Core\Content\Trait\FileTrait;
+use Drupal\drapi\Core\Content\Trait\FileTrait;
 
 abstract class RouteRegistryBase {
   use FileTrait;

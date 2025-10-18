@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Auth\Enum;
+namespace Drupal\drapi\Core\Auth\Enum;
 
 enum JWTResponseIntent: string {
   case INVALID = 'invalid';

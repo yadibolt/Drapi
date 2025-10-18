@@ -1,17 +1,16 @@
 <?php
 
-namespace Drupal\drift_eleven\EventSubscriber;
+namespace Drupal\drapi\EventSubscriber;
 
-use Drupal;
-use Drupal\drift_eleven\Core\Auth\JWT;
-use Drupal\drift_eleven\Core\Cache\Cache;
-use Drupal\drift_eleven\Core\Cache\Enum\CacheIntent;
-use Drupal\drift_eleven\Core\Http\Middleware\AuthMiddleware;
-use Drupal\drift_eleven\Core\Http\Reply;
-use Drupal\drift_eleven\Core\Session\Enum\SubjectIntent;
-use Drupal\drift_eleven\Core\Session\Session;
-use Drupal\drift_eleven\Core\Session\Subject;
-use Drupal\drift_eleven\EventSubscriber\Trait\RouteTrait;
+use Drupal\drapi\Core\Auth\JWT;
+use Drupal\drapi\Core\Cache\Cache;
+use Drupal\drapi\Core\Cache\Enum\CacheIntent;
+use Drupal\drapi\Core\Http\Middleware\AuthMiddleware;
+use Drupal\drapi\Core\Http\Reply;
+use Drupal\drapi\Core\Session\Enum\SubjectIntent;
+use Drupal\drapi\Core\Session\Session;
+use Drupal\drapi\Core\Session\Subject;
+use Drupal\drapi\EventSubscriber\Trait\RouteTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 use Symfony\Component\HttpKernel\Event\RequestEvent;

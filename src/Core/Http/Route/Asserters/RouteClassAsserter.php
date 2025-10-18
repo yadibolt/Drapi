@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Route\Asserters;
+namespace Drupal\drapi\Core\Http\Route\Asserters;
 
-use Drupal\drift_eleven\Core\Http\Route\Asserters\Interface\RouteAsserterInterface;
-use Drupal\drift_eleven\Core\Http\Route\Route;
+use Drupal\drapi\Core\Http\Route\Asserters\Interface\RouteAsserterInterface;
+use Drupal\drapi\Core\Http\Route\Route;
 
 class RouteClassAsserter implements RouteAsserterInterface {
 

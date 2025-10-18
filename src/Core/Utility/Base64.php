@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Utility;
+namespace Drupal\drapi\Core\Utility;
 
 class Base64 {
   public static function encode(string $data): string {

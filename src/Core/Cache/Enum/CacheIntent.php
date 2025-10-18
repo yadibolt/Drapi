@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Cache\Enum;
+namespace Drupal\drapi\Core\Cache\Enum;
 
 enum CacheIntent: string {
   case ENTITY = 'entity';

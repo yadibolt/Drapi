@@ -1,5 +1,0 @@
-name: Drift Eleven
-description: Expose Drupal data layer with simple API workflow!
-package: Drift Eleven Core
-type: module
-core_version_requirement: ^11

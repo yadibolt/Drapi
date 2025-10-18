@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Enum;
+namespace Drupal\drapi\Core\Http\Enum;
 
 enum ReplyIntent: string {
   case INVALID_HEADER = 'invalid_header';

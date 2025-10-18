@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Cache\Base;
+namespace Drupal\drapi\Core\Cache\Base;
 
 use Drupal;
 use Drupal\Core\Cache\Cache;
 use Drupal\Core\Entity\EntityInterface;
-use Drupal\drift_eleven\Core\Cache\Enum\CacheIntent;
+use Drupal\drapi\Core\Cache\Enum\CacheIntent;
 
 abstract class CacheBase {
   protected const string CACHE_BIN_KEY = CACHE_BIN_KEY_DEFAULT;

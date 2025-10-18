@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Content\Trait;
+namespace Drupal\drapi\Core\Content\Trait;
 
-use Drupal\drift_eleven\Core\Utility\Enum\LoggerIntent;
-use Drupal\drift_eleven\Core\Utility\Logger;
+use Drupal\drapi\Core\Utility\Enum\LoggerIntent;
+use Drupal\drapi\Core\Utility\Logger;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionException;

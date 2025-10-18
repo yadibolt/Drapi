@@ -1,13 +1,13 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Auth;
+namespace Drupal\drapi\Core\Auth;
 
 use Drupal;
-use Drupal\drift_eleven\Core\Auth\Enum\JWTResponseIntent;
-use Drupal\drift_eleven\Core\Utility\Base64;
-use Drupal\drift_eleven\Core\Auth\Enum\JWTIntent;
-use Drupal\drift_eleven\Core\Utility\Logger;
-use Drupal\drift_eleven\Core\Utility\Enum\LoggerIntent;
+use Drupal\drapi\Core\Auth\Enum\JWTResponseIntent;
+use Drupal\drapi\Core\Utility\Base64;
+use Drupal\drapi\Core\Auth\Enum\JWTIntent;
+use Drupal\drapi\Core\Utility\Logger;
+use Drupal\drapi\Core\Utility\Enum\LoggerIntent;
 
 class JWT {
   protected const string HASH_ALGO = 'sha512';

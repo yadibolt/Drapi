@@ -1,17 +1,17 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Content\Field\Resolver;
+namespace Drupal\drapi\Core\Content\Field\Resolver;
 
-use Drupal\drift_eleven\Core\Content\Field\BooleanField;
-use Drupal\drift_eleven\Core\Content\Field\DaterangeField;
-use Drupal\drift_eleven\Core\Content\Field\EntityReferenceField;
-use Drupal\drift_eleven\Core\Content\Field\FileField;
-use Drupal\drift_eleven\Core\Content\Field\FloatField;
-use Drupal\drift_eleven\Core\Content\Field\IntegerField;
-use Drupal\drift_eleven\Core\Content\Field\LinkField;
-use Drupal\drift_eleven\Core\Content\Field\PathField;
-use Drupal\drift_eleven\Core\Content\Field\StringField;
-use Drupal\drift_eleven\Core\Content\Field\TextField;
+use Drupal\drapi\Core\Content\Field\BooleanField;
+use Drupal\drapi\Core\Content\Field\DaterangeField;
+use Drupal\drapi\Core\Content\Field\EntityReferenceField;
+use Drupal\drapi\Core\Content\Field\FileField;
+use Drupal\drapi\Core\Content\Field\FloatField;
+use Drupal\drapi\Core\Content\Field\IntegerField;
+use Drupal\drapi\Core\Content\Field\LinkField;
+use Drupal\drapi\Core\Content\Field\PathField;
+use Drupal\drapi\Core\Content\Field\StringField;
+use Drupal\drapi\Core\Content\Field\TextField;
 
 class FieldResolver {
   protected const array FIELD_TYPE_HANDLERS = [

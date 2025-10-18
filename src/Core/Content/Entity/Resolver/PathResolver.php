@@ -1,11 +1,11 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Content\Entity\Resolver;
+namespace Drupal\drapi\Core\Content\Entity\Resolver;
 
 use Drupal;
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Url;
-use Drupal\drift_eleven\Core\Utility\Trait\SanitizerTrait;
+use Drupal\drapi\Core\Utility\Trait\SanitizerTrait;
 use Exception;
 
 class PathResolver {

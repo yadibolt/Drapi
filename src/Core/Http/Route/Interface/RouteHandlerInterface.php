@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Route\Interface;
+namespace Drupal\drapi\Core\Http\Route\Interface;
 
-use Drupal\drift_eleven\Core\Http\Reply;
+use Drupal\drapi\Core\Http\Reply;
 use Symfony\Component\HttpFoundation\Request;
 
 interface RouteHandlerInterface {

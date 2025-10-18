@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Session\Base;
+namespace Drupal\drapi\Core\Session\Base;
 
 abstract class SubjectBase {
   protected int $id;

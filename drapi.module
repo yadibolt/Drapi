@@ -2,13 +2,11 @@
 
 use Drupal\Core\Entity\EntityInterface;
 use Drupal\Core\Render\RendererInterface;
-use Drupal\drift_eleven\Core\Cache\Cache;
-use Drupal\drift_eleven\Core\Logger\Logger;
-use Drupal\drift_eleven\Core\Logger\LoggerInterface;
+use Drupal\drapi\Core\Cache\Cache;
 
 require_once __DIR__ . '/globals.inc';
 
-function drift_eleven_mail(string $key, array &$message, array $params): void {
+function drapi_mail(string $key, array &$message, array $params): void {
   /** @var RendererInterface $renderer */
   $renderer = Drupal::service('renderer');
 
@@ -25,10 +23,7 @@ function drift_eleven_mail(string $key, array &$message, array $params): void {
   }
 }
 
-/**
- * Implements hook_theme().
- */
-function drift_eleven_theme(array $existing, string $type, string $theme, string $path): array {
+function drapi_theme(array $existing, string $type, string $theme, string $path): array {
   return [
     'user_password_reset_mail' => [
       'variables' => [
@@ -48,15 +43,15 @@ function drift_eleven_theme(array $existing, string $type, string $theme, string
   ];
 }
 
-function drift_eleven_cache_flush(): void {
+function drapi_cache_flush(): void {
   Cache::make(CACHE_BIN_KEY_DEFAULT)->flush();
 }
-function drift_eleven_entity_insert(EntityInterface $entity): void {
+function drapi_entity_insert(EntityInterface $entity): void {
   Cache::make(CACHE_BIN_KEY_DEFAULT)->invalidateEntityTags($entity);
 }
-function drift_eleven_entity_update(EntityInterface $entity): void {
+function drapi_entity_update(EntityInterface $entity): void {
   Cache::make(CACHE_BIN_KEY_DEFAULT)->invalidateEntityTags($entity);
 }
-function drift_eleven_entity_delete(EntityInterface $entity): void {
+function drapi_entity_delete(EntityInterface $entity): void {
   Cache::make(CACHE_BIN_KEY_DEFAULT)->invalidateEntityTags($entity);
 }

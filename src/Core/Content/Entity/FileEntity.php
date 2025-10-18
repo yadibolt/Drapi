@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Content\Entity;
+namespace Drupal\drapi\Core\Content\Entity;
 
-use Drupal\drift_eleven\Core\Content\Entity\Base\EntityBase;
+use Drupal\drapi\Core\Content\Entity\Base\EntityBase;
 use InvalidArgumentException;
 
 class FileEntity extends EntityBase {

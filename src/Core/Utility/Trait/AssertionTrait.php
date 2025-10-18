@@ -1,8 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Utility\Trait;
-
-use Random\RandomException;
+namespace Drupal\drapi\Core\Utility\Trait;
 
 trait AssertionTrait {
   protected function assertionForUsername(string $username): ?string {

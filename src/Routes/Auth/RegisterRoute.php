@@ -1,29 +1,24 @@
 <?php
 
-namespace Drupal\drift_eleven\Routes\Auth;
+namespace Drupal\drapi\Routes\Auth;
 
 use Drupal;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
 use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Entity\EntityStorageException;
-use Drupal\Core\Password\PasswordInterface;
-use Drupal\drift_eleven\Core\Auth\Enum\JWTIntent;
-use Drupal\drift_eleven\Core\Auth\JWT;
-use Drupal\drift_eleven\Core\Http\Mail\MailClient;use Drupal\drift_eleven\Core\Http\Reply;
-use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandler;
-use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandlerBase;
-use Drupal\drift_eleven\Core\Session\Enum\SubjectIntent;
-use Drupal\drift_eleven\Core\Session\Session;
-use Drupal\drift_eleven\Core\Utility\Enum\LoggerIntent;
-use Drupal\drift_eleven\Core\Utility\Logger;
-use Drupal\drift_eleven\Core\Utility\Trait\AssertionTrait;
-use Drupal\drift_eleven\Core\Utility\Trait\StringGeneratorTrait;
+use Drupal\drapi\Core\Http\Mail\MailClient;
+use Drupal\drapi\Core\Http\Reply;
+use Drupal\drapi\Core\Http\Route\Base\RouteHandler;
+use Drupal\drapi\Core\Http\Route\Base\RouteHandlerBase;
+use Drupal\drapi\Core\Utility\Enum\LoggerIntent;
+use Drupal\drapi\Core\Utility\Logger;
+use Drupal\drapi\Core\Utility\Trait\AssertionTrait;
+use Drupal\drapi\Core\Utility\Trait\StringGeneratorTrait;
 use Drupal\user\Entity\User;
-use Drupal\user\UserInterface;
 
 #[RouteHandler(
   id: 'auth:register',
-  name: '(Core) Register Route',
+  name: '[DrapiCore] Register Route',
   method: 'POST',
   path: 'auth/register',
   description: 'Route for user registration',

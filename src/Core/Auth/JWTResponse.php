@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Auth;
+namespace Drupal\drapi\Core\Auth;
 
-use Drupal\drift_eleven\Core\Auth\Enum\JWTResponseIntent;
+use Drupal\drapi\Core\Auth\Enum\JWTResponseIntent;
 
 class JWTResponse {
   protected string $action;

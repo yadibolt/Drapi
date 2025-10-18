@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Route;
+namespace Drupal\drapi\Core\Http\Route;
 
-use Drupal\drift_eleven\Core\Http\Route\Base\RouteBase;
-use Drupal\drift_eleven\Core\Utility\Enum\LoggerIntent;
-use Drupal\drift_eleven\Core\Utility\Logger;
+use Drupal\drapi\Core\Http\Route\Base\RouteBase;
+use Drupal\drapi\Core\Utility\Enum\LoggerIntent;
+use Drupal\drapi\Core\Utility\Logger;
 use Exception;
 use ReflectionAttribute;
 

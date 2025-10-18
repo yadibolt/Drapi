@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\drift_eleven\EventSubscriber;
+namespace Drupal\drapi\EventSubscriber;
 
 use Drupal;
 use Drupal\Core\Routing\RouteSubscriberBase;
-use Drupal\drift_eleven\Core\Http\Route\RouteRegistry;
+use Drupal\drapi\Core\Http\Route\RouteRegistry;
 use Symfony\Component\Routing\RouteCollection;
 
 class Routes extends RouteSubscriberBase {

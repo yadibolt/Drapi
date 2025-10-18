@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Utility\Trait;
+namespace Drupal\drapi\Core\Utility\Trait;
 
 trait SanitizerTrait {
   protected function sanitizeURL(string $input): ?string {

@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\drift_eleven\EventSubscriber\Trait;
+namespace Drupal\drapi\EventSubscriber\Trait;
 
 use Drupal;
 use Drupal\Core\Config\Config;
-use Drupal\drift_eleven\Core\Http\Route\Route;
+use Drupal\drapi\Core\Http\Route\Route;
 use Symfony\Component\HttpFoundation\Request;
 
 trait RouteTrait {

@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Route\Base;
+namespace Drupal\drapi\Core\Http\Route\Base;
 
 use Attribute;
 

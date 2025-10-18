@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http\Route\Base;
+namespace Drupal\drapi\Core\Http\Route\Base;
 
 use Drupal;
-use Drupal\drift_eleven\Core\Http\Reply;
-use Drupal\drift_eleven\Core\Http\Route\Interface\RouteHandlerInterface;
+use Drupal\drapi\Core\Http\Reply;
+use Drupal\drapi\Core\Http\Route\Interface\RouteHandlerInterface;
 use Symfony\Component\HttpFoundation\Request;
 
 abstract class RouteHandlerBase implements RouteHandlerInterface {

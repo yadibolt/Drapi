@@ -1,8 +1,8 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Http;
+namespace Drupal\drapi\Core\Http;
 
-use Drupal\drift_eleven\Core\Http\Base\ReplyBase;
+use Drupal\drapi\Core\Http\Base\ReplyBase;
 use Symfony\Component\HttpFoundation\ResponseHeaderBag;
 
 class Reply extends ReplyBase {

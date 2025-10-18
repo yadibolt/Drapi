@@ -1,62 +1,64 @@
 <?php
 
-function drift_eleven_schema(): array {
+require_once __DIR__ . '/globals.inc';
+
+function drapi_schema(): array {
   $schemas = [];
 
-  $sessionSchema = 'drift_eleven_session';
-  $passwordResetSchema = 'drift_eleven_password_reset';
+  $sessionSchema = SESSION_TABLE_NAME_DEFAULT;
+  $passwordResetSchema = SUBJECT_RESET_PASSWORD_TABLE_NAME_DEFAULT;
 
   $schemas[$sessionSchema] = [
-    'description' => 'Table storing all tokens used by AUTH middleware',
+    'description' => 'Table storing active sessions info for Drapi module.',
     'fields' => [
       'id' => [
         'type' => 'serial',
         'not null' => true,
-        'description' => 'ID of the session',
+        'description' => 'Session Id',
       ],
       'entity_id' => [
         'type' => 'int',
         'not null' => true,
-        'description' => 'Entity Id session belongs to',
+        'description' => 'Entity Id the session is tied to (so, User Id)',
       ],
       'access_token' => [
         'type' => 'varchar',
         'length' => 512,
         'not null' => true,
-        'description' => 'JWT token value',
+        'description' => 'Session JWT token',
       ],
       'refresh_token' => [
         'type' => 'varchar',
         'length' => 512,
         'not null' => true,
-        'description' => 'JWT refresh token value',
+        'description' => 'Session JWT refresh token (used to invalidate session after a set time)',
       ],
       'user_agent' => [
         'type' => 'varchar',
         'length' => 512,
         'not null' => false,
-        'description' => 'User agent of entity that created this session',
+        'description' => 'User agent of the entity (this may be browser user agent or other identifier)',
       ],
       'ip' => [
         'type' => 'varchar',
         'length' => 45,
         'not null' => false,
-        'description' => 'IP address of entity that created this session',
+        'description' => 'IP address of the entity machine',
       ],
       'expires_at' => [
         'type' => 'int',
         'not null' => true,
-        'description' => 'The timestamp when the record was edited',
+        'description' => 'Timestamp for when the session expires',
       ],
       'updated_at' => [
         'type' => 'int',
         'not null' => true,
-        'description' => 'The timestamp when the record was edited',
+        'description' => 'Timestamp for when the record was last updated',
       ],
       'created_at' => [
         'type' => 'int',
         'not null' => true,
-        'description' => 'The timestamp when the record was created',
+        'description' => 'Timestamp for when the record was created',
       ],
     ],
     'primary key' => ['id'],
@@ -66,45 +68,45 @@ function drift_eleven_schema(): array {
   ];
 
   $schemas[$passwordResetSchema] = [
-    'description' => 'Table storing all tokens used by AUTH middleware to reset passwords',
+    'description' => 'Table storing currently active password reset tokens for Drapi module.',
     'fields' => [
       'id' => [
         'type' => 'serial',
         'not null' => true,
-        'description' => 'ID of the token record',
+        'description' => 'Record Id',
       ],
       'entity_id' => [
         'type' => 'int',
         'not null' => true,
-        'description' => 'Entity Id token belongs to',
+        'description' => 'Entity Id the token is tied to (so, User Id)',
       ],
       'mail' => [
         'type' => 'varchar',
         'length' => 512,
         'not null' => true,
-        'description' => 'Email associated with token record',
+        'description' => 'Entity mail the token is tied to',
       ],
       'token' => [
         'type' => 'varchar',
         'length' => 512,
         'not null' => true,
-        'description' => 'JWT token value',
+        'description' => 'Password reset token',
       ],
       'langcode' => [
         'type' => 'varchar',
         'length' => 12,
         'not null' => true,
-        'description' => 'Language code associated with token record',
+        'description' => 'Language code of the entity when requested password reset',
       ],
       'expires_at' => [
         'type' => 'int',
         'not null' => true,
-        'description' => 'Expiration date of the token record',
+        'description' => 'The timestamp when the token expires',
       ],
       'updated_at' => [
         'type' => 'int',
         'not null' => true,
-        'description' => 'The timestamp when the record was updated',
+        'description' => 'The timestamp when the record was last updated',
       ],
       'created_at' => [
         'type' => 'int',

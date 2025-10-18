@@ -1,15 +1,15 @@
 <?php
 
-namespace Drupal\drift_eleven\Routes\User;
+namespace Drupal\drapi\Routes\User;
 
-use Drupal\drift_eleven\Core\Http\Reply;
-use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandler;
-use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandlerBase;
-use Drupal\drift_eleven\Core\Session\Subject;
+use Drupal\drapi\Core\Http\Reply;
+use Drupal\drapi\Core\Http\Route\Base\RouteHandler;
+use Drupal\drapi\Core\Http\Route\Base\RouteHandlerBase;
+use Drupal\drapi\Core\Session\Subject;
 
 #[RouteHandler(
   id: 'api:user',
-  name: '(Core) User Route',
+  name: '[DrapiCore] User Route',
   method: 'GET',
   path: 'api/user',
   description: 'Route for user',

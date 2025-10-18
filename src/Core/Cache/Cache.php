@@ -1,9 +1,9 @@
 <?php
 
-namespace Drupal\drift_eleven\Core\Cache;
+namespace Drupal\drapi\Core\Cache;
 
-use Drupal\drift_eleven\Core\Cache\Interface\CacheInterface;
-use Drupal\drift_eleven\Core\Cache\Base\CacheBase;
+use Drupal\drapi\Core\Cache\Interface\CacheInterface;
+use Drupal\drapi\Core\Cache\Base\CacheBase;
 
 class Cache extends CacheBase implements CacheInterface {
   public function __construct(string $binKey = '') {

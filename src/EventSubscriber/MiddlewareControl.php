@@ -1,10 +1,10 @@
 <?php
 
-namespace Drupal\drift_eleven\EventSubscriber;
+namespace Drupal\drapi\EventSubscriber;
 
-use Drupal\drift_eleven\Core\Http\Middleware\Middleware;
-use Drupal\drift_eleven\Core\Http\Reply;
-use Drupal\drift_eleven\EventSubscriber\Trait\RouteTrait;
+use Drupal\drapi\Core\Http\Middleware\Middleware;
+use Drupal\drapi\Core\Http\Reply;
+use Drupal\drapi\EventSubscriber\Trait\RouteTrait;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\RequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
