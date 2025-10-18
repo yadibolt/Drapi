@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Password\PasswordInterface;
 use Drupal\drift_eleven\Core\Auth\Enum\JWTIntent;
 use Drupal\drift_eleven\Core\Auth\JWT;
-use Drupal\drift_eleven\Core\Http\Reply;
+use Drupal\drift_eleven\Core\Http\Mail\MailClient;use Drupal\drift_eleven\Core\Http\Reply;
 use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandler;
 use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandlerBase;
 use Drupal\drift_eleven\Core\Session\Enum\SubjectIntent;
@@ -37,6 +37,7 @@ class RegisterRoute extends RouteHandlerBase {
   use StringGeneratorTrait;
 
   public function handle(): Reply {
+    $systemMail = Drupal::config('system.site')->get('mail');
     $data = $this->getRequestData();
     if (empty($data['mail'])) return Reply::make([
       'message' => 'Required parameter "mail" is missing.',
@@ -110,7 +111,13 @@ class RegisterRoute extends RouteHandlerBase {
       ], 500);
     }
 
-    // TODO Send mail.
+    MailClient::make(
+      moduleName: MODULE_NAME_DEFAULT,
+      from: $systemMail,
+      to: $user->getEmail(),
+      subject: 'Thank you for registering!',
+      themeKey: 'user_registration_mail',
+    )->sendMail();
 
     Logger::l(
       channel: 'registration',

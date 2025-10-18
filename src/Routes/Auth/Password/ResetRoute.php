@@ -8,7 +8,7 @@ use Drupal\Component\Plugin\Exception\PluginNotFoundException;
 use Drupal\Core\Password\PasswordInterface;
 use Drupal\drift_eleven\Core\Auth\Enum\JWTIntent;
 use Drupal\drift_eleven\Core\Auth\JWT;
-use Drupal\drift_eleven\Core\Http\Reply;
+use Drupal\drift_eleven\Core\Http\Mail\MailClient;use Drupal\drift_eleven\Core\Http\Reply;
 use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandler;
 use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandlerBase;
 use Drupal\drift_eleven\Core\Session\Enum\SubjectIntent;
@@ -53,7 +53,16 @@ class ResetRoute extends RouteHandlerBase {
       ], 500);
     }
 
-    // TODO send mail
+    MailClient::make(
+      moduleName: MODULE_NAME_DEFAULT,
+      from: $systemMail,
+      to: $data['mail'],
+      subject: 'Here is the link to reset your password',
+      themeKey: 'user_password_reset_mail',
+      themeParams: [
+        'token' => $token,
+      ]
+    )->sendMail();
 
     return Reply::make([
       'message' => 'If the mail exists, the mail has been sent.',

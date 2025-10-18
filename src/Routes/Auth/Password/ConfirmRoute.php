@@ -9,7 +9,7 @@ use Drupal\Core\Entity\EntityStorageException;
 use Drupal\Core\Password\PasswordInterface;
 use Drupal\drift_eleven\Core\Auth\Enum\JWTIntent;
 use Drupal\drift_eleven\Core\Auth\JWT;
-use Drupal\drift_eleven\Core\Http\Reply;
+use Drupal\drift_eleven\Core\Http\Mail\MailClient;use Drupal\drift_eleven\Core\Http\Reply;
 use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandler;
 use Drupal\drift_eleven\Core\Http\Route\Base\RouteHandlerBase;
 use Drupal\drift_eleven\Core\Session\Enum\SubjectIntent;
@@ -35,6 +35,7 @@ class ConfirmRoute extends RouteHandlerBase {
   use AssertionTrait;
 
   public function handle(): Reply {
+    $systemMail = Drupal::config('system.site')->get('mail');
     $data = $this->getRequestData();
     $queryParams = $this->getQueryParams();
 
@@ -103,7 +104,13 @@ class ConfirmRoute extends RouteHandlerBase {
       ], 500);
     }
 
-    // TODO send mail
+    MailClient::make(
+      moduleName: MODULE_NAME_DEFAULT,
+      from: $systemMail,
+      to: $user->getEmail(),
+      subject: 'Your password has been reset',
+      themeKey: 'user_password_reset_confirmation_mail',
+    )->sendMail();
 
     return Reply::make([
       'message' => 'Success.',

@@ -15,6 +15,7 @@ const D9M7_CACHE_BIN_KEY = 'drift_eleven';*/
 
 
 // v2
+const MODULE_NAME_DEFAULT = 'drift_eleven';
 const MODULE_FOLDER_NAME = 'drift-eleven';
 
 const LOGGER_DEBUG = true;
