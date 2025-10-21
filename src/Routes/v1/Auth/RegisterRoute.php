@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drapi\Routes\Auth;
+namespace Drupal\drapi\Routes\v1\Auth;
 
 use Drupal;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
@@ -20,7 +20,7 @@ use Drupal\user\Entity\User;
   id: 'auth:register',
   name: '[DrapiCore] Register Route',
   method: 'POST',
-  path: 'auth/register',
+  path: 'v1/auth/register',
   description: 'Route for user registration',
   permissions: ['access content'],
   roles: [],

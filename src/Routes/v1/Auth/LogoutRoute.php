@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drapi\Routes\Auth;
+namespace Drupal\drapi\Routes\v1\Auth;
 
 use Drupal\drapi\Core\Http\Reply;
 use Drupal\drapi\Core\Http\Route\Base\RouteHandler;
@@ -14,7 +14,7 @@ use Drupal\drapi\Core\Utility\Logger;
   id: 'auth:logout',
   name: '[DrapiCore] Logout Route',
   method: 'GET',
-  path: 'auth/logout',
+  path: 'v1/auth/logout',
   description: 'Route for user logout',
   permissions: ['access content'],
   roles: [],

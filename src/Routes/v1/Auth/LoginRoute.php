@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drapi\Routes\Auth;
+namespace Drupal\drapi\Routes\v1\Auth;
 
 use Drupal;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
@@ -21,7 +21,7 @@ use Drupal\user\UserInterface;
   id: 'auth:login',
   name: '[DrapiCore] Login Route',
   method: 'POST',
-  path: 'auth/login',
+  path: 'v1/auth/login',
   description: 'Route for user login',
   permissions: ['access content'],
   roles: [],

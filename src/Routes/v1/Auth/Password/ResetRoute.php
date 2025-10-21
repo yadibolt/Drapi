@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drapi\Routes\Auth\Password;
+namespace Drupal\drapi\Routes\v1\Auth\Password;
 
 use Drupal;
 use Drupal\drapi\Core\Http\Mail\MailClient;
@@ -13,7 +13,7 @@ use Drupal\drapi\Core\Session\Subject;
   id: 'auth:password:reset',
   name: '[DrapiCore] Reset Password Route',
   method: 'POST',
-  path: 'auth/password/reset',
+  path: 'v1/auth/password/reset',
   description: 'Route for user password reset.',
   permissions: ['access content'],
   roles: [],

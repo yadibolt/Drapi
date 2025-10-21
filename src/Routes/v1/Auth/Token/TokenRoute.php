@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drapi\Routes\Auth\Token;
+namespace Drupal\drapi\Routes\v1\Auth\Token;
 
 use Drupal\drapi\Core\Auth\Enum\JWTIntent;
 use Drupal\drapi\Core\Auth\JWT;
@@ -13,7 +13,7 @@ use Drupal\drapi\Core\Session\Enum\SubjectIntent;
   id: 'auth:token:token',
   name: '[DrapiCore] Token Route',
   method: 'GET',
-  path: 'auth/token',
+  path: 'v1/auth/token',
   description: 'Route to get a token that is used for authorization',
   permissions: ['access content'],
   roles: [],

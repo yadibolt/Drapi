@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drapi\Routes\Auth\Password;
+namespace Drupal\drapi\Routes\v1\Auth\Password;
 
 use Drupal;
 use Drupal\Component\Plugin\Exception\InvalidPluginDefinitionException;
@@ -19,7 +19,7 @@ use Drupal\user\UserInterface;
   id: 'auth:password:confirm',
   name: '[DrapiCore] Reset Password Confirm Route',
   method: 'POST',
-  path: 'auth/password/confirm',
+  path: 'v1/auth/password/confirm',
   description: 'Route for user password reset confirmation.',
   permissions: ['access content'],
   roles: [],

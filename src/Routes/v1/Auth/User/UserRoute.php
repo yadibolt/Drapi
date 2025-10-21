@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drapi\Routes\User;
+namespace Drupal\drapi\Routes\v1\User;
 
 use Drupal\drapi\Core\Http\Reply;
 use Drupal\drapi\Core\Http\Route\Base\RouteHandler;
@@ -11,7 +11,7 @@ use Drupal\drapi\Core\Session\Subject;
   id: 'api:user',
   name: '[DrapiCore] User Route',
   method: 'GET',
-  path: 'api/user',
+  path: 'v1/api/user',
   description: 'Route for user',
   permissions: ['access content'],
   roles: [],
