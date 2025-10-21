@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drapi\Routes;
+namespace Drupal\drapi\Routes\v1;
 
 use Drupal;
 use Drupal\Core\File\FileSystemInterface;
@@ -11,8 +11,7 @@ use Drupal\drapi\Core\Http\Route\Base\RouteHandlerBase;
 use Drupal\file\FileRepositoryInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
-#[
-  RouteHandler(
+#[RouteHandler(
     id: "drapi:example",
     name: "Drapi Example (Testing) Route",
     method: "POST",
@@ -21,7 +20,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
     permissions: ["access content"],
     roles: [],
     useMiddleware: ["request"],
-    useCache: false,
+    useCache: true,
   ),
 ]
 class ExampleRoute extends RouteHandlerBase

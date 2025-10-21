@@ -27,7 +27,7 @@ trait RouteTrait {
       $route = unserialize($route);
 
       /** @var Route $route */
-      if (!empty($route->getPath())) continue;
+      if (empty($route->getPath())) continue;
 
       $parts = mb_split('/', $route->getPath());
       if (count($parts) !== count($uriParts)) continue;
@@ -36,6 +36,9 @@ trait RouteTrait {
         if (str_starts_with($parts[$i], '{') && str_ends_with($parts[$i], '}')) continue;
         if ($parts[$i] !== $uriParts[$i]) continue 2;
       }
+
+      $name = ROUTE_NAME_PREFIX_DEFAULT . ':' . $route->getId();
+      $request->attributes->add(['_route' => $name]);
 
       return [$route, $configuration];
     }

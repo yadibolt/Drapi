@@ -15,7 +15,7 @@ abstract class SubjectBase {
     $this->active = $active;
     $this->authenticated = $authenticated;
     $this->roles = $roles;
-    $this->permissions = $permissions;
+    $this->permissions = array_merge($permissions, ['access content']);
     $this->langcode = $langcode;
   }
   public function toArray(): array {

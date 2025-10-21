@@ -1,6 +1,6 @@
 <?php
 
-namespace Drupal\drapi\Routes\v1\User;
+namespace Drupal\drapi\Routes\v1\Auth\User;
 
 use Drupal\drapi\Core\Http\Reply;
 use Drupal\drapi\Core\Http\Route\Base\RouteHandler;

@@ -29,7 +29,7 @@ class MiddlewareControl implements EventSubscriberInterface {
 
     if (!$route) return;
 
-    $middlewareResponse = new Middleware()->apply($route);
+    $middlewareResponse = Middleware::make($route)->apply();
     if ($middlewareResponse instanceof Reply) {
       $event->setResponse($middlewareResponse);
       $event->stopPropagation();

@@ -6,10 +6,11 @@ use Drupal\drapi\Core\Http\Enum\ReplyIntent;
 use Drupal\drapi\Core\Http\Middleware\Base\MiddlewareBase;
 use Drupal\drapi\Core\Http\Middleware\Interface\MiddlewareInterface;
 use Drupal\drapi\Core\Http\Reply;
+use Drupal\drapi\Core\Http\Route\Route;
 
 class RequestMiddleware extends MiddlewareBase implements MiddlewareInterface {
-  public static function make(): self {
-    return new self();
+  public static function make(Route $route): self {
+    return new self($route);
   }
   public static function getId(): string {
     return 'request';

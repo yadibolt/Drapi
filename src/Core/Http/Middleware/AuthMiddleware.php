@@ -7,13 +7,13 @@ use Drupal\drapi\Core\Http\Enum\ReplyIntent;
 use Drupal\drapi\Core\Http\Middleware\Base\MiddlewareBase;
 use Drupal\drapi\Core\Http\Middleware\Interface\MiddlewareInterface;
 use Drupal\drapi\Core\Http\Reply;
-use Drupal\drapi\Core\Session\Enum\SubjectIntent;
+use Drupal\drapi\Core\Http\Route\Route;use Drupal\drapi\Core\Session\Enum\SubjectIntent;
 use Drupal\drapi\Core\Session\Session;
 use Drupal\drapi\Core\Session\Subject;
 
 class AuthMiddleware extends MiddlewareBase implements MiddlewareInterface {
-  public static function make(): self {
-    return new self();
+  public static function make(Route $route): self {
+    return new self($route);
   }
   public static function getId(): string {
     return 'auth';
@@ -96,8 +96,8 @@ class AuthMiddleware extends MiddlewareBase implements MiddlewareInterface {
   protected function checkRequirements(Subject $subject): bool {
     $route = $this->currentRoute;
 
-    $routePermissions = $route['permissions'] ?? [];
-    $routeRoles = $route['roles'] ?? [];
+    $routePermissions = $route->getPermissions() ?? [];
+    $routeRoles = $route->getRoles() ?? [];
 
     $permissions = $subject->getPermissions();
     if (array_any($routePermissions,fn($routePermission) => !in_array($routePermission, $permissions))) {

@@ -12,8 +12,8 @@ abstract class MiddlewareBase {
   protected Request $currentRequest;
   protected Route $currentRoute;
 
-  public function __construct() {
+  public function __construct(Route $route) {
+    $this->currentRoute = $route;
     $this->currentRequest = $this->getCurrentRequest();
-    $this->currentRoute = $this->getCurrentRoute();
   }
 }
