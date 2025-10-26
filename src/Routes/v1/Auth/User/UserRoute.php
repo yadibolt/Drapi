@@ -11,7 +11,7 @@ use Drupal\drapi\Core\Session\Subject;
   id: 'api:user',
   name: '[DrapiCore] User Route',
   method: 'GET',
-  path: 'v1/api/user',
+  path: 'v1/user',
   description: 'Route for user',
   permissions: ['access content'],
   roles: [],

@@ -15,7 +15,7 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
     id: "drapi:example",
     name: "Drapi Example (Testing) Route",
     method: "POST",
-    path: "api/example",
+    path: "example",
     description: "Testing route for module Drapi",
     permissions: ["access content"],
     roles: [],
