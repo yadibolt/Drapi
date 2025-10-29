@@ -21,12 +21,21 @@ class AuthMiddleware extends MiddlewareBase implements MiddlewareInterface {
   public function process(): ?Reply {
     $authorizationHeader = $this->currentRequest->headers->get('authorization');
     if (empty($authorizationHeader) || !preg_match('/^Bearer\s+(\S+)$/', $authorizationHeader, $matches)) {
-      return Reply::make(
-        data: [
-          'action_id' => ReplyIntent::INVALID_HEADER,
-          'message' => 'Authorization header is missing.',
-        ], status: 401
-      );
+      // we automatically assume this is anonymous call
+      $subject = Subject::makeAnonymous();
+      if (!$this->checkRequirements($subject)) return Reply::make([
+        'action_id' => ReplyIntent::REQUIREMENTS_NOT_MET,
+        'message' => 'Requirements not met.',
+      ], status: 403);
+
+      $requestContext = $this->currentRequest->attributes->get('context', []);
+      $this->addAttributes($this->currentRequest, 'context', [
+        ...$requestContext,
+        'token' => null,
+        'user' => $subject,
+      ]);
+
+      return null;
     }
 
     $checked = JWT::check($matches[1]);
@@ -47,24 +56,6 @@ class AuthMiddleware extends MiddlewareBase implements MiddlewareInterface {
           'message' => 'Payload is not valid.',
         ], status: 400
       );
-    }
-
-    if ($payload['data']['type'] === SubjectIntent::ANONYMOUS->value) {
-      $subject = Subject::makeAnonymous();
-
-      if (!$this->checkRequirements($subject)) return Reply::make([
-        'action_id' => ReplyIntent::REQUIREMENTS_NOT_MET,
-        'message' => 'Requirements not met.',
-      ], status: 403);
-
-      $requestContext = $this->currentRequest->attributes->get('context', []);
-      $this->addAttributes($this->currentRequest, 'context', [
-        ...$requestContext,
-        'token' => $matches[1],
-        'user' => $subject,
-      ]);
-
-      return null;
     }
 
     $subject = Session::make($matches[1])->find()?->getSubject();
