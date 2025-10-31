@@ -59,7 +59,16 @@ abstract class RouteHandlerBase implements RouteHandlerInterface {
   }
 
   protected function getRequestLangcode(): string {
-    return $this->context['request']['langcode'] ?? 'en';
+    $langcode = $this->context['request']['langcode'] ?? 'en';
+
+    if (strlen($langcode) > 2) {
+      $langcode = strtolower(substr($langcode, 0, 2));
+    }
+
+    $languages = Drupal::languageManager()->getLanguages();
+    if (isset($languages[$langcode])) return $langcode;
+
+    return 'en';
   }
   protected function getUriToken(string $token): ?string {
     return $this->currentRequest->get($token);
