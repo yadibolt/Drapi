@@ -70,18 +70,7 @@ class Subject extends SubjectBase {
       ]);
     try {
       if (!$query->execute()) return false;
-    } catch (Exception $e) {
-      Drupal::logger(MODULE_NAME_DEFAULT)->error('Failed to insert password reset token for mail: @mail', ['@mail' => $e->getMessage()]);
-      // log all passed fields
-      Drupal::logger(MODULE_NAME_DEFAULT)->error('Failed to insert password reset token for fields: @entity_id, @mail, @token, @langcode, @expires_at, @created_at, @updated_at', [
-        '@entity_id' => $userId,
-        '@mail' => $mail,
-        '@token' => $token,
-        '@langcode' => $langcode,
-        '@expires_at' => $expiresAt,
-        '@created_at' => time(),
-        '@updated_at' => time()
-      ]);
+    } catch (Exception) {
       return false;
     }
 

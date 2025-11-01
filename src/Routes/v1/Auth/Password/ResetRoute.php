@@ -42,9 +42,8 @@ class ResetRoute extends RouteHandlerBase {
       if (!Subject::insertForgotPasswordToken($token)) return Reply::make([
         'message' => 'Server error.',
       ], 500);
-    }
 
-    MailClient::make(
+      MailClient::make(
       moduleName: MODULE_NAME_DEFAULT,
       from: $systemMail,
       to: $data['mail'],
@@ -52,8 +51,8 @@ class ResetRoute extends RouteHandlerBase {
       themeKey: 'user_password_reset_mail',
       themeParams: [
         'token' => $token,
-      ]
-    )->sendMail();
+      ])->sendMail();
+    }
 
     return Reply::make([
       'message' => 'If the mail exists, the mail has been sent.',
