@@ -19,7 +19,7 @@ use Drupal\user\UserInterface;
   id: 'auth:password:confirm',
   name: '[DrapiCore] Reset Password Confirm Route',
   method: 'POST',
-  path: 'v1/auth/password/confirm',
+  path: 'v1/auth/password/reset/confirm',
   description: 'Route for user password reset confirmation.',
   permissions: ['access content'],
   roles: [],
