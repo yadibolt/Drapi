@@ -51,7 +51,7 @@ class JWT {
       'mod_sig' => JWT_SIGNATURE_HASH_DEFAULT,
       'iss' => JWT_ISSUER_DEFAULT,
       'iat' => time(),
-      'exp' => time() + $ttl - 1000,
+      'exp' => time() + $ttl - 1,
     ];
 
     if (!empty($data)) $payload['data'] = $data;

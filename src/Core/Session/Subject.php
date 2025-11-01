@@ -9,11 +9,11 @@ use Drupal\drapi\Core\Session\Base\SubjectBase;
 use Exception;
 
 class Subject extends SubjectBase {
-  public static function make(int $id, bool $active, bool $authenticated, array $roles = [], array $permissions = [], string $langcode = 'en'): self {
-    return new self($id, $active, $authenticated, $roles, $permissions, $langcode);
+  public static function make(int $id, string $username, bool $active, bool $authenticated, array $roles = [], array $permissions = [], string $langcode = 'en'): self {
+    return new self($id, $username, $active, $authenticated, $roles, $permissions, $langcode);
   }
   public static function makeAnonymous(): self {
-    return new self(0, false, true, ['anonymous'], ['access content'], 'en');
+    return new self(0, "anonymous", false, true, ['anonymous'], ['access content'], 'en');
   }
   public static function getByMail(string $mail): int {
     $query = Drupal::database()->select('users_field_data', 'a')
@@ -41,7 +41,7 @@ class Subject extends SubjectBase {
     if (empty($record)) return false;
 
     $record = reset($record);
-    if ($record->expires_at > time()) return false;
+    if ($record->expires_at < time()) return false;
 
     return true;
   }

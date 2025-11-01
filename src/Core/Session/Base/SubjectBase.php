@@ -4,14 +4,16 @@ namespace Drupal\drapi\Core\Session\Base;
 
 abstract class SubjectBase {
   protected int $id;
+  protected string $username;
   protected bool $active;
   protected array $roles;
   protected array $permissions;
   protected string $langcode;
   protected bool $authenticated;
 
-  public function __construct(int $id, bool $authenticated, bool $active, array $roles = [], array $permissions = [], string $langcode = 'en') {
+  public function __construct(int $id, string $username, bool $authenticated, bool $active, array $roles = [], array $permissions = [], string $langcode = 'en') {
     $this->id = $id;
+    $this->username = $username;
     $this->active = $active;
     $this->authenticated = $authenticated;
     $this->roles = $roles;
@@ -32,6 +34,9 @@ abstract class SubjectBase {
   public function setId(int $id) : void {
     $this->id = $id;
   }
+  public function setUsername(string $username) : void {
+    $this->username = $username;
+  }
   public function setActive(bool $active) : void {
     $this->active = $active;
   }
@@ -50,6 +55,9 @@ abstract class SubjectBase {
 
   public function getId() : int {
     return $this->id;
+  }
+  public function getUsername() : string {
+    return $this->username;
   }
   public function isActive() : bool {
     return $this->active;

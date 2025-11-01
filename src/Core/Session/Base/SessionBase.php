@@ -33,7 +33,7 @@ abstract class SessionBase {
       ->condition('access_token', $this->token);
 
     $query->innerJoin('users_field_data', 'ufd', 'a.entity_id = ufd.uid');
-    $query->fields('ufd', ['langcode', 'status']);
+    $query->fields('ufd', ['langcode', 'status', 'name']);
 
     $record = $query->execute()->fetchAll();
 
@@ -74,6 +74,7 @@ abstract class SessionBase {
 
     $this->subject = Subject::make(
       id: $record->entity_id,
+      username: $record->name,
       active: (bool)$record->status,
       authenticated: true,
       roles: $roles,
@@ -128,7 +129,9 @@ abstract class SessionBase {
 
     $newToken = JWT::make(JWTIntent::ACCESS_TOKEN, [
       'user_id' => $payload['data']['user_id'],
+      'username' => $payload['data']['username'],
       'type' => SubjectIntent::AUTHENTICATED,
+      'langcode' => $payload['data']['langcode'],
     ]);
 
     $query = $this->conn->update(SESSION_TABLE_NAME_DEFAULT)

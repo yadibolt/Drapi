@@ -72,7 +72,9 @@ class LoginRoute extends RouteHandlerBase {
 
     $token = JWT::make(JWTIntent::ACCESS_TOKEN, [
       'user_id' => $user->id(),
+      'username' => $user->getAccountName(),
       'type' => SubjectIntent::AUTHENTICATED,
+      'langcode' => $user->getPreferredLangcode(),
     ]);
 
     $session = Session::make($token, $this->userAgent, $this->clientIp)->create();
